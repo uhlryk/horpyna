@@ -1,0 +1,28 @@
+{
+  "name": "horpyna",
+  "version": "0.0.1",
+  "description": "promised modules flow control core library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uhlryk/horpyna.git"
+  },
+  "keywords": [
+    "promise",
+    "flow",
+    "async",
+    "business",
+    "process",
+    "modeling",
+    "conditional"
+  ],
+  "author": "Krzysztof Sztompka <sztompka.krzysztof@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uhlryk/horpyna/issues"
+  },
+  "homepage": "https://github.com/uhlryk/horpyna#readme"
+}
