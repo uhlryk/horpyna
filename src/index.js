@@ -1,5 +1,5 @@
-class Horpyna {
+import Component from "./components/Component";
 
-}
-
-export default Horpyna;
+export default {
+  Component
+};
