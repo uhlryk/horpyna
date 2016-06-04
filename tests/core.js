@@ -21,6 +21,16 @@ describe("Basic functionality", () => {
       expect(promise).to.eventually.be.fulfilled;
     });
 
+    it("should resolve promise in custom function from constructor and return resolved value", () => {
+      const RESOLVE_VALUE = "1234567";
+      let component = new Horpyna.Component(resolve => {
+        resolve(RESOLVE_VALUE);
+      });
+      let promise = component.run();
+      expect(promise).to.be.instanceof(Promise);
+      expect(promise).to.eventually.be.fulfilled;
+      expect(promise).to.eventually.equal(RESOLVE_VALUE);
+    })
   })
   ;
 });
