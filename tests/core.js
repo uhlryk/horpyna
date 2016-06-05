@@ -41,7 +41,7 @@ describe("Basic functionality", () => {
 
   });
 
-  describe("Check blocks in line", () => {
+  describe("Check chain components", () => {
     it("should return promise in run method and resolve it", (done) => {
       var spyA = sinon.spy();
       var spyB = sinon.spy();
@@ -69,6 +69,43 @@ describe("Basic functionality", () => {
         expect(spyC.calledOnce).to.be.true;
         expect(spyA.calledBefore(spyB)).to.be.true;
         expect(spyB.calledBefore(spyC)).to.be.true;
+        expect(spyC.calledBefore(spyComponent)).to.be.true;
+        done();
+      });
+
+    });
+
+  });
+
+  describe("Check branched components", () => {
+    it("should return promise in run method and resolve it", (done) => {
+      var spyA = sinon.spy();
+      var spyB = sinon.spy();
+      var spyC = sinon.spy();
+      var spyComponent = sinon.spy();
+      let componentA = new Horpyna.Component((input, output) => {
+        spyA();
+        output();
+      });
+      let componentB = new Horpyna.Component((input, output) => {
+        spyB();
+        output();
+      });
+      let componentC = new Horpyna.Component((input, output) => {
+        spyC();
+        output();
+      });
+      componentB.connect(componentA);
+      componentC.connect(componentA);
+      let promise = componentA.run();
+      promise.then((response) => {
+        spyComponent();
+        expect(spyA.calledOnce).to.be.true;
+        expect(spyB.calledOnce).to.be.true;
+        expect(spyC.calledOnce).to.be.true;
+        expect(spyA.calledBefore(spyB)).to.be.true;
+        expect(spyA.calledBefore(spyC)).to.be.true;
+        expect(spyB.calledBefore(spyComponent)).to.be.true;
         expect(spyC.calledBefore(spyComponent)).to.be.true;
         done();
       });
