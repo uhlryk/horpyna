@@ -58,14 +58,14 @@ require("source-map-support").install();
 	  value: true
 	});
 
-	var _Component = __webpack_require__(2);
+	var _component = __webpack_require__(2);
 
-	var _Component2 = _interopRequireDefault(_Component);
+	var _component2 = _interopRequireDefault(_component);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
-	  Component: _Component2.default
+	  Component: _component2.default
 	};
 
 /***/ },
@@ -80,9 +80,19 @@ require("source-map-support").install();
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _bluebird = __webpack_require__(3);
+	var _root = __webpack_require__(3);
 
-	var _bluebird2 = _interopRequireDefault(_bluebird);
+	var _root2 = _interopRequireDefault(_root);
+
+	var _statuses = __webpack_require__(5);
+
+	var STATUS = _interopRequireWildcard(_statuses);
+
+	var _Relation = __webpack_require__(4);
+
+	var Relation = _interopRequireWildcard(_Relation);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -92,23 +102,119 @@ require("source-map-support").install();
 	  function Component(componentFunction) {
 	    _classCallCheck(this, Component);
 
-	    this.componentFunction = typeof componentFunction === "function" ? componentFunction : function (resolve) {
-	      return resolve();
+	    this.componentFunction = typeof componentFunction === "function" ? componentFunction : function (input, output) {
+	      return output();
 	    };
+
+	    this.connectedChildrenComponents = [];
+	    this.connectedParentComponents = [];
+
+	    this.status = STATUS.INIT;
+	    this.rootComponent = new _root2.default();
+	    this.rootComponent.addComponent(this);
 	  }
+
+	  /**
+	   * triggered once from root component. It start all process.
+	   * It need to have connection ready.
+	   * @returns Promise promise is resolved when every component in tree is done.
+	   */
+
 
 	  _createClass(Component, [{
 	    key: "run",
 	    value: function run() {
-	      this.promise = new _bluebird2.default(this.componentFunction);
-	      return this.promise;
+	      var _this = this;
+
+	      return this.rootComponent.run(function () {
+	        return _this.runComponentFunction();
+	      });
 	    }
+
+	    /**
+	     * Start to run component logic from this.componentFunction.
+	     */
+
+	  }, {
+	    key: "runComponentFunction",
+	    value: function runComponentFunction() {
+	      this.status = STATUS.PROCESS;
+	      this.componentFunction(null, this.prepareOutputFunction());
+	    }
+
+	    /**
+	     * When parent component is done, it inform his child components about it. Which allow them to start
+	     * By default child component start when all parent components are done.
+	     */
+
+	  }, {
+	    key: "onParentReady",
+	    value: function onParentReady() {
+	      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+	        this.componentFunction(this.getParentsOutput(), this.prepareOutputFunction());
+	      }
+	    }
+
+	    /**
+	     * gather all parents outputs
+	     */
+
+	  }, {
+	    key: "getParentsOutput",
+	    value: function getParentsOutput() {
+	      if (this.connectedParentComponents.length === 1) {
+	        return this.connectedParentComponents[0].output;
+	      } else {
+	        return this.connectedParentComponents.map(function (component) {
+	          return component.output;
+	        });
+	      }
+	    }
+
+	    /**
+	     * Get function to run at the end in componentFunction. It inform other components that this one is ready
+	     * @returns {Function}
+	     */
+
+	  }, {
+	    key: "prepareOutputFunction",
+	    value: function prepareOutputFunction() {
+	      var _this2 = this;
+
+	      return function (output) {
+	        _this2.status = STATUS.DONE;
+	        _this2.output = output;
+	        _this2.connectedChildrenComponents.forEach(function (component) {
+	          return component.onParentReady();
+	        });
+	        _this2.rootComponent.onAnyDone();
+	      };
+	    }
+
+	    /**
+	     * child component add parent component
+	     * @param component parent component
+	     */
+
 	  }, {
 	    key: "connect",
-	    value: function connect() {}
+	    value: function connect(component) {
+	      this.connectedParentComponents.push(component);
+	      component.connectChild(this);
+	    }
+
+	    /**
+	     * Allow parent component to add child component, should be triggered only by this.connect
+	     * @param component child component
+	     */
+
 	  }, {
-	    key: "channel",
-	    get: function get() {}
+	    key: "connectChild",
+	    value: function connectChild(component) {
+	      this.connectedChildrenComponents.push(component);
+	      this.rootComponent.merge(component.rootComponent);
+	      component.rootComponent = this.rootComponent;
+	    }
 	  }]);
 
 	  return Component;
@@ -118,6 +224,145 @@ require("source-map-support").install();
 
 /***/ },
 /* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _Relation = __webpack_require__(4);
+
+	var Relation = _interopRequireWildcard(_Relation);
+
+	var _statuses = __webpack_require__(5);
+
+	var STATUS = _interopRequireWildcard(_statuses);
+
+	var _bluebird = __webpack_require__(6);
+
+	var _bluebird2 = _interopRequireDefault(_bluebird);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Root = function () {
+	  function Root() {
+	    _classCallCheck(this, Root);
+
+	    this.components = [];
+	  }
+
+	  /**
+	   * root component function, it is triggered by any child component
+	   */
+
+
+	  _createClass(Root, [{
+	    key: "onAnyDone",
+	    value: function onAnyDone() {
+	      /**
+	       * if all components are done then finish promise
+	       */
+	      if (Relation.hasComponentsStatus(this.components, STATUS.DONE)) {
+	        this.finish();
+	      }
+	    }
+	  }, {
+	    key: "addComponent",
+	    value: function addComponent(component) {
+	      this.components.push(component);
+	    }
+
+	    /**
+	     * triggered once from root component. It start all process.
+	     * It need to have connection ready.
+	     * @returns Promise promise is resolved when every component in tree is done.
+	     */
+
+	  }, {
+	    key: "run",
+	    value: function run(callback) {
+	      var _this = this;
+
+	      this.promise = new _bluebird2.default(function (resolve) {
+	        _this.finish = resolve;
+	        callback();
+	      });
+	      return this.promise;
+	    }
+
+	    /**
+	     * allow to join two rootComponents to one
+	     * @param childRootComponent
+	     */
+
+	  }, {
+	    key: "merge",
+	    value: function merge(childRootComponent) {
+	      this.components = this.components.concat(childRootComponent.components);
+	    }
+	  }]);
+
+	  return Root;
+	}();
+
+	exports.default = Root;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.hasComponentsStatus = hasComponentsStatus;
+
+	var _statuses = __webpack_require__(5);
+
+	var STATUS = _interopRequireWildcard(_statuses);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function hasComponentsStatus(components, statuses) {
+	  if (statuses.length === undefined) {
+	    statuses = [statuses];
+	  }
+	  var doneCount = components.reduce(function (doneCount, component) {
+	    if (statuses.indexOf(component.status) !== -1) {
+	      return ++doneCount;
+	    } else {
+	      return doneCount;
+	    }
+	  }, 0);
+	  return doneCount === components.length;
+	} /**
+	   * help to calculate relatives components state
+	   */
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var INIT = exports.INIT = "init";
+	var PROCESS = exports.PROCESS = "processing";
+	var DONE = exports.DONE = "done";
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = require("bluebird");

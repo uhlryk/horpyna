@@ -48,6 +48,7 @@
     "json-loader": "^0.5.4",
     "mocha": "^2.5.3",
     "path": "^0.12.7",
+    "sinon": "^1.17.4",
     "source-map-support": "^0.4.0",
     "supertest": "^1.2.0",
     "url-loader": "^0.5.7",

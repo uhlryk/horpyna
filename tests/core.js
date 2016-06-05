@@ -1,3 +1,4 @@
+import sinon from "sinon";
 import chai from "chai";
 import chaiThings from "chai-things";
 import chaiAsPromised from "chai-as-promised";
@@ -21,27 +22,58 @@ describe("Basic functionality", () => {
       expect(promise).to.eventually.be.fulfilled;
     });
 
-    it("should resolve promise in custom function from constructor and return resolved value", () => {
-      const RESOLVE_VALUE = "1234567";
-      let component = new Horpyna.Component(resolve => {
-        resolve(RESOLVE_VALUE);
+    it("should resolve promise in custom function from constructor and return resolved value", (done) => {
+      var spyComponent = sinon.spy();
+      var spyCustomFunc = sinon.spy();
+      let component = new Horpyna.Component((input, output) => {
+        spyCustomFunc();
+        output();
       });
       let promise = component.run();
-      expect(promise).to.be.instanceof(Promise);
-      expect(promise).to.eventually.be.fulfilled;
-      expect(promise).to.eventually.equal(RESOLVE_VALUE);
-    })
-
-    it("should reject promise in custom function from constructor", () => {
-      const RESOLVE_VALUE = "1234567";
-      let component = new Horpyna.Component((resolve, reject) => {
-        reject();
+      promise.then((response) => {
+        spyComponent();
+        expect(spyComponent.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
+        done();
       });
-      let promise = component.run();
-      expect(promise).to.be.instanceof(Promise);
-      expect(promise).to.eventually.be.rejected;
     })
 
-  })
-  ;
+  });
+
+  describe("Check blocks in line", () => {
+    it("should return promise in run method and resolve it", (done) => {
+      var spyA = sinon.spy();
+      var spyB = sinon.spy();
+      var spyC = sinon.spy();
+      var spyComponent = sinon.spy();
+      let componentA = new Horpyna.Component((input, output) => {
+        spyA();
+        output();
+      });
+      let componentB = new Horpyna.Component((input, output) => {
+        spyB();
+        output();
+      });
+      let componentC = new Horpyna.Component((input, output) => {
+        spyC();
+        output();
+      });
+      componentB.connect(componentA);
+      componentC.connect(componentB);
+      let promise = componentA.run();
+      promise.then((response) => {
+        spyComponent();
+        expect(spyA.calledOnce).to.be.true;
+        expect(spyB.calledOnce).to.be.true;
+        expect(spyC.calledOnce).to.be.true;
+        expect(spyA.calledBefore(spyB)).to.be.true;
+        expect(spyB.calledBefore(spyC)).to.be.true;
+        expect(spyC.calledBefore(spyComponent)).to.be.true;
+        done();
+      });
+
+    });
+
+  });
 });
