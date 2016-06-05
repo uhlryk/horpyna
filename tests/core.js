@@ -104,7 +104,7 @@ describe("Basic functionality", () => {
         expect(spyB.calledOnce).to.be.true;
         expect(spyC.calledOnce).to.be.true;
         expect(spyA.calledBefore(spyB)).to.be.true;
-        expect(spyA.calledBefore(spyC)).to.be.true;
+        expect(spyB.calledBefore(spyC)).to.be.true;
         expect(spyB.calledBefore(spyComponent)).to.be.true;
         expect(spyC.calledBefore(spyComponent)).to.be.true;
         done();
