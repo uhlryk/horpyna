@@ -5,7 +5,7 @@ import * as Relation from "../helpers/Relation";
 class Component {
 
   constructor(componentFunction) {
-    this.componentFunction = typeof componentFunction === "function" ? componentFunction : (input, output) => output();
+    this.componentFunction = typeof componentFunction === "function" ? componentFunction : (input, output) => output(input);
 
     this.connectedChildrenComponents = [];
     this.connectedParentComponents = [];
@@ -20,16 +20,16 @@ class Component {
    * It need to have connection ready.
    * @returns Promise promise is resolved when every component in tree is done.
    */
-  run() {
-    return this.rootComponent.run(() => this.runComponentFunction());
+  run(input) {
+    return this.rootComponent.run(() => this.runComponentFunction(input));
   }
 
   /**
    * Start to run component logic from this.componentFunction.
    */
-  runComponentFunction() {
+  runComponentFunction(input) {
     this.status = STATUS.PROCESS;
-    this.componentFunction(null, this.prepareOutputFunction());
+    this.componentFunction(input, this.prepareOutputFunction());
   }
 
   /**

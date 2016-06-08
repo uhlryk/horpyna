@@ -103,7 +103,7 @@ require("source-map-support").install();
 	    _classCallCheck(this, Component);
 
 	    this.componentFunction = typeof componentFunction === "function" ? componentFunction : function (input, output) {
-	      return output();
+	      return output(input);
 	    };
 
 	    this.connectedChildrenComponents = [];
@@ -123,11 +123,11 @@ require("source-map-support").install();
 
 	  _createClass(Component, [{
 	    key: "run",
-	    value: function run() {
+	    value: function run(input) {
 	      var _this = this;
 
 	      return this.rootComponent.run(function () {
-	        return _this.runComponentFunction();
+	        return _this.runComponentFunction(input);
 	      });
 	    }
 
@@ -137,9 +137,9 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "runComponentFunction",
-	    value: function runComponentFunction() {
+	    value: function runComponentFunction(input) {
 	      this.status = STATUS.PROCESS;
-	      this.componentFunction(null, this.prepareOutputFunction());
+	      this.componentFunction(input, this.prepareOutputFunction());
 	    }
 
 	    /**

@@ -22,7 +22,7 @@ describe("Basic functionality", () => {
       expect(promise).to.eventually.be.fulfilled;
     });
 
-    it("should resolve promise in custom function from constructor and return resolved value", (done) => {
+    it("should resolve promise in custom function from constructor", (done) => {
       var spyComponent = sinon.spy();
       var spyCustomFunc = sinon.spy();
       let component = new Horpyna.Component((input, output) => {
@@ -38,7 +38,30 @@ describe("Basic functionality", () => {
         done();
       });
     })
-
+    it("should return value to child component", (done) => {
+      const RESPONSE = "1234456564";
+      let componentA = new Horpyna.Component();
+      let componentB = new Horpyna.Component((input, output) => {
+        expect(input).to.be.equal(RESPONSE);
+        done();
+        output();
+      });
+      componentB.connect(componentA);
+      componentA.run(RESPONSE);
+    })
+    it("should return value to child component in custom function from constructor", (done) => {
+      const RESPONSE = "1234456564";
+      let componentA = new Horpyna.Component((input, output) => {
+        output(input);
+      });
+      let componentB = new Horpyna.Component((input, output) => {
+        expect(input).to.be.equal(RESPONSE);
+        done();
+        output();
+      });
+      componentB.connect(componentA);
+      componentA.run(RESPONSE);
+    })
   });
 
   describe("Check chain components", () => {
