@@ -151,6 +151,7 @@ require("source-map-support").install();
 	    key: "onParentReady",
 	    value: function onParentReady() {
 	      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+	        this.status = STATUS.PROCESS;
 	        this.componentFunction(this.getParentsOutput(), this.prepareOutputFunction());
 	      }
 	    }
@@ -270,7 +271,7 @@ require("source-map-support").install();
 	      /**
 	       * if all components are done then finish promise
 	       */
-	      if (Relation.hasComponentsStatus(this.components, STATUS.DONE)) {
+	      if (Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
 	        this.finish();
 	      }
 	    }

@@ -14,7 +14,7 @@ class Root {
     /**
      * if all components are done then finish promise
      */
-    if(Relation.hasComponentsStatus(this.components, STATUS.DONE)) {
+    if(Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
       this.finish();
     }
   }

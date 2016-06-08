@@ -38,6 +38,7 @@ class Component {
    */
   onParentReady() {
     if(Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+      this.status = STATUS.PROCESS;
       this.componentFunction(this.getParentsOutput(), this.prepareOutputFunction());
     }
   }
