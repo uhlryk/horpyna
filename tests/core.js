@@ -48,16 +48,22 @@ describe("Basic functionality", () => {
       var spyC = sinon.spy();
       var spyComponent = sinon.spy();
       let componentA = new Horpyna.Component((input, output) => {
-        spyA();
-        output();
+        setTimeout(() => {
+          spyA();
+          output();
+        }, 30);
       });
       let componentB = new Horpyna.Component((input, output) => {
-        spyB();
-        output();
+        setTimeout(() => {
+          spyB();
+          output();
+        }, 20);
       });
       let componentC = new Horpyna.Component((input, output) => {
-        spyC();
-        output();
+        setTimeout(() => {
+          spyC();
+          output();
+        }, 10);
       });
       componentB.connect(componentA);
       componentC.connect(componentB);
@@ -82,31 +88,49 @@ describe("Basic functionality", () => {
       var spyA = sinon.spy();
       var spyB = sinon.spy();
       var spyC = sinon.spy();
+      var spyD = sinon.spy();
       var spyComponent = sinon.spy();
       let componentA = new Horpyna.Component((input, output) => {
-        spyA();
-        output();
+        setTimeout(() => {
+          spyA();
+          output();
+        }, 50);
       });
       let componentB = new Horpyna.Component((input, output) => {
-        spyB();
-        output();
+        setTimeout(() => {
+          spyB();
+          output();
+        }, 40);
       });
       let componentC = new Horpyna.Component((input, output) => {
-        spyC();
-        output();
+        setTimeout(() => {
+          spyC();
+          output();
+        }, 30)
+
+      });
+      let componentD = new Horpyna.Component((input, output) => {
+        setTimeout(() => {
+          spyD();
+          output();
+        }, 20);
       });
       componentB.connect(componentA);
       componentC.connect(componentA);
+      componentD.connect(componentB);
+      componentD.connect(componentC);
       let promise = componentA.run();
       promise.then((response) => {
         spyComponent();
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
         expect(spyC.calledOnce).to.be.true;
+        expect(spyD.calledOnce).to.be.true;
         expect(spyA.calledBefore(spyB)).to.be.true;
-        expect(spyB.calledBefore(spyC)).to.be.true;
-        expect(spyB.calledBefore(spyComponent)).to.be.true;
-        expect(spyC.calledBefore(spyComponent)).to.be.true;
+        expect(spyA.calledBefore(spyC)).to.be.true;
+        expect(spyB.calledBefore(spyD)).to.be.true;
+        expect(spyC.calledBefore(spyD)).to.be.true;
+        expect(spyD.calledBefore(spyComponent)).to.be.true;
         done();
       });
 
