@@ -5,8 +5,11 @@ import * as Relation from "../helpers/Relation";
 class Component {
 
   constructor(componentFunction) {
-    this.componentFunction = typeof componentFunction === "function" ? componentFunction : (input, output) => output(input);
-
+    if(typeof componentFunction === "function") {
+      this.componentFunction = componentFunction;
+    } else {
+      throw new Error();
+    }
     this.connectedChildrenComponents = [];
     this.connectedParentComponents = [];
 
@@ -29,7 +32,7 @@ class Component {
    */
   _runComponentFunction(input) {
     this.status = STATUS.PROCESS;
-    this.componentFunction(input, this._prepareOutputFunction());
+    this.componentFunction({ input }, this._prepareResponseFunction());
   }
 
   /**
@@ -37,9 +40,11 @@ class Component {
    * By default child component start when all parent components are done.
    */
   _onParentReady() {
-    if(Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
-      this.status = STATUS.PROCESS;
-      this.componentFunction(this._getParentsOutput(), this._prepareOutputFunction());
+    if(this.rootComponent.status === STATUS.PROCESS) {
+      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+        this.status = STATUS.PROCESS;
+        this.componentFunction(this._getParentsOutput(), this._prepareResponseFunction());
+      }
     }
   }
 
@@ -48,9 +53,9 @@ class Component {
    */
   _getParentsOutput() {
     if(this.connectedParentComponents.length === 1) {
-      return this.connectedParentComponents[0].output;
+      return { input: this.connectedParentComponents[0].output };
     } else {
-      return this.connectedParentComponents.map(component => component.output);
+      return { input: this.connectedParentComponents.map(component => component.output) };
     }
   }
 
@@ -58,12 +63,19 @@ class Component {
    * Get function to run at the end in componentFunction. It inform other components that this one is ready
    * @returns {Function}
    */
-  _prepareOutputFunction() {
-    return output => {
-      this.status = STATUS.DONE;
-      this.output = output;
-      this.connectedChildrenComponents.forEach(component => component._onParentReady());
-      this.rootComponent.onAnyDone();
+  _prepareResponseFunction() {
+    return {
+      send: output => {
+        this.status = STATUS.DONE;
+        this.output = output;
+        this.connectedChildrenComponents.forEach(component => component._onParentReady());
+        this.rootComponent.onAnyDone();
+      },
+      finish: output => {
+        this.status = STATUS.DONE;
+        this.output = output;
+        this.rootComponent.finish(output);
+      }
     };
   }
 

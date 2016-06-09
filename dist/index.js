@@ -102,10 +102,11 @@ require("source-map-support").install();
 	  function Component(componentFunction) {
 	    _classCallCheck(this, Component);
 
-	    this.componentFunction = typeof componentFunction === "function" ? componentFunction : function (input, output) {
-	      return output(input);
-	    };
-
+	    if (typeof componentFunction === "function") {
+	      this.componentFunction = componentFunction;
+	    } else {
+	      throw new Error();
+	    }
 	    this.connectedChildrenComponents = [];
 	    this.connectedParentComponents = [];
 
@@ -139,7 +140,7 @@ require("source-map-support").install();
 	    key: "_runComponentFunction",
 	    value: function _runComponentFunction(input) {
 	      this.status = STATUS.PROCESS;
-	      this.componentFunction(input, this._prepareOutputFunction());
+	      this.componentFunction({ input: input }, this._prepareResponseFunction());
 	    }
 
 	    /**
@@ -150,9 +151,11 @@ require("source-map-support").install();
 	  }, {
 	    key: "_onParentReady",
 	    value: function _onParentReady() {
-	      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
-	        this.status = STATUS.PROCESS;
-	        this.componentFunction(this._getParentsOutput(), this._prepareOutputFunction());
+	      if (this.rootComponent.status === STATUS.PROCESS) {
+	        if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+	          this.status = STATUS.PROCESS;
+	          this.componentFunction(this._getParentsOutput(), this._prepareResponseFunction());
+	        }
 	      }
 	    }
 
@@ -164,11 +167,11 @@ require("source-map-support").install();
 	    key: "_getParentsOutput",
 	    value: function _getParentsOutput() {
 	      if (this.connectedParentComponents.length === 1) {
-	        return this.connectedParentComponents[0].output;
+	        return { input: this.connectedParentComponents[0].output };
 	      } else {
-	        return this.connectedParentComponents.map(function (component) {
-	          return component.output;
-	        });
+	        return { input: this.connectedParentComponents.map(function (component) {
+	            return component.output;
+	          }) };
 	      }
 	    }
 
@@ -178,17 +181,24 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "_prepareOutputFunction",
-	    value: function _prepareOutputFunction() {
+	    key: "_prepareResponseFunction",
+	    value: function _prepareResponseFunction() {
 	      var _this2 = this;
 
-	      return function (output) {
-	        _this2.status = STATUS.DONE;
-	        _this2.output = output;
-	        _this2.connectedChildrenComponents.forEach(function (component) {
-	          return component._onParentReady();
-	        });
-	        _this2.rootComponent.onAnyDone();
+	      return {
+	        send: function send(output) {
+	          _this2.status = STATUS.DONE;
+	          _this2.output = output;
+	          _this2.connectedChildrenComponents.forEach(function (component) {
+	            return component._onParentReady();
+	          });
+	          _this2.rootComponent.onAnyDone();
+	        },
+	        finish: function finish(output) {
+	          _this2.status = STATUS.DONE;
+	          _this2.output = output;
+	          _this2.rootComponent.finish(output);
+	        }
 	      };
 	    }
 
@@ -258,10 +268,11 @@ require("source-map-support").install();
 	    _classCallCheck(this, Root);
 
 	    this.components = [];
+	    this.status = STATUS.INIT;
 	  }
 
 	  /**
-	   * root component function, it is triggered by any child component
+	   * root component function, it is triggered by any child component after finish
 	   */
 
 
@@ -270,10 +281,12 @@ require("source-map-support").install();
 	    value: function onAnyDone() {
 	      /**
 	       * if all components are done then finish promise
+	       *
+	       * Now chain is finished when component run method finish
 	       */
-	      if (Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
-	        this.finish();
-	      }
+	      //if(Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
+	      //  this.finish();
+	      //}
 	    }
 	  }, {
 	    key: "addComponent",
@@ -293,10 +306,17 @@ require("source-map-support").install();
 	      var _this = this;
 
 	      this.promise = new _bluebird2.default(function (resolve) {
-	        _this.finish = resolve;
+	        _this.resolve = resolve;
+	        _this.status = STATUS.PROCESS;
 	        callback();
 	      });
 	      return this.promise;
+	    }
+	  }, {
+	    key: "finish",
+	    value: function finish(output) {
+	      this.status = STATUS.DONE;
+	      this.resolve(output);
 	    }
 
 	    /**

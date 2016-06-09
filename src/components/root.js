@@ -5,18 +5,21 @@ import Promise from "bluebird";
 class Root {
   constructor() {
     this.components = [];
+    this.status = STATUS.INIT;
   }
 
   /**
-   * root component function, it is triggered by any child component
+   * root component function, it is triggered by any child component after finish
    */
   onAnyDone() {
     /**
      * if all components are done then finish promise
+     *
+     * Now chain is finished when component run method finish
      */
-    if(Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
-      this.finish();
-    }
+    //if(Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
+    //  this.finish();
+    //}
   }
 
   addComponent(component) {
@@ -30,10 +33,16 @@ class Root {
    */
   run(callback) {
     this.promise = new Promise((resolve) => {
-      this.finish = resolve;
+      this.resolve = resolve;
+      this.status = STATUS.PROCESS;
       callback();
     });
     return this.promise;
+  }
+
+  finish(output) {
+    this.status = STATUS.DONE;
+    this.resolve(output);
   }
 
   /**

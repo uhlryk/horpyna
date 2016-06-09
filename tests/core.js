@@ -14,20 +14,21 @@ const expect = chai.expect;
 describe("Basic functionality", () => {
 
   describe("Check basic single block", () => {
-
-    it("should return promise in run method and resolve it", () => {
-      let component = new Horpyna.Component();
-      let promise = component.run();
-      expect(promise).to.be.instanceof(Promise);
-      expect(promise).to.eventually.be.fulfilled;
+    it("should throw error if conponent doesnt have callback in constructor", (done) => {
+      try {
+        new Horpyna.Component();
+      } catch (e) {
+        expect(e).to.be.deep.equal(new Error());
+        done();
+      }
     });
 
-    it("should resolve promise in custom function from constructor", (done) => {
+    it("should resolve promise", (done) => {
       var spyComponent = sinon.spy();
       var spyCustomFunc = sinon.spy();
-      let component = new Horpyna.Component((input, output) => {
+      let component = new Horpyna.Component((request, response) => {
         spyCustomFunc();
-        output();
+        response.finish();
       });
       let promise = component.run();
       promise.then(() => {
@@ -37,27 +38,16 @@ describe("Basic functionality", () => {
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
         done();
       });
-    })
+    });
     it("should return value to child component", (done) => {
       const RESPONSE = "1234456564";
-      let componentA = new Horpyna.Component();
-      let componentB = new Horpyna.Component((input, output) => {
-        expect(input).to.be.equal(RESPONSE);
-        done();
-        output();
+      let componentA = new Horpyna.Component((request, response) => {
+        response.send(request.input);
       });
-      componentB.bind(componentA);
-      componentA.run(RESPONSE);
-    })
-    it("should return value to child component in custom function from constructor", (done) => {
-      const RESPONSE = "1234456564";
-      let componentA = new Horpyna.Component((input, output) => {
-        output(input);
-      });
-      let componentB = new Horpyna.Component((input, output) => {
-        expect(input).to.be.equal(RESPONSE);
+      let componentB = new Horpyna.Component((request, response) => {
+        expect(request.input).to.be.equal(RESPONSE);
+        response.finish();
         done();
-        output();
       });
       componentB.bind(componentA);
       componentA.run(RESPONSE);
@@ -70,22 +60,22 @@ describe("Basic functionality", () => {
       var spyB = sinon.spy();
       var spyC = sinon.spy();
       var spyComponent = sinon.spy();
-      let componentA = new Horpyna.Component((input, output) => {
+      let componentA = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyA();
-          output();
+          response.send();
         }, 30);
       });
-      let componentB = new Horpyna.Component((input, output) => {
+      let componentB = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyB();
-          output();
+          response.send();
         }, 20);
       });
-      let componentC = new Horpyna.Component((input, output) => {
+      let componentC = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyC();
-          output();
+          response.finish();
         }, 10);
       });
       componentB.bind(componentA);
@@ -113,29 +103,29 @@ describe("Basic functionality", () => {
       var spyC = sinon.spy();
       var spyD = sinon.spy();
       var spyComponent = sinon.spy();
-      let componentA = new Horpyna.Component((input, output) => {
+      let componentA = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyA();
-          output();
+          response.send();
         }, 50);
       });
-      let componentB = new Horpyna.Component((input, output) => {
+      let componentB = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyB();
-          output();
+          response.send();
         }, 40);
       });
-      let componentC = new Horpyna.Component((input, output) => {
+      let componentC = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyC();
-          output();
+          response.send();
         }, 30)
 
       });
-      let componentD = new Horpyna.Component((input, output) => {
+      let componentD = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyD();
-          output();
+          response.finish();
         }, 20);
       });
       componentB.bind(componentA);
