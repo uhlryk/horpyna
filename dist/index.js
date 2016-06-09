@@ -127,7 +127,7 @@ require("source-map-support").install();
 	      var _this = this;
 
 	      return this.rootComponent.run(function () {
-	        return _this.runComponentFunction(input);
+	        return _this._runComponentFunction(input);
 	      });
 	    }
 
@@ -136,10 +136,10 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "runComponentFunction",
-	    value: function runComponentFunction(input) {
+	    key: "_runComponentFunction",
+	    value: function _runComponentFunction(input) {
 	      this.status = STATUS.PROCESS;
-	      this.componentFunction(input, this.prepareOutputFunction());
+	      this.componentFunction(input, this._prepareOutputFunction());
 	    }
 
 	    /**
@@ -148,11 +148,11 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "onParentReady",
-	    value: function onParentReady() {
+	    key: "_onParentReady",
+	    value: function _onParentReady() {
 	      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
 	        this.status = STATUS.PROCESS;
-	        this.componentFunction(this.getParentsOutput(), this.prepareOutputFunction());
+	        this.componentFunction(this._getParentsOutput(), this._prepareOutputFunction());
 	      }
 	    }
 
@@ -161,8 +161,8 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "getParentsOutput",
-	    value: function getParentsOutput() {
+	    key: "_getParentsOutput",
+	    value: function _getParentsOutput() {
 	      if (this.connectedParentComponents.length === 1) {
 	        return this.connectedParentComponents[0].output;
 	      } else {
@@ -178,15 +178,15 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "prepareOutputFunction",
-	    value: function prepareOutputFunction() {
+	    key: "_prepareOutputFunction",
+	    value: function _prepareOutputFunction() {
 	      var _this2 = this;
 
 	      return function (output) {
 	        _this2.status = STATUS.DONE;
 	        _this2.output = output;
 	        _this2.connectedChildrenComponents.forEach(function (component) {
-	          return component.onParentReady();
+	          return component._onParentReady();
 	        });
 	        _this2.rootComponent.onAnyDone();
 	      };
@@ -198,10 +198,10 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "connect",
-	    value: function connect(component) {
+	    key: "bind",
+	    value: function bind(component) {
 	      this.connectedParentComponents.push(component);
-	      component.connectChild(this);
+	      component._bindChild(this);
 	    }
 
 	    /**
@@ -210,8 +210,8 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "connectChild",
-	    value: function connectChild(component) {
+	    key: "_bindChild",
+	    value: function _bindChild(component) {
 	      this.connectedChildrenComponents.push(component);
 	      this.rootComponent.merge(component.rootComponent);
 	      component.rootComponent = this.rootComponent;

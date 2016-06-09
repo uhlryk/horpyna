@@ -21,32 +21,32 @@ class Component {
    * @returns Promise promise is resolved when every component in tree is done.
    */
   run(input) {
-    return this.rootComponent.run(() => this.runComponentFunction(input));
+    return this.rootComponent.run(() => this._runComponentFunction(input));
   }
 
   /**
    * Start to run component logic from this.componentFunction.
    */
-  runComponentFunction(input) {
+  _runComponentFunction(input) {
     this.status = STATUS.PROCESS;
-    this.componentFunction(input, this.prepareOutputFunction());
+    this.componentFunction(input, this._prepareOutputFunction());
   }
 
   /**
    * When parent component is done, it inform his child components about it. Which allow them to start
    * By default child component start when all parent components are done.
    */
-  onParentReady() {
+  _onParentReady() {
     if(Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
       this.status = STATUS.PROCESS;
-      this.componentFunction(this.getParentsOutput(), this.prepareOutputFunction());
+      this.componentFunction(this._getParentsOutput(), this._prepareOutputFunction());
     }
   }
 
   /**
    * gather all parents outputs
    */
-  getParentsOutput() {
+  _getParentsOutput() {
     if(this.connectedParentComponents.length === 1) {
       return this.connectedParentComponents[0].output;
     } else {
@@ -58,11 +58,11 @@ class Component {
    * Get function to run at the end in componentFunction. It inform other components that this one is ready
    * @returns {Function}
    */
-  prepareOutputFunction() {
+  _prepareOutputFunction() {
     return output => {
       this.status = STATUS.DONE;
       this.output = output;
-      this.connectedChildrenComponents.forEach(component => component.onParentReady());
+      this.connectedChildrenComponents.forEach(component => component._onParentReady());
       this.rootComponent.onAnyDone();
     };
   }
@@ -71,16 +71,16 @@ class Component {
    * child component add parent component
    * @param component parent component
    */
-  connect(component) {
+  bind(component) {
     this.connectedParentComponents.push(component);
-    component.connectChild(this);
+    component._bindChild(this);
   }
 
   /**
    * Allow parent component to add child component, should be triggered only by this.connect
    * @param component child component
    */
-  connectChild(component) {
+  _bindChild(component) {
     this.connectedChildrenComponents.push(component);
     this.rootComponent.merge(component.rootComponent);
     component.rootComponent = this.rootComponent;

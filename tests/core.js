@@ -30,7 +30,7 @@ describe("Basic functionality", () => {
         output();
       });
       let promise = component.run();
-      promise.then((response) => {
+      promise.then(() => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -46,7 +46,7 @@ describe("Basic functionality", () => {
         done();
         output();
       });
-      componentB.connect(componentA);
+      componentB.bind(componentA);
       componentA.run(RESPONSE);
     })
     it("should return value to child component in custom function from constructor", (done) => {
@@ -59,7 +59,7 @@ describe("Basic functionality", () => {
         done();
         output();
       });
-      componentB.connect(componentA);
+      componentB.bind(componentA);
       componentA.run(RESPONSE);
     })
   });
@@ -88,8 +88,8 @@ describe("Basic functionality", () => {
           output();
         }, 10);
       });
-      componentB.connect(componentA);
-      componentC.connect(componentB);
+      componentB.bind(componentA);
+      componentC.bind(componentB);
       let promise = componentA.run();
       promise.then((response) => {
         spyComponent();
@@ -138,10 +138,10 @@ describe("Basic functionality", () => {
           output();
         }, 20);
       });
-      componentB.connect(componentA);
-      componentC.connect(componentA);
-      componentD.connect(componentB);
-      componentD.connect(componentC);
+      componentB.bind(componentA);
+      componentC.bind(componentA);
+      componentD.bind(componentB);
+      componentD.bind(componentC);
       let promise = componentA.run();
       promise.then((response) => {
         spyComponent();
