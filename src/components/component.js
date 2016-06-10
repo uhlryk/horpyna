@@ -13,6 +13,7 @@ class Component {
     this.connectedParentComponents = [];
 
     this.status = STATUS.INIT;
+    this.finalComponentFlag = false;
     this.rootComponent = new Root();
     this.rootComponent.addComponent(this);
   }
@@ -69,8 +70,12 @@ class Component {
         if(this.rootComponent.status === STATUS.PROCESS) {
           this.status = STATUS.DONE;
           this.output = output;
-          this.connectedChildrenComponents.forEach(component => component._onParentReady());
-          this.rootComponent.onAnyDone();
+          if(this.finalComponentFlag === false) {
+            this.connectedChildrenComponents.forEach(component => component._onParentReady());
+            this.rootComponent.onAnyDone();
+          } else {
+            this.rootComponent.finish(output);
+          }
         }
       },
       finish: output => {
@@ -83,6 +88,14 @@ class Component {
     };
   }
 
+  /**
+   * If this method is triggered before component is done, it is flagged as final component,
+   * this means that when it is done also component chain is done
+   */
+  final() {
+    this.finalComponentFlag = true;
+    return this;
+  }
   /**
    * child component add parent component
    * @param component parent component

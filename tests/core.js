@@ -15,7 +15,7 @@ describe("Basic functionality", () => {
 
   describe("Check basic single block", () => {
 
-    it("should resolve promise when function logic is in constructor", (done) => {
+    it("should resolve promise when function logic is in constructor", done => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
       let component = new Horpyna.Component((request, response) => {
@@ -32,7 +32,7 @@ describe("Basic functionality", () => {
       });
     });
 
-    it("should resolve promise when function logic is as extend class method", (done) => {
+    it("should resolve promise when function logic is as extend class method", done => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
       let ExtendComponent = class extends Horpyna.Component {
@@ -52,7 +52,7 @@ describe("Basic functionality", () => {
       });
     });
 
-    it("should throw error if component doesn't have function logic", (done) => {
+    it("should throw error if component doesn't have function logic", done => {
       let component = new Horpyna.Component();
       let promise = component.run();
       promise.catch(e => {
@@ -62,7 +62,7 @@ describe("Basic functionality", () => {
     });
 
 
-    it("should return value to child component", (done) => {
+    it("should return value to child component", done => {
       const RESPONSE = "1234456564";
       let componentA = new Horpyna.Component((request, response) => {
         response.send(request.input);
@@ -75,10 +75,27 @@ describe("Basic functionality", () => {
       componentB.bind(componentA);
       componentA.run(RESPONSE);
     })
+    it("should resolve promise when component is mark as final", done => {
+      let spyComponent = sinon.spy();
+      let spyCustomFunc = sinon.spy();
+      let component = new Horpyna.Component((request, response) => {
+        spyCustomFunc();
+        response.send();
+      });
+      component.final();
+      let promise = component.run();
+      promise.then(() => {
+        spyComponent();
+        expect(spyComponent.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
+        done();
+      });
+    })
   });
 
   describe("Check chain components", () => {
-    it("should return promise in run method and resolve it", (done) => {
+    it("should return promise in run method and resolve it", done => {
       let spyA = sinon.spy();
       let spyB = sinon.spy();
       let spyC = sinon.spy();
@@ -120,7 +137,7 @@ describe("Basic functionality", () => {
   });
 
   describe("Check branched components", () => {
-    it("should return promise in run method and resolve it", (done) => {
+    it("should return promise in run method and resolve it", done => {
       let spyA = sinon.spy();
       let spyB = sinon.spy();
       let spyC = sinon.spy();

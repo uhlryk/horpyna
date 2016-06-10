@@ -113,6 +113,7 @@ require("source-map-support").install();
 	    this.connectedParentComponents = [];
 
 	    this.status = STATUS.INIT;
+	    this.finalComponentFlag = false;
 	    this.rootComponent = new _root2.default();
 	    this.rootComponent.addComponent(this);
 	  }
@@ -193,10 +194,14 @@ require("source-map-support").install();
 	          if (_this2.rootComponent.status === STATUS.PROCESS) {
 	            _this2.status = STATUS.DONE;
 	            _this2.output = output;
-	            _this2.connectedChildrenComponents.forEach(function (component) {
-	              return component._onParentReady();
-	            });
-	            _this2.rootComponent.onAnyDone();
+	            if (_this2.finalComponentFlag === false) {
+	              _this2.connectedChildrenComponents.forEach(function (component) {
+	                return component._onParentReady();
+	              });
+	              _this2.rootComponent.onAnyDone();
+	            } else {
+	              _this2.rootComponent.finish(output);
+	            }
 	          }
 	        },
 	        finish: function finish(output) {
@@ -209,6 +214,17 @@ require("source-map-support").install();
 	      };
 	    }
 
+	    /**
+	     * If this method is triggered before component is done, it is flagged as final component,
+	     * this means that when it is done also component chain is done
+	     */
+
+	  }, {
+	    key: "final",
+	    value: function final() {
+	      this.finalComponentFlag = true;
+	      return this;
+	    }
 	    /**
 	     * child component add parent component
 	     * @param component parent component
