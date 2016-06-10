@@ -14,18 +14,10 @@ const expect = chai.expect;
 describe("Basic functionality", () => {
 
   describe("Check basic single block", () => {
-    it("should throw error if conponent doesnt have callback in constructor", (done) => {
-      try {
-        new Horpyna.Component();
-      } catch (e) {
-        expect(e).to.be.deep.equal(new Error());
-        done();
-      }
-    });
 
-    it("should resolve promise", (done) => {
-      var spyComponent = sinon.spy();
-      var spyCustomFunc = sinon.spy();
+    it("should resolve promise when function logic is in constructor", (done) => {
+      let spyComponent = sinon.spy();
+      let spyCustomFunc = sinon.spy();
       let component = new Horpyna.Component((request, response) => {
         spyCustomFunc();
         response.finish();
@@ -39,6 +31,37 @@ describe("Basic functionality", () => {
         done();
       });
     });
+
+    it("should resolve promise when function logic is as extend class method", (done) => {
+      let spyComponent = sinon.spy();
+      let spyCustomFunc = sinon.spy();
+      let ExtendComponent = class extends Horpyna.Component {
+        componentFunction(request, response) {
+          spyCustomFunc();
+          response.finish();
+        }
+      };
+      let component = new ExtendComponent();
+      let promise = component.run();
+      promise.then(() => {
+        spyComponent();
+        expect(spyComponent.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
+        done();
+      });
+    });
+
+    it("should throw error if component doesn't have function logic", (done) => {
+      let component = new Horpyna.Component();
+      let promise = component.run();
+      promise.catch(e => {
+        expect(e).to.be.deep.equal(new Error());
+        done();
+      });
+    });
+
+
     it("should return value to child component", (done) => {
       const RESPONSE = "1234456564";
       let componentA = new Horpyna.Component((request, response) => {
@@ -56,10 +79,10 @@ describe("Basic functionality", () => {
 
   describe("Check chain components", () => {
     it("should return promise in run method and resolve it", (done) => {
-      var spyA = sinon.spy();
-      var spyB = sinon.spy();
-      var spyC = sinon.spy();
-      var spyComponent = sinon.spy();
+      let spyA = sinon.spy();
+      let spyB = sinon.spy();
+      let spyC = sinon.spy();
+      let spyComponent = sinon.spy();
       let componentA = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyA();
@@ -98,11 +121,11 @@ describe("Basic functionality", () => {
 
   describe("Check branched components", () => {
     it("should return promise in run method and resolve it", (done) => {
-      var spyA = sinon.spy();
-      var spyB = sinon.spy();
-      var spyC = sinon.spy();
-      var spyD = sinon.spy();
-      var spyComponent = sinon.spy();
+      let spyA = sinon.spy();
+      let spyB = sinon.spy();
+      let spyC = sinon.spy();
+      let spyD = sinon.spy();
+      let spyComponent = sinon.spy();
       let componentA = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyA();

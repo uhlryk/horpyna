@@ -84,6 +84,10 @@ require("source-map-support").install();
 
 	var _root2 = _interopRequireDefault(_root);
 
+	var _errors = __webpack_require__(7);
+
+	var ERROR = _interopRequireWildcard(_errors);
+
 	var _statuses = __webpack_require__(5);
 
 	var STATUS = _interopRequireWildcard(_statuses);
@@ -104,8 +108,6 @@ require("source-map-support").install();
 
 	    if (typeof componentFunction === "function") {
 	      this.componentFunction = componentFunction;
-	    } else {
-	      throw new Error();
 	    }
 	    this.connectedChildrenComponents = [];
 	    this.connectedParentComponents = [];
@@ -139,8 +141,12 @@ require("source-map-support").install();
 	  }, {
 	    key: "_runComponentFunction",
 	    value: function _runComponentFunction(request) {
-	      this.status = STATUS.PROCESS;
-	      this.componentFunction(request, this._getResponseObject());
+	      if (typeof this.componentFunction === "function") {
+	        this.status = STATUS.PROCESS;
+	        this.componentFunction(request, this._getResponseObject());
+	      } else {
+	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
+	      }
 	    }
 
 	    /**
@@ -151,10 +157,8 @@ require("source-map-support").install();
 	  }, {
 	    key: "_onParentReady",
 	    value: function _onParentReady() {
-	      if (this.rootComponent.status === STATUS.PROCESS) {
-	        if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
-	          this._runComponentFunction(this._getParentsOutput());
-	        }
+	      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+	        this._runComponentFunction(this._getParentsOutput());
 	      }
 	    }
 
@@ -186,17 +190,21 @@ require("source-map-support").install();
 
 	      return {
 	        send: function send(output) {
-	          _this2.status = STATUS.DONE;
-	          _this2.output = output;
-	          _this2.connectedChildrenComponents.forEach(function (component) {
-	            return component._onParentReady();
-	          });
-	          _this2.rootComponent.onAnyDone();
+	          if (_this2.rootComponent.status === STATUS.PROCESS) {
+	            _this2.status = STATUS.DONE;
+	            _this2.output = output;
+	            _this2.connectedChildrenComponents.forEach(function (component) {
+	              return component._onParentReady();
+	            });
+	            _this2.rootComponent.onAnyDone();
+	          }
 	        },
 	        finish: function finish(output) {
-	          _this2.status = STATUS.DONE;
-	          _this2.output = output;
-	          _this2.rootComponent.finish(output);
+	          if (_this2.rootComponent.status === STATUS.PROCESS) {
+	            _this2.status = STATUS.DONE;
+	            _this2.output = output;
+	            _this2.rootComponent.finish(output);
+	          }
 	        }
 	      };
 	    }
@@ -386,6 +394,17 @@ require("source-map-support").install();
 /***/ function(module, exports) {
 
 	module.exports = require("bluebird");
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var NO_COMPONENT_FUNCTION = exports.NO_COMPONENT_FUNCTION = "Component doesn't have function logic";
 
 /***/ }
 /******/ ])));

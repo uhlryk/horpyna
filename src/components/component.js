@@ -1,4 +1,5 @@
 import Root from "./root";
+import * as ERROR from "../constants/errors";
 import * as STATUS from "../constants/statuses";
 import * as Relation from "../helpers/Relation";
 
@@ -7,8 +8,6 @@ class Component {
   constructor(componentFunction) {
     if(typeof componentFunction === "function") {
       this.componentFunction = componentFunction;
-    } else {
-      throw new Error();
     }
     this.connectedChildrenComponents = [];
     this.connectedParentComponents = [];
@@ -31,8 +30,12 @@ class Component {
    * Start to run component logic from this.componentFunction.
    */
   _runComponentFunction(request) {
-    this.status = STATUS.PROCESS;
-    this.componentFunction(request, this._getResponseObject());
+    if(typeof this.componentFunction === "function") {
+      this.status = STATUS.PROCESS;
+      this.componentFunction(request, this._getResponseObject());
+    } else {
+      throw new Error(ERROR.NO_COMPONENT_FUNCTION);
+    }
   }
 
   /**
@@ -40,10 +43,8 @@ class Component {
    * By default child component start when all parent components are done.
    */
   _onParentReady() {
-    if(this.rootComponent.status === STATUS.PROCESS) {
-      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
-        this._runComponentFunction(this._getParentsOutput());
-      }
+    if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+      this._runComponentFunction(this._getParentsOutput());
     }
   }
 
@@ -65,15 +66,19 @@ class Component {
   _getResponseObject() {
     return {
       send: output => {
-        this.status = STATUS.DONE;
-        this.output = output;
-        this.connectedChildrenComponents.forEach(component => component._onParentReady());
-        this.rootComponent.onAnyDone();
+        if(this.rootComponent.status === STATUS.PROCESS) {
+          this.status = STATUS.DONE;
+          this.output = output;
+          this.connectedChildrenComponents.forEach(component => component._onParentReady());
+          this.rootComponent.onAnyDone();
+        }
       },
       finish: output => {
-        this.status = STATUS.DONE;
-        this.output = output;
-        this.rootComponent.finish(output);
+        if(this.rootComponent.status === STATUS.PROCESS) {
+          this.status = STATUS.DONE;
+          this.output = output;
+          this.rootComponent.finish(output);
+        }
       }
     };
   }
