@@ -128,7 +128,7 @@ require("source-map-support").install();
 	      var _this = this;
 
 	      return this.rootComponent.run(function () {
-	        return _this._runComponentFunction(input);
+	        return _this._runComponentFunction({ input: input });
 	      });
 	    }
 
@@ -138,9 +138,9 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "_runComponentFunction",
-	    value: function _runComponentFunction(input) {
+	    value: function _runComponentFunction(request) {
 	      this.status = STATUS.PROCESS;
-	      this.componentFunction({ input: input }, this._prepareResponseFunction());
+	      this.componentFunction(request, this._getResponseObject());
 	    }
 
 	    /**
@@ -153,8 +153,7 @@ require("source-map-support").install();
 	    value: function _onParentReady() {
 	      if (this.rootComponent.status === STATUS.PROCESS) {
 	        if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
-	          this.status = STATUS.PROCESS;
-	          this.componentFunction(this._getParentsOutput(), this._prepareResponseFunction());
+	          this._runComponentFunction(this._getParentsOutput());
 	        }
 	      }
 	    }
@@ -181,8 +180,8 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "_prepareResponseFunction",
-	    value: function _prepareResponseFunction() {
+	    key: "_getResponseObject",
+	    value: function _getResponseObject() {
 	      var _this2 = this;
 
 	      return {

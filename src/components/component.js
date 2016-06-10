@@ -24,15 +24,15 @@ class Component {
    * @returns Promise promise is resolved when every component in tree is done.
    */
   run(input) {
-    return this.rootComponent.run(() => this._runComponentFunction(input));
+    return this.rootComponent.run(() => this._runComponentFunction({ input }));
   }
 
   /**
    * Start to run component logic from this.componentFunction.
    */
-  _runComponentFunction(input) {
+  _runComponentFunction(request) {
     this.status = STATUS.PROCESS;
-    this.componentFunction({ input }, this._prepareResponseFunction());
+    this.componentFunction(request, this._getResponseObject());
   }
 
   /**
@@ -42,8 +42,7 @@ class Component {
   _onParentReady() {
     if(this.rootComponent.status === STATUS.PROCESS) {
       if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
-        this.status = STATUS.PROCESS;
-        this.componentFunction(this._getParentsOutput(), this._prepareResponseFunction());
+        this._runComponentFunction(this._getParentsOutput());
       }
     }
   }
@@ -63,7 +62,7 @@ class Component {
    * Get function to run at the end in componentFunction. It inform other components that this one is ready
    * @returns {Function}
    */
-  _prepareResponseFunction() {
+  _getResponseObject() {
     return {
       send: output => {
         this.status = STATUS.DONE;
