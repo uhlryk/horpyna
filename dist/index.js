@@ -84,23 +84,25 @@ require("source-map-support").install();
 
 	var _root2 = _interopRequireDefault(_root);
 
-	var _errors = __webpack_require__(7);
+	var _channelManager = __webpack_require__(6);
+
+	var _channelManager2 = _interopRequireDefault(_channelManager);
+
+	var _errors = __webpack_require__(8);
 
 	var ERROR = _interopRequireWildcard(_errors);
 
-	var _statuses = __webpack_require__(5);
+	var _statuses = __webpack_require__(4);
 
 	var STATUS = _interopRequireWildcard(_statuses);
-
-	var _Relation = __webpack_require__(4);
-
-	var Relation = _interopRequireWildcard(_Relation);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var DEFAULT_CHANNEL = "default";
 
 	var Component = function () {
 	  function Component(componentFunction) {
@@ -109,10 +111,11 @@ require("source-map-support").install();
 	    if (typeof componentFunction === "function") {
 	      this.componentFunction = componentFunction;
 	    }
-	    this.connectedChildrenComponents = [];
-	    this.connectedParentComponents = [];
+	    this.connectedParentChannels = [];
 
-	    this.status = STATUS.INIT;
+	    this.channelManager = new _channelManager2.default();
+	    this.channelManager.createChannel(DEFAULT_CHANNEL);
+
 	    this.finalComponentFlag = false;
 	    this.rootComponent = new _root2.default();
 	    this.rootComponent.addComponent(this);
@@ -143,7 +146,7 @@ require("source-map-support").install();
 	    key: "_runComponentFunction",
 	    value: function _runComponentFunction(request) {
 	      if (typeof this.componentFunction === "function") {
-	        this.status = STATUS.PROCESS;
+	        this.channelManager.setStatusProcess();
 	        this.componentFunction(request, this._getResponseObject());
 	      } else {
 	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
@@ -158,9 +161,21 @@ require("source-map-support").install();
 	  }, {
 	    key: "_onParentReady",
 	    value: function _onParentReady() {
-	      if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+	      if (this._isParentChannelsDone()) {
 	        this._runComponentFunction(this._getParentsOutput());
 	      }
+	    }
+	  }, {
+	    key: "_isParentChannelsDone",
+	    value: function _isParentChannelsDone() {
+	      var doneCount = this.connectedParentChannels.reduce(function (doneCount, channel) {
+	        if (channel.getStatus() === STATUS.DONE) {
+	          return ++doneCount;
+	        } else {
+	          return doneCount;
+	        }
+	      }, 0);
+	      return doneCount === this.connectedParentChannels.length;
 	    }
 
 	    /**
@@ -170,11 +185,11 @@ require("source-map-support").install();
 	  }, {
 	    key: "_getParentsOutput",
 	    value: function _getParentsOutput() {
-	      if (this.connectedParentComponents.length === 1) {
-	        return { input: this.connectedParentComponents[0].output };
+	      if (this.connectedParentChannels.length === 1) {
+	        return { input: this.connectedParentChannels[0].output };
 	      } else {
-	        return { input: this.connectedParentComponents.map(function (component) {
-	            return component.output;
+	        return { input: this.connectedParentChannels.map(function (channel) {
+	            return channel.output;
 	          }) };
 	      }
 	    }
@@ -190,15 +205,16 @@ require("source-map-support").install();
 	      var _this2 = this;
 
 	      return {
-	        send: function send(output) {
+	        send: function send(output, channelName) {
+	          channelName = channelName || DEFAULT_CHANNEL;
+	          var channel = _this2.getChannel(channelName);
 	          if (_this2.rootComponent.status === STATUS.PROCESS) {
-	            _this2.status = STATUS.DONE;
-	            _this2.output = output;
+	            _this2.channelManager.setStatusDone(channel);
+	            channel.output = output;
 	            if (_this2.finalComponentFlag === false) {
-	              _this2.connectedChildrenComponents.forEach(function (component) {
+	              channel.getComponentList().forEach(function (component) {
 	                return component._onParentReady();
 	              });
-	              _this2.rootComponent.onAnyDone();
 	            } else {
 	              _this2.rootComponent.finish(output);
 	            }
@@ -206,12 +222,15 @@ require("source-map-support").install();
 	        },
 	        finish: function finish(output) {
 	          if (_this2.rootComponent.status === STATUS.PROCESS) {
-	            _this2.status = STATUS.DONE;
-	            _this2.output = output;
 	            _this2.rootComponent.finish(output);
 	          }
 	        }
 	      };
+	    }
+	  }, {
+	    key: "getChannel",
+	    value: function getChannel(channelName) {
+	      return this.channelManager.getChannel(channelName);
 	    }
 
 	    /**
@@ -226,28 +245,20 @@ require("source-map-support").install();
 	      return this;
 	    }
 	    /**
-	     * child component add parent component
+	     * bind parent component with this component
 	     * @param component parent component
+	     * @param channel parent channel name
 	     */
 
 	  }, {
 	    key: "bind",
-	    value: function bind(component) {
-	      this.connectedParentComponents.push(component);
-	      component._bindChild(this);
-	    }
-
-	    /**
-	     * Allow parent component to add child component, should be triggered only by this.connect
-	     * @param component child component
-	     */
-
-	  }, {
-	    key: "_bindChild",
-	    value: function _bindChild(component) {
-	      this.connectedChildrenComponents.push(component);
-	      this.rootComponent.merge(component.rootComponent);
-	      component.rootComponent = this.rootComponent;
+	    value: function bind(component, channelName) {
+	      channelName = channelName || DEFAULT_CHANNEL;
+	      var parentChannel = component.getChannel(channelName);
+	      this.connectedParentChannels.push(parentChannel);
+	      parentChannel.addComponent(this);
+	      component.rootComponent.merge(this.rootComponent);
+	      this.rootComponent = component.rootComponent;
 	    }
 	  }]);
 
@@ -268,15 +279,11 @@ require("source-map-support").install();
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _Relation = __webpack_require__(4);
-
-	var Relation = _interopRequireWildcard(_Relation);
-
-	var _statuses = __webpack_require__(5);
+	var _statuses = __webpack_require__(4);
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
-	var _bluebird = __webpack_require__(6);
+	var _bluebird = __webpack_require__(5);
 
 	var _bluebird2 = _interopRequireDefault(_bluebird);
 
@@ -294,24 +301,7 @@ require("source-map-support").install();
 	    this.status = STATUS.INIT;
 	  }
 
-	  /**
-	   * root component function, it is triggered by any child component after finish
-	   */
-
-
 	  _createClass(Root, [{
-	    key: "onAnyDone",
-	    value: function onAnyDone() {
-	      /**
-	       * if all components are done then finish promise
-	       *
-	       * Now chain is finished when component run method finish
-	       */
-	      //if(Relation.hasComponentsStatus(this.components, [STATUS.DONE, STATUS.INIT])) {
-	      //  this.finish();
-	      //}
-	    }
-	  }, {
 	    key: "addComponent",
 	    value: function addComponent(component) {
 	      this.components.push(component);
@@ -361,39 +351,6 @@ require("source-map-support").install();
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.hasComponentsStatus = hasComponentsStatus;
-
-	var _statuses = __webpack_require__(5);
-
-	var STATUS = _interopRequireWildcard(_statuses);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	function hasComponentsStatus(components, statuses) {
-	  if (statuses.length === undefined) {
-	    statuses = [statuses];
-	  }
-	  var doneCount = components.reduce(function (doneCount, component) {
-	    if (statuses.indexOf(component.status) !== -1) {
-	      return ++doneCount;
-	    } else {
-	      return doneCount;
-	    }
-	  }, 0);
-	  return doneCount === components.length;
-	} /**
-	   * help to calculate relatives components state
-	   */
-
-/***/ },
-/* 5 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -406,13 +363,155 @@ require("source-map-support").install();
 	var DONE = exports.DONE = "done";
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = require("bluebird");
 
 /***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _channel = __webpack_require__(7);
+
+	var _channel2 = _interopRequireDefault(_channel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var ChannelManager = function () {
+	  function ChannelManager() {
+	    _classCallCheck(this, ChannelManager);
+
+	    this.channels = {};
+	  }
+
+	  _createClass(ChannelManager, [{
+	    key: "createChannel",
+	    value: function createChannel(name) {
+	      this.channels[name] = new _channel2.default();
+	    }
+	  }, {
+	    key: "setStatusProcess",
+	    value: function setStatusProcess() {
+	      var _this = this;
+
+	      Object.keys(this.channels).forEach(function (key) {
+	        var channel = _this.channels[key];
+	        channel.setStatusProcess();
+	      });
+	    }
+	  }, {
+	    key: "setStatusDone",
+	    value: function setStatusDone(doneChannel) {
+	      var _this2 = this;
+
+	      Object.keys(this.channels).forEach(function (key) {
+	        var channel = _this2.channels[key];
+	        if (channel === doneChannel) {
+	          channel.setStatusDone();
+	        } else {
+	          channel.setStatusInit();
+	        }
+	      });
+	    }
+	  }, {
+	    key: "getChannel",
+	    value: function getChannel(name) {
+	      return this.channels[name];
+	    }
+	  }]);
+
+	  return ChannelManager;
+	}();
+
+	exports.default = ChannelManager;
+
+/***/ },
 /* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _statuses = __webpack_require__(4);
+
+	var STATUS = _interopRequireWildcard(_statuses);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Channel = function () {
+	  function Channel() {
+	    _classCallCheck(this, Channel);
+
+	    this._status = STATUS.INIT;
+	    this._connectedChildrenComponents = [];
+	    this._output = null;
+	  }
+
+	  _createClass(Channel, [{
+	    key: "addComponent",
+	    value: function addComponent(component) {
+	      this._connectedChildrenComponents.push(component);
+	    }
+	  }, {
+	    key: "getComponentList",
+	    value: function getComponentList() {
+	      return this._connectedChildrenComponents;
+	    }
+	  }, {
+	    key: "getStatus",
+	    value: function getStatus() {
+	      return this._status;
+	    }
+	  }, {
+	    key: "setStatusInit",
+	    value: function setStatusInit() {
+	      this._status = STATUS.INIT;
+	    }
+	  }, {
+	    key: "setStatusProcess",
+	    value: function setStatusProcess() {
+	      this._status = STATUS.PROCESS;
+	    }
+	  }, {
+	    key: "setStatusDone",
+	    value: function setStatusDone() {
+	      this._status = STATUS.DONE;
+	    }
+	  }, {
+	    key: "output",
+	    get: function get() {
+	      return this._output;
+	    },
+	    set: function set(value) {
+	      this._output = value;
+	    }
+	  }]);
+
+	  return Channel;
+	}();
+
+	exports.default = Channel;
+
+/***/ },
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";

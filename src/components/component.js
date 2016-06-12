@@ -1,18 +1,20 @@
 import Root from "./root";
+import ChannelManager from "./channelManager";
 import * as ERROR from "../constants/errors";
 import * as STATUS from "../constants/statuses";
-import * as Relation from "../helpers/Relation";
+
+const DEFAULT_CHANNEL = "default";
 
 class Component {
-
   constructor(componentFunction) {
     if(typeof componentFunction === "function") {
       this.componentFunction = componentFunction;
     }
-    this.connectedChildrenComponents = [];
-    this.connectedParentComponents = [];
+    this.connectedParentChannels = [];
 
-    this.status = STATUS.INIT;
+    this.channelManager = new ChannelManager();
+    this.channelManager.createChannel(DEFAULT_CHANNEL);
+
     this.finalComponentFlag = false;
     this.rootComponent = new Root();
     this.rootComponent.addComponent(this);
@@ -32,7 +34,7 @@ class Component {
    */
   _runComponentFunction(request) {
     if(typeof this.componentFunction === "function") {
-      this.status = STATUS.PROCESS;
+      this.channelManager.setStatusProcess();
       this.componentFunction(request, this._getResponseObject());
     } else {
       throw new Error(ERROR.NO_COMPONENT_FUNCTION);
@@ -44,19 +46,31 @@ class Component {
    * By default child component start when all parent components are done.
    */
   _onParentReady() {
-    if (Relation.hasComponentsStatus(this.connectedParentComponents, STATUS.DONE)) {
+    if (this._isParentChannelsDone()) {
       this._runComponentFunction(this._getParentsOutput());
     }
   }
+
+  _isParentChannelsDone() {
+    let doneCount = this.connectedParentChannels.reduce((doneCount, channel) => {
+      if(channel.getStatus() === STATUS.DONE) {
+        return ++doneCount;
+      } else {
+        return doneCount;
+      }
+    }, 0);
+    return doneCount === this.connectedParentChannels.length;
+  }
+
 
   /**
    * gather all parents outputs
    */
   _getParentsOutput() {
-    if(this.connectedParentComponents.length === 1) {
-      return { input: this.connectedParentComponents[0].output };
+    if(this.connectedParentChannels.length === 1) {
+      return { input: this.connectedParentChannels[0].output };
     } else {
-      return { input: this.connectedParentComponents.map(component => component.output) };
+      return { input: this.connectedParentChannels.map(channel => channel.output) };
     }
   }
 
@@ -66,13 +80,14 @@ class Component {
    */
   _getResponseObject() {
     return {
-      send: output => {
+      send: (output, channelName) => {
+        channelName = channelName || DEFAULT_CHANNEL;
+        let channel = this.getChannel(channelName);
         if(this.rootComponent.status === STATUS.PROCESS) {
-          this.status = STATUS.DONE;
-          this.output = output;
+          this.channelManager.setStatusDone(channel);
+          channel.output = output;
           if(this.finalComponentFlag === false) {
-            this.connectedChildrenComponents.forEach(component => component._onParentReady());
-            this.rootComponent.onAnyDone();
+            channel.getComponentList().forEach(component => component._onParentReady());
           } else {
             this.rootComponent.finish(output);
           }
@@ -80,12 +95,14 @@ class Component {
       },
       finish: output => {
         if(this.rootComponent.status === STATUS.PROCESS) {
-          this.status = STATUS.DONE;
-          this.output = output;
           this.rootComponent.finish(output);
         }
       }
     };
+  }
+
+  getChannel(channelName) {
+    return this.channelManager.getChannel(channelName);
   }
 
   /**
@@ -97,22 +114,17 @@ class Component {
     return this;
   }
   /**
-   * child component add parent component
+   * bind parent component with this component
    * @param component parent component
+   * @param channel parent channel name
    */
-  bind(component) {
-    this.connectedParentComponents.push(component);
-    component._bindChild(this);
-  }
-
-  /**
-   * Allow parent component to add child component, should be triggered only by this.connect
-   * @param component child component
-   */
-  _bindChild(component) {
-    this.connectedChildrenComponents.push(component);
-    this.rootComponent.merge(component.rootComponent);
-    component.rootComponent = this.rootComponent;
+  bind(component, channelName) {
+    channelName = channelName || DEFAULT_CHANNEL;
+    let parentChannel = component.getChannel(channelName);
+    this.connectedParentChannels.push(parentChannel);
+    parentChannel.addComponent(this);
+    component.rootComponent.merge(this.rootComponent);
+    this.rootComponent = component.rootComponent;
   }
 
 }
