@@ -1,5 +1,6 @@
 import Root from "./root";
 import ChannelManager from "./channelManager";
+import ParentChannelManager from "./parentChannelManager";
 import Response from "./response";
 import * as ERROR from "../constants/errors";
 import * as STATUS from "../constants/statuses";
@@ -11,8 +12,8 @@ class Component {
     if(typeof componentFunction === "function") {
       this.componentFunction = componentFunction;
     }
-    this.connectedParentChannels = [];
-    this.channelManager = new ChannelManager();
+    this.parentChannelManager = new ParentChannelManager();
+    this.channelManager = new ChannelManager(this);
     this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
     this.status = STATUS.INIT;
     this.finalComponentFlag = false;
@@ -45,31 +46,9 @@ class Component {
    * When parent component is done, it inform his child components about it. Which allow them to start
    * By default child component start when all parent components are done.
    */
-  _onParentReady() {
-    if (this._isParentChannelsDone()) {
-      this._runComponentFunction(this._getParentsOutput());
-    }
-  }
-
-  _isParentChannelsDone() {
-    let doneCount = this.connectedParentChannels.reduce((doneCount, channel) => {
-      if(channel.status === STATUS.DONE) {
-        return ++doneCount;
-      } else {
-        return doneCount;
-      }
-    }, 0);
-    return doneCount === this.connectedParentChannels.length;
-  }
-
-  /**
-   * gather all parents outputs
-   */
-  _getParentsOutput() {
-    if(this.connectedParentChannels.length === 1) {
-      return { input: this.connectedParentChannels[0].output };
-    } else {
-      return { input: this.connectedParentChannels.map(channel => channel.output) };
+  onParentReady() {
+    if (this.parentChannelManager.isDone()) {
+      this._runComponentFunction(this.parentChannelManager.getOutput());
     }
   }
 
@@ -98,7 +77,7 @@ class Component {
   bind(component, channelName) {
     channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
     let parentChannel = component.getChannel(channelName);
-    this.connectedParentChannels.push(parentChannel);
+    this.parentChannelManager.addChannel(parentChannel);
     parentChannel.addComponent(this);
     component.rootComponent.merge(this.rootComponent);
     this.rootComponent = component.rootComponent;

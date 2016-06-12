@@ -88,11 +88,15 @@ require("source-map-support").install();
 
 	var _channelManager2 = _interopRequireDefault(_channelManager);
 
-	var _response = __webpack_require__(8);
+	var _parentChannelManager = __webpack_require__(8);
+
+	var _parentChannelManager2 = _interopRequireDefault(_parentChannelManager);
+
+	var _response = __webpack_require__(9);
 
 	var _response2 = _interopRequireDefault(_response);
 
-	var _errors = __webpack_require__(10);
+	var _errors = __webpack_require__(11);
 
 	var ERROR = _interopRequireWildcard(_errors);
 
@@ -100,7 +104,7 @@ require("source-map-support").install();
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
-	var _channels = __webpack_require__(9);
+	var _channels = __webpack_require__(10);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
@@ -117,8 +121,8 @@ require("source-map-support").install();
 	    if (typeof componentFunction === "function") {
 	      this.componentFunction = componentFunction;
 	    }
-	    this.connectedParentChannels = [];
-	    this.channelManager = new _channelManager2.default();
+	    this.parentChannelManager = new _parentChannelManager2.default();
+	    this.channelManager = new _channelManager2.default(this);
 	    this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
 	    this.status = STATUS.INIT;
 	    this.finalComponentFlag = false;
@@ -164,38 +168,10 @@ require("source-map-support").install();
 	     */
 
 	  }, {
-	    key: "_onParentReady",
-	    value: function _onParentReady() {
-	      if (this._isParentChannelsDone()) {
-	        this._runComponentFunction(this._getParentsOutput());
-	      }
-	    }
-	  }, {
-	    key: "_isParentChannelsDone",
-	    value: function _isParentChannelsDone() {
-	      var doneCount = this.connectedParentChannels.reduce(function (doneCount, channel) {
-	        if (channel.status === STATUS.DONE) {
-	          return ++doneCount;
-	        } else {
-	          return doneCount;
-	        }
-	      }, 0);
-	      return doneCount === this.connectedParentChannels.length;
-	    }
-
-	    /**
-	     * gather all parents outputs
-	     */
-
-	  }, {
-	    key: "_getParentsOutput",
-	    value: function _getParentsOutput() {
-	      if (this.connectedParentChannels.length === 1) {
-	        return { input: this.connectedParentChannels[0].output };
-	      } else {
-	        return { input: this.connectedParentChannels.map(function (channel) {
-	            return channel.output;
-	          }) };
+	    key: "onParentReady",
+	    value: function onParentReady() {
+	      if (this.parentChannelManager.isDone()) {
+	        this._runComponentFunction(this.parentChannelManager.getOutput());
 	      }
 	    }
 	  }, {
@@ -232,7 +208,7 @@ require("source-map-support").install();
 	    value: function bind(component, channelName) {
 	      channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
 	      var parentChannel = component.getChannel(channelName);
-	      this.connectedParentChannels.push(parentChannel);
+	      this.parentChannelManager.addChannel(parentChannel);
 	      parentChannel.addComponent(this);
 	      component.rootComponent.merge(this.rootComponent);
 	      this.rootComponent = component.rootComponent;
@@ -366,16 +342,17 @@ require("source-map-support").install();
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var ChannelManager = function () {
-	  function ChannelManager() {
+	  function ChannelManager(component) {
 	    _classCallCheck(this, ChannelManager);
 
+	    this.component = component;
 	    this.channels = [];
 	  }
 
 	  _createClass(ChannelManager, [{
 	    key: "createChannel",
 	    value: function createChannel(name) {
-	      this.channels.push(new _channel2.default(name));
+	      this.channels.push(new _channel2.default(this.component, name));
 	    }
 	  }, {
 	    key: "getChannel",
@@ -412,9 +389,10 @@ require("source-map-support").install();
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Channel = function () {
-	  function Channel(name) {
+	  function Channel(component, name) {
 	    _classCallCheck(this, Channel);
 
+	    this.component = component;
 	    this.name = name;
 	    this.status = STATUS.INIT;
 	    this.connectedChildrenComponents = [];
@@ -450,11 +428,79 @@ require("source-map-support").install();
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _channel = __webpack_require__(7);
+
+	var _channel2 = _interopRequireDefault(_channel);
+
 	var _statuses = __webpack_require__(4);
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
-	var _channels = __webpack_require__(9);
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var ParentChannelManager = function () {
+	  function ParentChannelManager() {
+	    _classCallCheck(this, ParentChannelManager);
+
+	    this.channels = [];
+	  }
+
+	  _createClass(ParentChannelManager, [{
+	    key: "addChannel",
+	    value: function addChannel(channel) {
+	      this.channels.push(channel);
+	    }
+	  }, {
+	    key: "getOutput",
+	    value: function getOutput() {
+	      if (this.channels.length === 1) {
+	        return { input: this.channels[0].output };
+	      } else {
+	        return { input: this.channels.map(function (channel) {
+	            return channel.output;
+	          }) };
+	      }
+	    }
+	  }, {
+	    key: "isDone",
+	    value: function isDone() {
+	      var doneCount = this.channels.reduce(function (doneCount, channel) {
+	        if (channel.status === STATUS.DONE && channel.component.status === STATUS.DONE) {
+	          return ++doneCount;
+	        } else {
+	          return doneCount;
+	        }
+	      }, 0);
+	      return doneCount === this.channels.length;
+	    }
+	  }]);
+
+	  return ParentChannelManager;
+	}();
+
+	exports.default = ParentChannelManager;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _statuses = __webpack_require__(4);
+
+	var STATUS = _interopRequireWildcard(_statuses);
+
+	var _channels = __webpack_require__(10);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
@@ -490,7 +536,7 @@ require("source-map-support").install();
 	          this.component.channelManager.channels.forEach(function (channel) {
 	            if (channel.status === STATUS.DONE) {
 	              channel.getComponentList().forEach(function (component) {
-	                return component._onParentReady();
+	                return component.onParentReady();
 	              });
 	            }
 	          });
@@ -524,7 +570,7 @@ require("source-map-support").install();
 	exports.default = Response;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -535,7 +581,7 @@ require("source-map-support").install();
 	var DEFAULT_CHANNEL = exports.DEFAULT_CHANNEL = "default";
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";

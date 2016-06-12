@@ -21,7 +21,7 @@ class Response {
       if (this.component.finalComponentFlag === false) {
         this.component.channelManager.channels.forEach(channel => {
           if (channel.status === STATUS.DONE) {
-            channel.getComponentList().forEach(component => component._onParentReady());
+            channel.getComponentList().forEach(component => component.onParentReady());
           }
         });
       } else {
