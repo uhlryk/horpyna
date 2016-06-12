@@ -19,14 +19,6 @@ class Channel {
     return this._status;
   }
 
-  setStatusInit() {
-    this._status = STATUS.INIT;
-  }
-
-  setStatusProcess() {
-    this._status = STATUS.PROCESS;
-  }
-
   setStatusDone() {
     this._status = STATUS.DONE;
   }

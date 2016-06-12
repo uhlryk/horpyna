@@ -35,7 +35,6 @@ class Component {
   _runComponentFunction(request) {
     if(typeof this.componentFunction === "function") {
       this.status = STATUS.PROCESS;
-      this.channelManager.setStatusProcess();
       this.componentFunction(request, this._getResponseObject());
     } else {
       throw new Error(ERROR.NO_COMPONENT_FUNCTION);
@@ -93,11 +92,6 @@ class Component {
           } else {
             this.rootComponent.finish(output);
           }
-        }
-      },
-      finish: output => {
-        if(this.rootComponent.status === STATUS.PROCESS) {
-          this.rootComponent.finish(output);
         }
       }
     };

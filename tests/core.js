@@ -9,7 +9,7 @@ chai.use(chaiThings);
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-
+const TEST_MESSAGE_A = "messageA";
 
 describe("Basic functionality", () => {
 
@@ -20,14 +20,16 @@ describe("Basic functionality", () => {
       let spyCustomFunc = sinon.spy();
       let component = new Horpyna.Component((request, response) => {
         spyCustomFunc();
-        response.finish();
+        response.send(TEST_MESSAGE_A);
       });
+      component.final();
       let promise = component.run();
-      promise.then(() => {
+      promise.then(output => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
+        expect(output).to.be.equal(TEST_MESSAGE_A);
         done();
       });
     });
@@ -36,18 +38,23 @@ describe("Basic functionality", () => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
       let ExtendComponent = class extends Horpyna.Component {
+        constructor() {
+          super();
+          this.final();
+        }
         componentFunction(request, response) {
           spyCustomFunc();
-          response.finish();
+          response.send(TEST_MESSAGE_A);
         }
       };
       let component = new ExtendComponent();
       let promise = component.run();
-      promise.then(() => {
+      promise.then(output => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
+        expect(output).to.be.equal(TEST_MESSAGE_A);
         done();
       });
     });
@@ -63,34 +70,17 @@ describe("Basic functionality", () => {
 
 
     it("should return value to child component", done => {
-      const RESPONSE = "1234456564";
       let componentA = new Horpyna.Component((request, response) => {
         response.send(request.input);
       });
       let componentB = new Horpyna.Component((request, response) => {
-        expect(request.input).to.be.equal(RESPONSE);
-        response.finish();
-        done();
-      });
-      componentB.bind(componentA);
-      componentA.run(RESPONSE);
-    })
-    it("should resolve promise when component is mark as final", done => {
-      let spyComponent = sinon.spy();
-      let spyCustomFunc = sinon.spy();
-      let component = new Horpyna.Component((request, response) => {
-        spyCustomFunc();
+        expect(request.input).to.be.equal(TEST_MESSAGE_A);
         response.send();
-      });
-      component.final();
-      let promise = component.run();
-      promise.then(() => {
-        spyComponent();
-        expect(spyComponent.calledOnce).to.be.true;
-        expect(spyCustomFunc.calledOnce).to.be.true;
-        expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
         done();
       });
+      componentB.final();
+      componentB.bind(componentA);
+      componentA.run(TEST_MESSAGE_A);
     })
   });
 
@@ -115,9 +105,10 @@ describe("Basic functionality", () => {
       let componentC = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyC();
-          response.finish();
+          response.send();
         }, 10);
       });
+      componentC.final();
       componentB.bind(componentA);
       componentC.bind(componentB);
       let promise = componentA.run();
@@ -165,9 +156,10 @@ describe("Basic functionality", () => {
       let componentD = new Horpyna.Component((request, response) => {
         setTimeout(() => {
           spyD();
-          response.finish();
+          response.send();
         }, 20);
       });
+      componentD.final();
       componentB.bind(componentA);
       componentC.bind(componentA);
       componentD.bind(componentB);
@@ -190,4 +182,37 @@ describe("Basic functionality", () => {
     });
 
   });
+
+  describe("Check channels", () => {
+    it("should return message to final component connected by custom channel", (done) => {
+      let spyA = sinon.spy();
+      let spyB = sinon.spy();
+
+      const CHANNEL_AA = "channelAA";
+      let componentA = new Horpyna.Component((request, response) => {
+        spyA();
+        response.send(TEST_MESSAGE_A, CHANNEL_AA);
+      });
+      componentA.createChannel(CHANNEL_AA);
+      let componentB = new Horpyna.Component((request, response) => {
+        spyB();
+        expect(request.input).to.be.equal(TEST_MESSAGE_A);
+        response.send();
+      });
+
+      componentB.bind(componentA, CHANNEL_AA);
+      componentB.final();
+
+      let promise = componentA.run();
+      promise.then((response) => {
+        expect(spyA.calledOnce).to.be.true;
+        expect(spyB.calledOnce).to.be.true;
+        expect(spyA.calledBefore(spyB)).to.be.true;
+        done();
+      });
+    });
+
+  });
+
+
 });

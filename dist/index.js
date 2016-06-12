@@ -115,7 +115,7 @@ require("source-map-support").install();
 
 	    this.channelManager = new _channelManager2.default();
 	    this.channelManager.createChannel(DEFAULT_CHANNEL);
-
+	    this.status = STATUS.INIT;
 	    this.finalComponentFlag = false;
 	    this.rootComponent = new _root2.default();
 	    this.rootComponent.addComponent(this);
@@ -146,7 +146,7 @@ require("source-map-support").install();
 	    key: "_runComponentFunction",
 	    value: function _runComponentFunction(request) {
 	      if (typeof this.componentFunction === "function") {
-	        this.channelManager.setStatusProcess();
+	        this.status = STATUS.PROCESS;
 	        this.componentFunction(request, this._getResponseObject());
 	      } else {
 	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
@@ -209,6 +209,7 @@ require("source-map-support").install();
 	          channelName = channelName || DEFAULT_CHANNEL;
 	          var channel = _this2.getChannel(channelName);
 	          if (_this2.rootComponent.status === STATUS.PROCESS) {
+	            _this2.status = STATUS.DONE;
 	            _this2.channelManager.setStatusDone(channel);
 	            channel.output = output;
 	            if (_this2.finalComponentFlag === false) {
@@ -219,11 +220,6 @@ require("source-map-support").install();
 	              _this2.rootComponent.finish(output);
 	            }
 	          }
-	        },
-	        finish: function finish(output) {
-	          if (_this2.rootComponent.status === STATUS.PROCESS) {
-	            _this2.rootComponent.finish(output);
-	          }
 	        }
 	      };
 	    }
@@ -231,6 +227,11 @@ require("source-map-support").install();
 	    key: "getChannel",
 	    value: function getChannel(channelName) {
 	      return this.channelManager.getChannel(channelName);
+	    }
+	  }, {
+	    key: "createChannel",
+	    value: function createChannel(channelName) {
+	      this.channelManager.createChannel(channelName);
 	    }
 
 	    /**
@@ -401,28 +402,9 @@ require("source-map-support").install();
 	      this.channels[name] = new _channel2.default();
 	    }
 	  }, {
-	    key: "setStatusProcess",
-	    value: function setStatusProcess() {
-	      var _this = this;
-
-	      Object.keys(this.channels).forEach(function (key) {
-	        var channel = _this.channels[key];
-	        channel.setStatusProcess();
-	      });
-	    }
-	  }, {
 	    key: "setStatusDone",
 	    value: function setStatusDone(doneChannel) {
-	      var _this2 = this;
-
-	      Object.keys(this.channels).forEach(function (key) {
-	        var channel = _this2.channels[key];
-	        if (channel === doneChannel) {
-	          channel.setStatusDone();
-	        } else {
-	          channel.setStatusInit();
-	        }
-	      });
+	      doneChannel.setStatusDone();
 	    }
 	  }, {
 	    key: "getChannel",
@@ -479,16 +461,6 @@ require("source-map-support").install();
 	    key: "getStatus",
 	    value: function getStatus() {
 	      return this._status;
-	    }
-	  }, {
-	    key: "setStatusInit",
-	    value: function setStatusInit() {
-	      this._status = STATUS.INIT;
-	    }
-	  }, {
-	    key: "setStatusProcess",
-	    value: function setStatusProcess() {
-	      this._status = STATUS.PROCESS;
 	    }
 	  }, {
 	    key: "setStatusDone",
