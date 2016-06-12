@@ -14,7 +14,7 @@ class Component {
 
     this.channelManager = new ChannelManager();
     this.channelManager.createChannel(DEFAULT_CHANNEL);
-
+    this.status = STATUS.INIT;
     this.finalComponentFlag = false;
     this.rootComponent = new Root();
     this.rootComponent.addComponent(this);
@@ -34,6 +34,7 @@ class Component {
    */
   _runComponentFunction(request) {
     if(typeof this.componentFunction === "function") {
+      this.status = STATUS.PROCESS;
       this.channelManager.setStatusProcess();
       this.componentFunction(request, this._getResponseObject());
     } else {
@@ -84,6 +85,7 @@ class Component {
         channelName = channelName || DEFAULT_CHANNEL;
         let channel = this.getChannel(channelName);
         if(this.rootComponent.status === STATUS.PROCESS) {
+          this.status = STATUS.DONE;
           this.channelManager.setStatusDone(channel);
           channel.output = output;
           if(this.finalComponentFlag === false) {
@@ -104,6 +106,11 @@ class Component {
   getChannel(channelName) {
     return this.channelManager.getChannel(channelName);
   }
+
+  createChannel(channelName) {
+    this.channelManager.createChannel(channelName);
+  }
+
 
   /**
    * If this method is triggered before component is done, it is flagged as final component,
