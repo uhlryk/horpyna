@@ -10,6 +10,7 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const TEST_MESSAGE_A = "messageA";
+const TEST_MESSAGE_B = "messageB";
 
 describe("Basic functionality", () => {
 
@@ -30,6 +31,27 @@ describe("Basic functionality", () => {
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
         expect(output).to.be.equal(TEST_MESSAGE_A);
+        done();
+      });
+    });
+
+    it("should output last response from response.prepare", done => {
+      let spyComponent = sinon.spy();
+      let spyCustomFunc = sinon.spy();
+      let component = new Horpyna.Component((request, response) => {
+        spyCustomFunc();
+        response.prepare(TEST_MESSAGE_A);
+        response.prepare(TEST_MESSAGE_B);
+        response.done();
+      });
+      component.final();
+      let promise = component.run();
+      promise.then(output => {
+        spyComponent();
+        expect(spyComponent.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledOnce).to.be.true;
+        expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
+        expect(output).to.be.equal(TEST_MESSAGE_B);
         done();
       });
     });

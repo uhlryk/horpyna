@@ -88,7 +88,11 @@ require("source-map-support").install();
 
 	var _channelManager2 = _interopRequireDefault(_channelManager);
 
-	var _errors = __webpack_require__(8);
+	var _response = __webpack_require__(8);
+
+	var _response2 = _interopRequireDefault(_response);
+
+	var _errors = __webpack_require__(10);
 
 	var ERROR = _interopRequireWildcard(_errors);
 
@@ -96,13 +100,15 @@ require("source-map-support").install();
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
+	var _channels = __webpack_require__(9);
+
+	var CHANNEL = _interopRequireWildcard(_channels);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var DEFAULT_CHANNEL = "default";
 
 	var Component = function () {
 	  function Component(componentFunction) {
@@ -112,9 +118,8 @@ require("source-map-support").install();
 	      this.componentFunction = componentFunction;
 	    }
 	    this.connectedParentChannels = [];
-
 	    this.channelManager = new _channelManager2.default();
-	    this.channelManager.createChannel(DEFAULT_CHANNEL);
+	    this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
 	    this.status = STATUS.INIT;
 	    this.finalComponentFlag = false;
 	    this.rootComponent = new _root2.default();
@@ -147,7 +152,7 @@ require("source-map-support").install();
 	    value: function _runComponentFunction(request) {
 	      if (typeof this.componentFunction === "function") {
 	        this.status = STATUS.PROCESS;
-	        this.componentFunction(request, this._getResponseObject());
+	        this.componentFunction(request, new _response2.default(this));
 	      } else {
 	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
 	      }
@@ -169,7 +174,7 @@ require("source-map-support").install();
 	    key: "_isParentChannelsDone",
 	    value: function _isParentChannelsDone() {
 	      var doneCount = this.connectedParentChannels.reduce(function (doneCount, channel) {
-	        if (channel.getStatus() === STATUS.DONE) {
+	        if (channel.status === STATUS.DONE) {
 	          return ++doneCount;
 	        } else {
 	          return doneCount;
@@ -193,36 +198,6 @@ require("source-map-support").install();
 	          }) };
 	      }
 	    }
-
-	    /**
-	     * Get function to run at the end in componentFunction. It inform other components that this one is ready
-	     * @returns {Function}
-	     */
-
-	  }, {
-	    key: "_getResponseObject",
-	    value: function _getResponseObject() {
-	      var _this2 = this;
-
-	      return {
-	        send: function send(output, channelName) {
-	          channelName = channelName || DEFAULT_CHANNEL;
-	          var channel = _this2.getChannel(channelName);
-	          if (_this2.rootComponent.status === STATUS.PROCESS) {
-	            _this2.status = STATUS.DONE;
-	            _this2.channelManager.setStatusDone(channel);
-	            channel.output = output;
-	            if (_this2.finalComponentFlag === false) {
-	              channel.getComponentList().forEach(function (component) {
-	                return component._onParentReady();
-	              });
-	            } else {
-	              _this2.rootComponent.finish(output);
-	            }
-	          }
-	        }
-	      };
-	    }
 	  }, {
 	    key: "getChannel",
 	    value: function getChannel(channelName) {
@@ -245,6 +220,7 @@ require("source-map-support").install();
 	      this.finalComponentFlag = true;
 	      return this;
 	    }
+
 	    /**
 	     * bind parent component with this component
 	     * @param component parent component
@@ -254,7 +230,7 @@ require("source-map-support").install();
 	  }, {
 	    key: "bind",
 	    value: function bind(component, channelName) {
-	      channelName = channelName || DEFAULT_CHANNEL;
+	      channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
 	      var parentChannel = component.getChannel(channelName);
 	      this.connectedParentChannels.push(parentChannel);
 	      parentChannel.addComponent(this);
@@ -393,23 +369,20 @@ require("source-map-support").install();
 	  function ChannelManager() {
 	    _classCallCheck(this, ChannelManager);
 
-	    this.channels = {};
+	    this.channels = [];
 	  }
 
 	  _createClass(ChannelManager, [{
 	    key: "createChannel",
 	    value: function createChannel(name) {
-	      this.channels[name] = new _channel2.default();
-	    }
-	  }, {
-	    key: "setStatusDone",
-	    value: function setStatusDone(doneChannel) {
-	      doneChannel.setStatusDone();
+	      this.channels.push(new _channel2.default(name));
 	    }
 	  }, {
 	    key: "getChannel",
 	    value: function getChannel(name) {
-	      return this.channels[name];
+	      return this.channels.find(function (channel) {
+	        return channel.name === name;
+	      });
 	    }
 	  }]);
 
@@ -439,41 +412,24 @@ require("source-map-support").install();
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Channel = function () {
-	  function Channel() {
+	  function Channel(name) {
 	    _classCallCheck(this, Channel);
 
-	    this._status = STATUS.INIT;
-	    this._connectedChildrenComponents = [];
-	    this._output = null;
+	    this.name = name;
+	    this.status = STATUS.INIT;
+	    this.connectedChildrenComponents = [];
+	    this.output = null;
 	  }
 
 	  _createClass(Channel, [{
 	    key: "addComponent",
 	    value: function addComponent(component) {
-	      this._connectedChildrenComponents.push(component);
+	      this.connectedChildrenComponents.push(component);
 	    }
 	  }, {
 	    key: "getComponentList",
 	    value: function getComponentList() {
-	      return this._connectedChildrenComponents;
-	    }
-	  }, {
-	    key: "getStatus",
-	    value: function getStatus() {
-	      return this._status;
-	    }
-	  }, {
-	    key: "setStatusDone",
-	    value: function setStatusDone() {
-	      this._status = STATUS.DONE;
-	    }
-	  }, {
-	    key: "output",
-	    get: function get() {
-	      return this._output;
-	    },
-	    set: function set(value) {
-	      this._output = value;
+	      return this.connectedChildrenComponents;
 	    }
 	  }]);
 
@@ -484,6 +440,102 @@ require("source-map-support").install();
 
 /***/ },
 /* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _statuses = __webpack_require__(4);
+
+	var STATUS = _interopRequireWildcard(_statuses);
+
+	var _channels = __webpack_require__(9);
+
+	var CHANNEL = _interopRequireWildcard(_channels);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Response = function () {
+	  function Response(component) {
+	    _classCallCheck(this, Response);
+
+	    this.component = component;
+	  }
+
+	  _createClass(Response, [{
+	    key: "prepare",
+	    value: function prepare(output, channelName) {
+	      if (this.component.rootComponent.status === STATUS.PROCESS) {
+	        channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
+	        var channel = this.component.getChannel(channelName);
+	        channel.status = STATUS.DONE;
+	        channel.output = output;
+	      }
+	    }
+	  }, {
+	    key: "done",
+	    value: function done() {
+	      var _this = this;
+
+	      if (this.component.rootComponent.status === STATUS.PROCESS) {
+	        this.component.status = STATUS.DONE;
+	        if (this.component.finalComponentFlag === false) {
+	          this.component.channelManager.channels.forEach(function (channel) {
+	            if (channel.status === STATUS.DONE) {
+	              channel.getComponentList().forEach(function (component) {
+	                return component._onParentReady();
+	              });
+	            }
+	          });
+	        } else {
+	          (function () {
+	            var output = [];
+	            _this.component.channelManager.channels.forEach(function (channel) {
+	              if (channel.status === STATUS.DONE) {
+	                output.push(channel.output);
+	              }
+	            });
+	            if (output.length === 1) {
+	              output = output[0];
+	            }
+	            _this.component.rootComponent.finish(output);
+	          })();
+	        }
+	      }
+	    }
+	  }, {
+	    key: "send",
+	    value: function send(output, channelName) {
+	      this.prepare(output, channelName);
+	      this.done();
+	    }
+	  }]);
+
+	  return Response;
+	}();
+
+	exports.default = Response;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var DEFAULT_CHANNEL = exports.DEFAULT_CHANNEL = "default";
+
+/***/ },
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";

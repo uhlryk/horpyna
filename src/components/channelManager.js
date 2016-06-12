@@ -2,21 +2,15 @@ import Channel from "./channel";
 
 class ChannelManager {
   constructor() {
-    this.channels = {
-
-    }
+    this.channels = [];
   }
 
   createChannel(name) {
-    this.channels[name] = new Channel();
-  }
-
-  setStatusDone(doneChannel) {
-    doneChannel.setStatusDone();
+    this.channels.push(new Channel(name));
   }
 
   getChannel(name) {
-    return this.channels[name];
+    return this.channels.find(channel => channel.name === name);
   }
 }
 export default ChannelManager;

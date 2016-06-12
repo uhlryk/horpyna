@@ -1,19 +1,19 @@
 import Root from "./root";
 import ChannelManager from "./channelManager";
+import Response from "./response";
 import * as ERROR from "../constants/errors";
 import * as STATUS from "../constants/statuses";
-
-const DEFAULT_CHANNEL = "default";
+import * as CHANNEL from "../constants/channels";
 
 class Component {
+
   constructor(componentFunction) {
     if(typeof componentFunction === "function") {
       this.componentFunction = componentFunction;
     }
     this.connectedParentChannels = [];
-
     this.channelManager = new ChannelManager();
-    this.channelManager.createChannel(DEFAULT_CHANNEL);
+    this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
     this.status = STATUS.INIT;
     this.finalComponentFlag = false;
     this.rootComponent = new Root();
@@ -35,7 +35,7 @@ class Component {
   _runComponentFunction(request) {
     if(typeof this.componentFunction === "function") {
       this.status = STATUS.PROCESS;
-      this.componentFunction(request, this._getResponseObject());
+      this.componentFunction(request, new Response(this));
     } else {
       throw new Error(ERROR.NO_COMPONENT_FUNCTION);
     }
@@ -53,7 +53,7 @@ class Component {
 
   _isParentChannelsDone() {
     let doneCount = this.connectedParentChannels.reduce((doneCount, channel) => {
-      if(channel.getStatus() === STATUS.DONE) {
+      if(channel.status === STATUS.DONE) {
         return ++doneCount;
       } else {
         return doneCount;
@@ -61,7 +61,6 @@ class Component {
     }, 0);
     return doneCount === this.connectedParentChannels.length;
   }
-
 
   /**
    * gather all parents outputs
@@ -74,29 +73,6 @@ class Component {
     }
   }
 
-  /**
-   * Get function to run at the end in componentFunction. It inform other components that this one is ready
-   * @returns {Function}
-   */
-  _getResponseObject() {
-    return {
-      send: (output, channelName) => {
-        channelName = channelName || DEFAULT_CHANNEL;
-        let channel = this.getChannel(channelName);
-        if(this.rootComponent.status === STATUS.PROCESS) {
-          this.status = STATUS.DONE;
-          this.channelManager.setStatusDone(channel);
-          channel.output = output;
-          if(this.finalComponentFlag === false) {
-            channel.getComponentList().forEach(component => component._onParentReady());
-          } else {
-            this.rootComponent.finish(output);
-          }
-        }
-      }
-    };
-  }
-
   getChannel(channelName) {
     return this.channelManager.getChannel(channelName);
   }
@@ -104,7 +80,6 @@ class Component {
   createChannel(channelName) {
     this.channelManager.createChannel(channelName);
   }
-
 
   /**
    * If this method is triggered before component is done, it is flagged as final component,
@@ -114,13 +89,14 @@ class Component {
     this.finalComponentFlag = true;
     return this;
   }
+
   /**
    * bind parent component with this component
    * @param component parent component
    * @param channel parent channel name
    */
   bind(component, channelName) {
-    channelName = channelName || DEFAULT_CHANNEL;
+    channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
     let parentChannel = component.getChannel(channelName);
     this.connectedParentChannels.push(parentChannel);
     parentChannel.addComponent(this);
@@ -129,4 +105,5 @@ class Component {
   }
 
 }
+
 export default Component;
