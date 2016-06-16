@@ -6,6 +6,13 @@ class Response {
     this.component = component;
   }
 
+  init() {
+    this.component.channelManager.channels.forEach(channel => {
+      channel.status = STATUS.INIT;
+      channel.output = null;
+    });
+  }
+
   prepare(output, channelName) {
     if(this.component.rootComponent.status === STATUS.PROCESS) {
       channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
@@ -40,6 +47,7 @@ class Response {
   }
 
   send(output, channelName) {
+    this.init();
     this.prepare(output, channelName);
     this.done();
   }

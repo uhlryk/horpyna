@@ -1,6 +1,6 @@
 {
   "name": "horpyna",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "promised modules flow control core library",
   "main": "index.js",
   "scripts": {
@@ -53,5 +53,8 @@
     "supertest": "^1.2.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.0"
   }
 }

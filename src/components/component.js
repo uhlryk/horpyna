@@ -72,7 +72,7 @@ class Component {
   /**
    * bind parent component with this component
    * @param component parent component
-   * @param channel parent channel name
+   * @param channelName parent channel name
    */
   bind(component, channelName) {
     channelName = channelName || CHANNEL.DEFAULT_CHANNEL;

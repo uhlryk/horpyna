@@ -206,7 +206,7 @@ describe("Basic functionality", () => {
   });
 
   describe("Check channels", () => {
-    it("should return message to final component connected by custom channel", (done) => {
+    it("should return message to final component connected by custom channel", done => {
       let spyA = sinon.spy();
       let spyB = sinon.spy();
 
@@ -236,5 +236,50 @@ describe("Basic functionality", () => {
 
   });
 
+  describe("Custom structures", () => {
+    const CHANNEL_AA = "channelAA";
+    const CHANNEL_AB = "channelAB";
+    it("should finish", done => {
+      let spyAA = sinon.spy();
+      let spyAB = sinon.spy();
+      let spyB = sinon.spy();
+      let spyC = sinon.spy();
+      let componentA = new Horpyna.Component((request, response) => {
+        if(request.input) {
+          spyAB();
+          response.send(null, CHANNEL_AB);
+        } else {
+          spyAA();
+          response.send(null, CHANNEL_AA);
+        }
+      });
+      componentA.createChannel(CHANNEL_AA);
+      componentA.createChannel(CHANNEL_AB);
+      let componentB = new Horpyna.Component((request, response) => {
+        spyB();
+        response.send(true);
+      });
+      componentB.bind(componentA, CHANNEL_AA);
+      componentA.bind(componentB);
 
+      let componentC = new Horpyna.Component((request, response) => {
+        spyC();
+        response.send();
+      });
+      componentC.bind(componentA, CHANNEL_AB);
+      componentC.final();
+      let promise = componentA.run();
+      promise.then((response) => {
+        expect(spyAA.calledOnce).to.be.true;
+        expect(spyAB.calledOnce).to.be.true;
+        expect(spyB.calledOnce).to.be.true;
+        expect(spyC.calledOnce).to.be.true;
+        expect(spyAA.calledBefore(spyAB)).to.be.true;
+        expect(spyAA.calledBefore(spyB)).to.be.true;
+        expect(spyB.calledBefore(spyAB)).to.be.true;
+        expect(spyAB.calledBefore(spyC)).to.be.true;
+        done();
+      });
+    })
+  });
 });

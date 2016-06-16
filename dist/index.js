@@ -520,6 +520,14 @@ require("source-map-support").install();
 	  }
 
 	  _createClass(Response, [{
+	    key: "init",
+	    value: function init() {
+	      this.component.channelManager.channels.forEach(function (channel) {
+	        channel.status = STATUS.INIT;
+	        channel.output = null;
+	      });
+	    }
+	  }, {
 	    key: "prepare",
 	    value: function prepare(output, channelName) {
 	      if (this.component.rootComponent.status === STATUS.PROCESS) {
@@ -563,6 +571,7 @@ require("source-map-support").install();
 	  }, {
 	    key: "send",
 	    value: function send(output, channelName) {
+	      this.init();
 	      this.prepare(output, channelName);
 	      this.done();
 	    }
