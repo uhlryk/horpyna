@@ -204,7 +204,7 @@ require("source-map-support").install();
 	    /**
 	     * bind parent component with this component
 	     * @param component parent component
-	     * @param channel parent channel name
+	     * @param channelName parent channel name
 	     */
 
 	  }, {

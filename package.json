@@ -1,10 +1,10 @@
 {
   "name": "horpyna",
-  "version": "0.3.3",
+  "version": "0.3.4i",
   "description": "promised modules flow control core library",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/uhlryk/horpyna#readme",
   "devDependencies": {
-    "babel": "^6.5.2",
+    "babel-cli": "^6.10.1",
     "babel-core": "^6.9.1",
     "babel-eslint": "^6.0.4",
     "babel-loader": "^6.2.4",
@@ -44,7 +44,6 @@
     "gulp": "^3.9.1",
     "gulp-sequence": "^0.4.5",
     "gulp-shell": "^0.5.2",
-    "istanbul": "^0.4.3",
     "json-loader": "^0.5.4",
     "mocha": "^2.5.3",
     "path": "^0.12.7",

@@ -41,7 +41,6 @@ gulp.task('_watch', function(done) {
 
 
 gulp.task('_test', shell.task(['./node_modules/.bin/mocha --compilers js:babel-register --check-leaks --timeout 3000 tests']));
-gulp.task('_coverage-test-server', shell.task(['./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha tests/server --print both --recursive -- -u exports -R spec && open coverage/lcov-report/index.html']));
 
 gulp.task('test',function(done) {
   sequence(
@@ -55,7 +54,7 @@ gulp.task('coverage', function(done){
   sequence(
     '_delete-dist',
     '_compile-prod',
-    '_coverage-test-server',
+    '_coverage',
     done
   )
 });
