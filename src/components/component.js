@@ -36,7 +36,7 @@ class Component {
   _runComponentFunction(request) {
     if(typeof this.componentFunction === "function") {
       this.status = STATUS.PROCESS;
-      this.componentFunction(request, new Response(this));
+      setTimeout(() => this.componentFunction(request, new Response(this)), 0);
     } else {
       throw new Error(ERROR.NO_COMPONENT_FUNCTION);
     }

@@ -154,9 +154,13 @@ require("source-map-support").install();
 	  }, {
 	    key: "_runComponentFunction",
 	    value: function _runComponentFunction(request) {
+	      var _this2 = this;
+
 	      if (typeof this.componentFunction === "function") {
 	        this.status = STATUS.PROCESS;
-	        this.componentFunction(request, new _response2.default(this));
+	        setTimeout(function () {
+	          return _this2.componentFunction(request, new _response2.default(_this2));
+	        }, 0);
 	      } else {
 	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
 	      }
