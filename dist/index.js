@@ -115,11 +115,11 @@ require("source-map-support").install();
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Component = function () {
-	  function Component(componentFunction) {
+	  function Component(onProcess) {
 	    _classCallCheck(this, Component);
 
-	    if (typeof componentFunction === "function") {
-	      this.componentFunction = componentFunction;
+	    if (typeof onProcess === "function") {
+	      this.onProcess = onProcess;
 	    }
 	    this.parentChannelManager = new _parentChannelManager2.default();
 	    this.channelManager = new _channelManager2.default(this);
@@ -143,23 +143,23 @@ require("source-map-support").install();
 	      var _this = this;
 
 	      return this.rootComponent.run(function () {
-	        return _this._runComponentFunction({ input: input });
+	        return _this._runProcess({ input: input });
 	      });
 	    }
 
 	    /**
-	     * Start to run component logic from this.componentFunction.
+	     * Start to run component logic from this.onProcess.
 	     */
 
 	  }, {
-	    key: "_runComponentFunction",
-	    value: function _runComponentFunction(request) {
+	    key: "_runProcess",
+	    value: function _runProcess(request) {
 	      var _this2 = this;
 
-	      if (typeof this.componentFunction === "function") {
+	      if (typeof this.onProcess === "function") {
 	        this.status = STATUS.PROCESS;
 	        setTimeout(function () {
-	          return _this2.componentFunction(request, new _response2.default(_this2));
+	          return _this2.onProcess(request, new _response2.default(_this2));
 	        }, 0);
 	      } else {
 	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
@@ -175,7 +175,7 @@ require("source-map-support").install();
 	    key: "onParentReady",
 	    value: function onParentReady() {
 	      if (this.parentChannelManager.isDone()) {
-	        this._runComponentFunction(this.parentChannelManager.getOutput());
+	        this._runProcess(this.parentChannelManager.getOutput());
 	      }
 	    }
 	  }, {

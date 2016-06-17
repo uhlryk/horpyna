@@ -64,7 +64,7 @@ describe("Basic functionality", () => {
           super();
           this.final();
         }
-        componentFunction(request, response) {
+        onProcess(request, response) {
           spyCustomFunc();
           response.send(TEST_MESSAGE_A);
         }

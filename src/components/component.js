@@ -8,9 +8,9 @@ import * as CHANNEL from "../constants/channels";
 
 class Component {
 
-  constructor(componentFunction) {
-    if(typeof componentFunction === "function") {
-      this.componentFunction = componentFunction;
+  constructor(onProcess) {
+    if(typeof onProcess === "function") {
+      this.onProcess = onProcess;
     }
     this.parentChannelManager = new ParentChannelManager();
     this.channelManager = new ChannelManager(this);
@@ -27,16 +27,16 @@ class Component {
    * @returns Promise promise is resolved when every component in tree is done.
    */
   run(input) {
-    return this.rootComponent.run(() => this._runComponentFunction({ input }));
+    return this.rootComponent.run(() => this._runProcess({ input }));
   }
 
   /**
-   * Start to run component logic from this.componentFunction.
+   * Start to run component logic from this.onProcess.
    */
-  _runComponentFunction(request) {
-    if(typeof this.componentFunction === "function") {
+  _runProcess(request) {
+    if(typeof this.onProcess === "function") {
       this.status = STATUS.PROCESS;
-      setTimeout(() => this.componentFunction(request, new Response(this)), 0);
+      setTimeout(() => this.onProcess(request, new Response(this)), 0);
     } else {
       throw new Error(ERROR.NO_COMPONENT_FUNCTION);
     }
@@ -48,7 +48,7 @@ class Component {
    */
   onParentReady() {
     if (this.parentChannelManager.isDone()) {
-      this._runComponentFunction(this.parentChannelManager.getOutput());
+      this._runProcess(this.parentChannelManager.getOutput());
     }
   }
 
