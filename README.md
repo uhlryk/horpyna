@@ -26,7 +26,7 @@ each component. And then it is funniest part. You can join components together, 
 joined components. You can decorate components with other components to modify it functionality. 
 
 For example you can have component which consist of 5 other components. You can reuse it, and remove some inner components
-and replace it with other components.
+and replace them with other components.
 
 It is also easy to test. Each component have input and output. In test you set different input data and test
  output values.

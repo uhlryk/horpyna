@@ -19,7 +19,14 @@ class Component {
     this.finalComponentFlag = false;
     this.rootComponent = new Root();
     this.rootComponent.addComponent(this);
+    this.onInit();
   }
+
+  /**
+   * for override
+   * It is for initialize component
+   */
+  onInit() {}
 
   /**
    * triggered once from root component. It start all process.

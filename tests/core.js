@@ -55,8 +55,7 @@ describe("Basic functionality", () => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
       let ExtendComponent = class extends Horpyna.Component {
-        constructor() {
-          super();
+        onInit() {
           this.final();
         }
         onProcess(request, response) {

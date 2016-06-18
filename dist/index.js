@@ -128,16 +128,26 @@ require("source-map-support").install();
 	    this.finalComponentFlag = false;
 	    this.rootComponent = new _root2.default();
 	    this.rootComponent.addComponent(this);
+	    this.onInit();
 	  }
 
 	  /**
-	   * triggered once from root component. It start all process.
-	   * It need to have connection ready.
-	   * @returns Promise promise is resolved when every component in tree is done.
+	   * for override
+	   * It is for initialize component
 	   */
 
 
 	  _createClass(Component, [{
+	    key: "onInit",
+	    value: function onInit() {}
+
+	    /**
+	     * triggered once from root component. It start all process.
+	     * It need to have connection ready.
+	     * @returns Promise promise is resolved when every component in tree is done.
+	     */
+
+	  }, {
 	    key: "run",
 	    value: function run(input, endCallback) {
 	      this.rootComponent.run(endCallback);
@@ -258,7 +268,6 @@ require("source-map-support").install();
 	    /**
 	     * triggered once from root component. It start all process.
 	     * It need to have connection ready.
-	     * @returns none.
 	     */
 
 	  }, {
