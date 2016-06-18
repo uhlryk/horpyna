@@ -1,12 +1,9 @@
 import sinon from "sinon";
 import chai from "chai";
 import chaiThings from "chai-things";
-import chaiAsPromised from "chai-as-promised";
-import Promise from "bluebird";
 import Horpyna from "../src/index";
 
 chai.use(chaiThings);
-chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const TEST_MESSAGE_A = "messageA";
@@ -16,7 +13,7 @@ describe("Basic functionality", () => {
 
   describe("Check basic single block", () => {
 
-    it("should resolve promise when function logic is in constructor", done => {
+    it("should finish chain when process function is constructor argument", done => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
       let component = new Horpyna.Component((request, response) => {
@@ -24,8 +21,7 @@ describe("Basic functionality", () => {
         response.send(TEST_MESSAGE_A);
       });
       component.final();
-      let promise = component.run();
-      promise.then(output => {
+      component.run(null, output => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -45,8 +41,7 @@ describe("Basic functionality", () => {
         response.done();
       });
       component.final();
-      let promise = component.run();
-      promise.then(output => {
+      component.run(null, output => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -70,8 +65,7 @@ describe("Basic functionality", () => {
         }
       };
       let component = new ExtendComponent();
-      let promise = component.run();
-      promise.then(output => {
+      let promise = component.run(null, output => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -83,11 +77,12 @@ describe("Basic functionality", () => {
 
     it("should throw error if component doesn't have function logic", done => {
       let component = new Horpyna.Component();
-      let promise = component.run();
-      promise.catch(e => {
+      try {
+        component.run();
+      } catch(e) {
         expect(e).to.be.deep.equal(new Error());
         done();
-      });
+      }
     });
 
 
@@ -133,8 +128,7 @@ describe("Basic functionality", () => {
       componentC.final();
       componentB.bind(componentA);
       componentC.bind(componentB);
-      let promise = componentA.run();
-      promise.then((response) => {
+      componentA.run(null, output => {
         spyComponent();
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
@@ -144,7 +138,6 @@ describe("Basic functionality", () => {
         expect(spyC.calledBefore(spyComponent)).to.be.true;
         done();
       });
-
     });
 
   });
@@ -186,8 +179,7 @@ describe("Basic functionality", () => {
       componentC.bind(componentA);
       componentD.bind(componentB);
       componentD.bind(componentC);
-      let promise = componentA.run();
-      promise.then((response) => {
+      componentA.run(null, output => {
         spyComponent();
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
@@ -200,7 +192,6 @@ describe("Basic functionality", () => {
         expect(spyD.calledBefore(spyComponent)).to.be.true;
         done();
       });
-
     });
 
   });
@@ -225,8 +216,7 @@ describe("Basic functionality", () => {
       componentB.bind(componentA, CHANNEL_AA);
       componentB.final();
 
-      let promise = componentA.run();
-      promise.then((response) => {
+      componentA.run(null, otput => {
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
         expect(spyA.calledBefore(spyB)).to.be.true;
@@ -268,8 +258,7 @@ describe("Basic functionality", () => {
       });
       componentC.bind(componentA, CHANNEL_AB);
       componentC.final();
-      let promise = componentA.run();
-      promise.then((response) => {
+      componentA.run(null, output => {
         expect(spyAA.calledOnce).to.be.true;
         expect(spyAB.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;

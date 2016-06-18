@@ -1,5 +1,4 @@
 import * as STATUS from "../constants/statuses";
-import Promise from "bluebird";
 
 class Root {
   constructor() {
@@ -14,20 +13,17 @@ class Root {
   /**
    * triggered once from root component. It start all process.
    * It need to have connection ready.
-   * @returns Promise promise is resolved when every component in tree is done.
    */
-  run(callback) {
-    this.promise = new Promise((resolve) => {
-      this.resolve = resolve;
-      this.status = STATUS.PROCESS;
-      callback();
-    });
-    return this.promise;
+  run(endCallback) {
+    this.endCallback = endCallback;
+    this.status = STATUS.PROCESS;
   }
 
   finish(output) {
     this.status = STATUS.DONE;
-    this.resolve(output);
+    if(this.endCallback) {
+      this.endCallback(output);
+    }
   }
 
   /**

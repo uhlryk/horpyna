@@ -26,8 +26,9 @@ class Component {
    * It need to have connection ready.
    * @returns Promise promise is resolved when every component in tree is done.
    */
-  run(input) {
-    return this.rootComponent.run(() => this._runProcess({ input }));
+  run(input, endCallback) {
+    this.rootComponent.run(endCallback);
+    this._runProcess({ input });
   }
 
   /**

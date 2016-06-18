@@ -84,19 +84,19 @@ require("source-map-support").install();
 
 	var _root2 = _interopRequireDefault(_root);
 
-	var _channelManager = __webpack_require__(6);
+	var _channelManager = __webpack_require__(5);
 
 	var _channelManager2 = _interopRequireDefault(_channelManager);
 
-	var _parentChannelManager = __webpack_require__(8);
+	var _parentChannelManager = __webpack_require__(7);
 
 	var _parentChannelManager2 = _interopRequireDefault(_parentChannelManager);
 
-	var _response = __webpack_require__(9);
+	var _response = __webpack_require__(8);
 
 	var _response2 = _interopRequireDefault(_response);
 
-	var _errors = __webpack_require__(11);
+	var _errors = __webpack_require__(10);
 
 	var ERROR = _interopRequireWildcard(_errors);
 
@@ -104,7 +104,7 @@ require("source-map-support").install();
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
-	var _channels = __webpack_require__(10);
+	var _channels = __webpack_require__(9);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
@@ -139,12 +139,9 @@ require("source-map-support").install();
 
 	  _createClass(Component, [{
 	    key: "run",
-	    value: function run(input) {
-	      var _this = this;
-
-	      return this.rootComponent.run(function () {
-	        return _this._runProcess({ input: input });
-	      });
+	    value: function run(input, endCallback) {
+	      this.rootComponent.run(endCallback);
+	      this._runProcess({ input: input });
 	    }
 
 	    /**
@@ -154,12 +151,12 @@ require("source-map-support").install();
 	  }, {
 	    key: "_runProcess",
 	    value: function _runProcess(request) {
-	      var _this2 = this;
+	      var _this = this;
 
 	      if (typeof this.onProcess === "function") {
 	        this.status = STATUS.PROCESS;
 	        setTimeout(function () {
-	          return _this2.onProcess(request, new _response2.default(_this2));
+	          return _this.onProcess(request, new _response2.default(_this));
 	        }, 0);
 	      } else {
 	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
@@ -240,12 +237,6 @@ require("source-map-support").install();
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
-	var _bluebird = __webpack_require__(5);
-
-	var _bluebird2 = _interopRequireDefault(_bluebird);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -267,26 +258,22 @@ require("source-map-support").install();
 	    /**
 	     * triggered once from root component. It start all process.
 	     * It need to have connection ready.
-	     * @returns Promise promise is resolved when every component in tree is done.
+	     * @returns none.
 	     */
 
 	  }, {
 	    key: "run",
-	    value: function run(callback) {
-	      var _this = this;
-
-	      this.promise = new _bluebird2.default(function (resolve) {
-	        _this.resolve = resolve;
-	        _this.status = STATUS.PROCESS;
-	        callback();
-	      });
-	      return this.promise;
+	    value: function run(endCallback) {
+	      this.endCallback = endCallback;
+	      this.status = STATUS.PROCESS;
 	    }
 	  }, {
 	    key: "finish",
 	    value: function finish(output) {
 	      this.status = STATUS.DONE;
-	      this.resolve(output);
+	      if (this.endCallback) {
+	        this.endCallback(output);
+	      }
 	    }
 
 	    /**
@@ -321,12 +308,6 @@ require("source-map-support").install();
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	module.exports = require("bluebird");
-
-/***/ },
-/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -337,7 +318,7 @@ require("source-map-support").install();
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _channel = __webpack_require__(7);
+	var _channel = __webpack_require__(6);
 
 	var _channel2 = _interopRequireDefault(_channel);
 
@@ -373,7 +354,7 @@ require("source-map-support").install();
 	exports.default = ChannelManager;
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -421,7 +402,7 @@ require("source-map-support").install();
 	exports.default = Channel;
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -432,7 +413,7 @@ require("source-map-support").install();
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _channel = __webpack_require__(7);
+	var _channel = __webpack_require__(6);
 
 	var _channel2 = _interopRequireDefault(_channel);
 
@@ -489,7 +470,7 @@ require("source-map-support").install();
 	exports.default = ParentChannelManager;
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -504,7 +485,7 @@ require("source-map-support").install();
 
 	var STATUS = _interopRequireWildcard(_statuses);
 
-	var _channels = __webpack_require__(10);
+	var _channels = __webpack_require__(9);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
@@ -583,7 +564,7 @@ require("source-map-support").install();
 	exports.default = Response;
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -594,7 +575,7 @@ require("source-map-support").install();
 	var DEFAULT_CHANNEL = exports.DEFAULT_CHANNEL = "default";
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
