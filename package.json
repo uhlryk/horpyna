@@ -1,6 +1,6 @@
 {
   "name": "horpyna",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "promised modules flow control core library",
   "main": "index.js",
   "scripts": {
