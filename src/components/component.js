@@ -8,10 +8,7 @@ import * as CHANNEL from "../constants/channels";
 
 class Component {
 
-  constructor(onProcess) {
-    if(typeof onProcess === "function") {
-      this.onProcess = onProcess;
-    }
+  constructor() {
     this.parentChannelManager = new ParentChannelManager();
     this.channelManager = new ChannelManager(this);
     this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
@@ -28,6 +25,10 @@ class Component {
    */
   onInit() {}
 
+  onProcess(request, response) {
+    response.send(request.input);
+  }
+
   /**
    * triggered once from root component. It start all process.
    * It need to have connection ready.
@@ -42,12 +43,8 @@ class Component {
    * Start to run component logic from this.onProcess.
    */
   _runProcess(request) {
-    if(typeof this.onProcess === "function") {
-      this.status = STATUS.PROCESS;
-      setTimeout(() => this.onProcess(request, new Response(this)), 0);
-    } else {
-      throw new Error(ERROR.NO_COMPONENT_FUNCTION);
-    }
+    this.status = STATUS.PROCESS;
+    setTimeout(() => this.onProcess(request, new Response(this)), 0);
   }
 
   /**

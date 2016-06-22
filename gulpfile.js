@@ -20,6 +20,7 @@ function onBuild(done) {
     }
   }
 }
+
 gulp.task('_delete-dist', function(done) {
   delPath(['./dist/']).then(function() {
     done();
@@ -50,14 +51,7 @@ gulp.task('test',function(done) {
     done
   )
 });
-gulp.task('coverage', function(done){
-  sequence(
-    '_delete-dist',
-    '_compile-prod',
-    '_coverage',
-    done
-  )
-});
+
 gulp.task('prod', function(done) {
   sequence(
     '_delete-dist',
@@ -65,6 +59,7 @@ gulp.task('prod', function(done) {
     done
   )
 });
+
 gulp.task('dev', function(done) {
   sequence(
     '_delete-dist',

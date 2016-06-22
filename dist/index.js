@@ -115,12 +115,9 @@ require("source-map-support").install();
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Component = function () {
-	  function Component(onProcess) {
+	  function Component() {
 	    _classCallCheck(this, Component);
 
-	    if (typeof onProcess === "function") {
-	      this.onProcess = onProcess;
-	    }
 	    this.parentChannelManager = new _parentChannelManager2.default();
 	    this.channelManager = new _channelManager2.default(this);
 	    this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
@@ -140,6 +137,11 @@ require("source-map-support").install();
 	  _createClass(Component, [{
 	    key: "onInit",
 	    value: function onInit() {}
+	  }, {
+	    key: "onProcess",
+	    value: function onProcess(request, response) {
+	      response.send(request.input);
+	    }
 
 	    /**
 	     * triggered once from root component. It start all process.
@@ -163,14 +165,10 @@ require("source-map-support").install();
 	    value: function _runProcess(request) {
 	      var _this = this;
 
-	      if (typeof this.onProcess === "function") {
-	        this.status = STATUS.PROCESS;
-	        setTimeout(function () {
-	          return _this.onProcess(request, new _response2.default(_this));
-	        }, 0);
-	      } else {
-	        throw new Error(ERROR.NO_COMPONENT_FUNCTION);
-	      }
+	      this.status = STATUS.PROCESS;
+	      setTimeout(function () {
+	        return _this.onProcess(request, new _response2.default(_this));
+	      }, 0);
 	    }
 
 	    /**
@@ -588,11 +586,6 @@ require("source-map-support").install();
 /***/ function(module, exports) {
 
 	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var NO_COMPONENT_FUNCTION = exports.NO_COMPONENT_FUNCTION = "Component doesn't have function logic";
 
 /***/ }
 /******/ ])));
