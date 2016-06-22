@@ -8,7 +8,7 @@ import * as CHANNEL from "../constants/channels";
 
 class Component {
 
-  constructor() {
+  constructor(options) {
     this.parentChannelManager = new ParentChannelManager();
     this.channelManager = new ChannelManager(this);
     this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
@@ -16,14 +16,14 @@ class Component {
     this.finalComponentFlag = false;
     this.rootComponent = new Root();
     this.rootComponent.addComponent(this);
-    this.onInit();
+    this.onInit(options);
   }
 
   /**
    * for override
    * It is for initialize component
    */
-  onInit() {}
+  onInit(options) {}
 
   onProcess(request, response) {
     response.send(request.input);

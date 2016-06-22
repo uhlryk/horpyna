@@ -115,7 +115,7 @@ require("source-map-support").install();
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Component = function () {
-	  function Component() {
+	  function Component(options) {
 	    _classCallCheck(this, Component);
 
 	    this.parentChannelManager = new _parentChannelManager2.default();
@@ -125,7 +125,7 @@ require("source-map-support").install();
 	    this.finalComponentFlag = false;
 	    this.rootComponent = new _root2.default();
 	    this.rootComponent.addComponent(this);
-	    this.onInit();
+	    this.onInit(options);
 	  }
 
 	  /**
@@ -136,7 +136,7 @@ require("source-map-support").install();
 
 	  _createClass(Component, [{
 	    key: "onInit",
-	    value: function onInit() {}
+	    value: function onInit(options) {}
 	  }, {
 	    key: "onProcess",
 	    value: function onProcess(request, response) {

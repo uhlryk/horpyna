@@ -33,6 +33,16 @@ describe("Basic functionality", () => {
       });
     });
 
+    it("should pass options to onInit", done => {
+      let Component =  class extends Horpyna.Component {
+        onInit(options) {
+          expect(options).to.be.equal(TEST_MESSAGE_A);
+          done();
+        }
+      };
+      new Component(TEST_MESSAGE_A);
+    });
+
     it("should output last response from response.prepare", done => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
