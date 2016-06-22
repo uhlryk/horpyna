@@ -35,11 +35,101 @@ It is also easy to test. Each component have input and output. In test you set d
 ## INSTALLATION
 
     npm install horpyna
-    
+
 ## USAGE 
 *in ES6 syntax but you can use it with ES5 too*
 
-[todo]
+### EXTENDING COMPONENT
+
+*You have to separate your code into smallest code blocks, then create new classes which extending from Horpyna.Component
+and put in each class your code block*
+
+
+    import Horpyna from "horpyna"; 
+    
+    class CustomComponent1 extends Horpyna.Component {
+    
+      onInit() {
+        //custom configuration, for example creation of additional channels
+      }
+      onProcess(request, response) {
+        //input data is available from request.input
+        //when component finish calculating response send it via response.send(componentResponse)
+      }
+      
+    }
+    
+    export default CustomCOmponent1;
+
+YOU SHOULD BUILD COMPONENTS WITH OPTIONS WHICH SHOULD ALLOW YOUR COMPONENTS TO BE FLEXIBLE,
+GREAT IDEA IS TO TREAT SOME PARAMS FROM PARENT COMPONENTS AS OPTIONS WHICH CHANGING COMPONENT BEHAVIOR,
+
+if you wish create your components `inline` :
+
+    let CustomComponent1 = class extends Horpyna.Component {
+      onInit() { ... }
+      onProcess(request, response) { ... }
+    }
+    
+or even create instances from inline classes
+
+    let customComponent1 = new class extends Horpyna.Component {
+      onInit() { ... }
+      onProcess(request, response) { ... }
+    }
+
+
+### BUILDING COMPONENT CHAINS
+    
+*Your work consists of two parts: create components, create components chains based on your components (or use external components)*
+
+Let assume that we have few components:
+And we want to validate incoming data, 
+if data is wrong then send error message, 
+if data is  ok then use it to take users from db,
+If there is no users then send error message
+If there is one user make some calculation.
+If there are manu users calculate somethig else.
+    
+    import ValidateParams from "validateParams";
+    import getEnityFromDb from "GetEnityFromDb";
+    import CalculateSomething from "calculateSomething";
+    import SendResponse from "sendResponse";
+    
+    let validateParamsComponent = new ValidateParams();
+    
+    let validateErrorMessageComponent = new SendResponse(options);
+    validateErrorMessageComponent.bind(validateParamsComponent, "customErrorChannel");
+    
+    let getUserList = new GetEntityFromDb(options);
+    getUserList.bind(validateParamsComponent);
+    
+    let zeroUsersErrorMessageComponent = new SendResponse(options);
+    zeroUsersErrorMessageComponent.bind(getUserList, "otherCustomErrorChannel");
+    
+    let calculateWhenOneEntity = new CalculateSomething(options);
+    calculateWhenOneEntity.bind(getUserList, "oneEntityChannel");
+    calculateWhenOneEntity.final();
+    
+    let calculateWhenManyEntities = new CalculateSomething(options);
+    calculateWhenManyEntities.bind(getUserList, "manyEntitiesChannel");
+    calculateWhenManyEntities.final();
+    
+    validateParamsComponent.run(startParameters, output => {
+      //callback when chain finished calculation
+    });
+
+
+You can create one component which will contain this component chain. And you can easy build new component chains
+based on simple components or complex components.
+
+[todo: example of complex component chain]
+
+[todo: use complex components and unbinding from it some subcomponents]
+
+## API
+
+[todo: api]
 
 ## LICENSE
 
