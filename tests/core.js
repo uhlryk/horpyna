@@ -51,20 +51,18 @@ describe("Basic functionality", () => {
       });
     });
 
-    it("should resolve promise when function logic is as extend class method", done => {
+    it("should  output last response when function logic is as extend class method", done => {
       let spyComponent = sinon.spy();
       let spyCustomFunc = sinon.spy();
       let ExtendComponent = class extends Horpyna.Component {
-        onInit() {
-          this.final();
-        }
         onProcess(request, response) {
           spyCustomFunc();
           response.send(TEST_MESSAGE_A);
         }
       };
       let component = new ExtendComponent();
-      let promise = component.run(null, output => {
+      component.final();
+      component.run(null, output => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -97,7 +95,62 @@ describe("Basic functionality", () => {
       componentB.final();
       componentB.bind(componentA);
       componentA.run(TEST_MESSAGE_A);
-    })
+    });
+
+    it("next component should have request object with string input and count 1 if one parent send response", done => {
+      let ExtendComponentParent = class extends Horpyna.Component {
+        onProcess(request, response) {
+          response.send(TEST_MESSAGE_A);
+        }
+      };
+      let ExtendComponent = class extends Horpyna.Component {
+        onProcess(request, response) {
+          expect(request.input).to.be.equal(TEST_MESSAGE_A);
+          expect(request.length).to.be.equal(1);
+          done();
+        }
+      };
+      let componentParent = new ExtendComponentParent();
+      let component = new ExtendComponent();
+      component.bind(componentParent);
+      componentParent.run();
+    });
+
+
+    it("next component should have request object with string array input and count 2 if one parent send response", done => {
+      let ExtendComponentGrandParent = class extends Horpyna.Component {
+        onProcess(request, response) {
+          response.send();
+        }
+      };
+      let ExtendComponentParentA = class extends Horpyna.Component {
+        onProcess(request, response) {
+          response.send(TEST_MESSAGE_A);
+        }
+      };
+      let ExtendComponentParentB = class extends Horpyna.Component {
+        onProcess(request, response) {
+          response.send(TEST_MESSAGE_B);
+        }
+      };
+      let ExtendComponent = class extends Horpyna.Component {
+        onProcess(request, response) {
+          expect(request.input.length).to.be.equal(2);
+          expect(request.length).to.be.equal(2);
+          done();
+        }
+      };
+      let componentGrandParent = new ExtendComponentGrandParent();
+      let componentParentA = new ExtendComponentParentA();
+      let componentParentB = new ExtendComponentParentB();
+      let component = new ExtendComponent();
+      componentParentA.bind(componentGrandParent);
+      componentParentB.bind(componentGrandParent);
+      component.bind(componentParentA);
+      component.bind(componentParentB);
+      componentGrandParent.run();
+    });
+
   });
 
   describe("Check chain components", () => {
