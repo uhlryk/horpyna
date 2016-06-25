@@ -1,7 +1,7 @@
 {
   "name": "horpyna",
-  "version": "0.7.1",
-  "description": "promised modules flow control core library",
+  "version": "0.7.2",
+  "description": "utility to manage async processes",
   "main": "index.js",
   "scripts": {
     "test": "gulp test"
