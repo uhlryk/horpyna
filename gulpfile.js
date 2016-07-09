@@ -52,7 +52,7 @@ gulp.task('test',function(done) {
   )
 });
 
-gulp.task('prod', function(done) {
+gulp.task('build', function(done) {
   sequence(
     '_delete-dist',
     '_compile-prod',

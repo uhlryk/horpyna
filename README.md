@@ -131,6 +131,31 @@ based on simple components or complex components.
 
 [todo: api]
 
+## DEVELOPMENT
+
+### COMMANDS 
+
+If you wish to help with this module, below there are instructions.
+
+Run dev build and watch on files changes:
+
+    npm run dev
+    
+Run production build:
+
+    npm run build
+    
+Run tests (they run build before):
+
+    npm test
+
+
+### RULES
+
+ 1. New functionality should be coveraged by tests. Tests are in tests directory
+ 
+ 2. When you finished, run build `npm run build` (repository also storage build)
+ 
 ## LICENSE
 
 MIT
