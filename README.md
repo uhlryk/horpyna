@@ -53,7 +53,7 @@ and put in each class your code block*
         //custom configuration, for example creation of additional channels
       }
       onProcess(request, response) {
-        //input data is available from request.input
+        //input data is available from request.data
         //when component finish calculating response send it via response.send(componentResponse)
       }
       
@@ -129,7 +129,51 @@ based on simple components or complex components.
 
 ## API
 
-[todo: api]
+### Component
+
+#### constructor(options)
+
+#### onInit(options)
+
+#### onProcess(request:Request, response:Response)
+
+#### run(initData, endCallback)
+
+#### onParentReady()
+
+#### getChannel(channelName):Channel
+
+#### createChannel(channelName)
+
+#### final()
+
+#### bind(component:Component, channelName)
+
+### Channel
+
+#### constructor(component, name)
+
+#### addComponent(component)
+
+#### getComponentList()
+
+### Request
+
+#### constructor(data)
+
+#### data
+
+### Response
+
+#### constructor(component)
+
+#### init()
+
+#### prepare(data, channelName)
+
+#### done()
+
+#### send(data, channelName)
 
 ## DEVELOPMENT
 
