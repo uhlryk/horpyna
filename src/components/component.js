@@ -27,7 +27,7 @@ class Component {
   onInit(options) {}
 
   onProcess(request, response) {
-    response.send(request.input);
+    response.send(request.data);
   }
 
   /**
@@ -35,17 +35,17 @@ class Component {
    * It need to have connection ready.
    * @returns Promise promise is resolved when every component in tree is done.
    */
-  run(input, endCallback) {
+  run(inputData, endCallback) {
     this.rootComponent.run(endCallback);
-    this._runProcess([input]);
+    this._runProcess([inputData]);
   }
 
   /**
    * Start to run component logic from this.onProcess.
    */
-  _runProcess(inputList) {
+  _runProcess(inputDataList) {
     this.status = STATUS.PROCESS;
-    setTimeout(() => this.onProcess(new Request(inputList), new Response(this)), 0);
+    setTimeout(() => this.onProcess(new Request(inputDataList), new Response(this)), 0);
   }
 
   /**
@@ -54,7 +54,7 @@ class Component {
    */
   onParentReady() {
     if (this.parentChannelManager.isDone()) {
-      this._runProcess(this.parentChannelManager.getOutput());
+      this._runProcess(this.parentChannelManager.getChannelsData());
     }
   }
 

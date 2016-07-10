@@ -10,8 +10,8 @@ class ParentChannelManager {
     this.channels.push(channel);
   }
 
-  getOutput() {
-    return this.channels.map(channel => channel.output);
+  getChannelsData() {
+    return this.channels.map(channel => channel.data);
   }
 
   isDone() {

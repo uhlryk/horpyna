@@ -1,6 +1,10 @@
 import * as STATUS from "../constants/statuses";
 import * as CHANNEL from "../constants/channels";
 
+/**
+ * Object which is passed to component onProcess method.
+ * It allow to set responses to channels of components and then pass it to child components in Request
+ */
 class Response {
   constructor(component) {
     this.component = component;
@@ -9,16 +13,16 @@ class Response {
   init() {
     this.component.channelManager.channels.forEach(channel => {
       channel.status = STATUS.INIT;
-      channel.output = null;
+      channel.data = null;
     });
   }
 
-  prepare(output, channelName) {
+  prepare(data, channelName) {
     if(this.component.rootComponent.status === STATUS.PROCESS) {
       channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
       let channel = this.component.getChannel(channelName);
       channel.status = STATUS.DONE;
-      channel.output = output;
+      channel.data = data;
     }
   }
 
@@ -43,9 +47,9 @@ class Response {
     }
   }
 
-  send(output, channelName) {
+  send(data, channelName) {
     this.init();
-    this.prepare(output, channelName);
+    this.prepare(data, channelName);
     this.done();
   }
 

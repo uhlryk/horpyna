@@ -6,7 +6,7 @@ class Channel {
     this.name = name;
     this.status = STATUS.INIT;
     this.connectedChildrenComponents = [];
-    this.output = null;
+    this.data = null;
   }
 
   addComponent(component) {

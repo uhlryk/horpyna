@@ -144,7 +144,7 @@ require("source-map-support").install();
 	  }, {
 	    key: "onProcess",
 	    value: function onProcess(request, response) {
-	      response.send(request.input);
+	      response.send(request.data);
 	    }
 
 	    /**
@@ -155,9 +155,9 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "run",
-	    value: function run(input, endCallback) {
+	    value: function run(inputData, endCallback) {
 	      this.rootComponent.run(endCallback);
-	      this._runProcess([input]);
+	      this._runProcess([inputData]);
 	    }
 
 	    /**
@@ -166,12 +166,12 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "_runProcess",
-	    value: function _runProcess(inputList) {
+	    value: function _runProcess(inputDataList) {
 	      var _this = this;
 
 	      this.status = STATUS.PROCESS;
 	      setTimeout(function () {
-	        return _this.onProcess(new _request2.default(inputList), new _response2.default(_this));
+	        return _this.onProcess(new _request2.default(inputDataList), new _response2.default(_this));
 	      }, 0);
 	    }
 
@@ -184,7 +184,7 @@ require("source-map-support").install();
 	    key: "onParentReady",
 	    value: function onParentReady() {
 	      if (this.parentChannelManager.isDone()) {
-	        this._runProcess(this.parentChannelManager.getOutput());
+	        this._runProcess(this.parentChannelManager.getChannelsData());
 	      }
 	    }
 	  }, {
@@ -392,7 +392,7 @@ require("source-map-support").install();
 	    this.name = name;
 	    this.status = STATUS.INIT;
 	    this.connectedChildrenComponents = [];
-	    this.output = null;
+	    this.data = null;
 	  }
 
 	  _createClass(Channel, [{
@@ -451,10 +451,10 @@ require("source-map-support").install();
 	      this.channels.push(channel);
 	    }
 	  }, {
-	    key: "getOutput",
-	    value: function getOutput() {
+	    key: "getChannelsData",
+	    value: function getChannelsData() {
 	      return this.channels.map(function (channel) {
-	        return channel.output;
+	        return channel.data;
 	      });
 	    }
 	  }, {
@@ -500,6 +500,11 @@ require("source-map-support").install();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	/**
+	 * Object which is passed to component onProcess method.
+	 * It allow to set responses to channels of components and then pass it to child components in Request
+	 */
+
 	var Response = function () {
 	  function Response(component) {
 	    _classCallCheck(this, Response);
@@ -512,17 +517,17 @@ require("source-map-support").install();
 	    value: function init() {
 	      this.component.channelManager.channels.forEach(function (channel) {
 	        channel.status = STATUS.INIT;
-	        channel.output = null;
+	        channel.data = null;
 	      });
 	    }
 	  }, {
 	    key: "prepare",
-	    value: function prepare(output, channelName) {
+	    value: function prepare(data, channelName) {
 	      if (this.component.rootComponent.status === STATUS.PROCESS) {
 	        channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
 	        var channel = this.component.getChannel(channelName);
 	        channel.status = STATUS.DONE;
-	        channel.output = output;
+	        channel.data = data;
 	      }
 	    }
 	  }, {
@@ -555,9 +560,9 @@ require("source-map-support").install();
 	    }
 	  }, {
 	    key: "send",
-	    value: function send(output, channelName) {
+	    value: function send(data, channelName) {
 	      this.init();
-	      this.prepare(output, channelName);
+	      this.prepare(data, channelName);
 	      this.done();
 	    }
 	  }]);
@@ -590,10 +595,20 @@ require("source-map-support").install();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var Request = function Request(outputList) {
+	/**
+	 * Request object which is passed to component onProcess method.
+	 * It contains calculated data from parent components channels
+	 */
+
+	var Request =
+	/**
+	 *
+	 * @param data array from parent components channels which are bind to this component
+	 */
+	function Request(data) {
 	  _classCallCheck(this, Request);
 
-	  this.input = outputList;
+	  this.data = data;
 	};
 
 	exports.default = Request;
