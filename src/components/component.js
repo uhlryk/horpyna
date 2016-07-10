@@ -2,6 +2,7 @@ import Root from "./root";
 import ChannelManager from "./channelManager";
 import ParentChannelManager from "./parentChannelManager";
 import Response from "./response";
+import Request from "./request";
 import * as ERROR from "../constants/errors";
 import * as STATUS from "../constants/statuses";
 import * as CHANNEL from "../constants/channels";
@@ -36,15 +37,15 @@ class Component {
    */
   run(input, endCallback) {
     this.rootComponent.run(endCallback);
-    this._runProcess({ input });
+    this._runProcess([input]);
   }
 
   /**
    * Start to run component logic from this.onProcess.
    */
-  _runProcess(request) {
+  _runProcess(inputList) {
     this.status = STATUS.PROCESS;
-    setTimeout(() => this.onProcess(request, new Response(this)), 0);
+    setTimeout(() => this.onProcess(new Request(inputList), new Response(this)), 0);
   }
 
   /**

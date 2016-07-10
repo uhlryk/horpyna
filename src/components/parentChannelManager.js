@@ -11,11 +11,7 @@ class ParentChannelManager {
   }
 
   getOutput() {
-    if(this.channels.length === 1) {
-      return { input: this.channels[0].output, length: 1 };
-    } else {
-      return { input: this.channels.map(channel => channel.output), length: this.channels.length };
-    }
+    return this.channels.map(channel => channel.output);
   }
 
   isDone() {

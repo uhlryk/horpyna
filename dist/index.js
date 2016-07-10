@@ -96,7 +96,11 @@ require("source-map-support").install();
 
 	var _response2 = _interopRequireDefault(_response);
 
-	var _errors = __webpack_require__(10);
+	var _request = __webpack_require__(10);
+
+	var _request2 = _interopRequireDefault(_request);
+
+	var _errors = __webpack_require__(11);
 
 	var ERROR = _interopRequireWildcard(_errors);
 
@@ -153,7 +157,7 @@ require("source-map-support").install();
 	    key: "run",
 	    value: function run(input, endCallback) {
 	      this.rootComponent.run(endCallback);
-	      this._runProcess({ input: input });
+	      this._runProcess([input]);
 	    }
 
 	    /**
@@ -162,12 +166,12 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "_runProcess",
-	    value: function _runProcess(request) {
+	    value: function _runProcess(inputList) {
 	      var _this = this;
 
 	      this.status = STATUS.PROCESS;
 	      setTimeout(function () {
-	        return _this.onProcess(request, new _response2.default(_this));
+	        return _this.onProcess(new _request2.default(inputList), new _response2.default(_this));
 	      }, 0);
 	    }
 
@@ -449,13 +453,9 @@ require("source-map-support").install();
 	  }, {
 	    key: "getOutput",
 	    value: function getOutput() {
-	      if (this.channels.length === 1) {
-	        return { input: this.channels[0].output, length: 1 };
-	      } else {
-	        return { input: this.channels.map(function (channel) {
-	            return channel.output;
-	          }), length: this.channels.length };
-	      }
+	      return this.channels.map(function (channel) {
+	        return channel.output;
+	      });
 	    }
 	  }, {
 	    key: "isDone",
@@ -542,16 +542,13 @@ require("source-map-support").install();
 	          });
 	        } else {
 	          (function () {
-	            var output = [];
+	            var doneChannelList = [];
 	            _this.component.channelManager.channels.forEach(function (channel) {
 	              if (channel.status === STATUS.DONE) {
-	                output.push(channel.output);
+	                doneChannelList.push(channel);
 	              }
 	            });
-	            if (output.length === 1) {
-	              output = output[0];
-	            }
-	            _this.component.rootComponent.finish(output);
+	            _this.component.rootComponent.finish(doneChannelList);
 	          })();
 	        }
 	      }
@@ -583,6 +580,26 @@ require("source-map-support").install();
 
 /***/ },
 /* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Request = function Request(outputList) {
+	  _classCallCheck(this, Request);
+
+	  this.input = outputList;
+	};
+
+	exports.default = Request;
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";

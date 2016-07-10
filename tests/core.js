@@ -23,12 +23,12 @@ describe("Basic functionality", () => {
         }
       };
       component.final();
-      component.run(null, output => {
+      component.run(null, channelList => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
-        expect(output).to.be.equal(TEST_MESSAGE_A);
+        expect(channelList[0].output).to.be.equal(TEST_MESSAGE_A);
         done();
       });
     });
@@ -55,21 +55,23 @@ describe("Basic functionality", () => {
         }
       };
       component.final();
-      component.run(null, output => {
+      component.run(null, channelList => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
-        expect(output).to.be.equal(TEST_MESSAGE_B);
+        expect(channelList[0].output).to.be.equal(TEST_MESSAGE_B);
         done();
       });
     });
 
-    it("should throw error if component doesn't have function logic", done => {
+    it("should output response from first channel list and response is single element array", done => {
       let component = new Horpyna.Component();
       component.final();
-      component.run(TEST_MESSAGE_A, output => {
-        expect(output).to.be.equal(TEST_MESSAGE_A);
+      component.run(TEST_MESSAGE_A, channelList => {
+        expect(channelList.length).to.be.equal(1);
+        expect(channelList[0].output.length).to.be.equal(1);
+        expect(channelList[0].output[0]).to.be.equal(TEST_MESSAGE_A);
         done();
       });
     });
@@ -78,12 +80,12 @@ describe("Basic functionality", () => {
     it("should return value to child component", done => {
       let componentA = new class extends Horpyna.Component {
         onProcess(request, response) {
-          response.send(request.input);
+          response.send(request.input[0]);
         }
       };
       let componentB = new class extends Horpyna.Component {
         onProcess(request, response) {
-          expect(request.input).to.be.equal(TEST_MESSAGE_A);
+          expect(request.input[0]).to.be.equal(TEST_MESSAGE_A);
           response.send();
           done();
         }
@@ -101,8 +103,8 @@ describe("Basic functionality", () => {
       };
       let component = new class extends Horpyna.Component {
         onProcess(request, response) {
-          expect(request.input).to.be.equal(TEST_MESSAGE_A);
-          expect(request.length).to.be.equal(1);
+          expect(request.input[0]).to.be.equal(TEST_MESSAGE_A);
+          expect(request.input.length).to.be.equal(1);
           done();
         }
       };
@@ -130,7 +132,6 @@ describe("Basic functionality", () => {
       let component = new class extends Horpyna.Component {
         onProcess(request, response) {
           expect(request.input.length).to.be.equal(2);
-          expect(request.length).to.be.equal(2);
           done();
         }
       };
@@ -267,7 +268,7 @@ describe("Basic functionality", () => {
       let componentB = new class extends Horpyna.Component {
         onProcess(request, response) {
           spyB();
-          expect(request.input).to.be.equal(TEST_MESSAGE_A);
+          expect(request.input[0]).to.be.equal(TEST_MESSAGE_A);
           response.send();
         }
       };
@@ -295,7 +296,7 @@ describe("Basic functionality", () => {
       let spyC = sinon.spy();
       let componentA = new class extends Horpyna.Component {
         onProcess(request, response) {
-          if (request.input) {
+          if (request.input[0]) {
             spyAB();
             response.send(null, CHANNEL_AB);
           } else {

@@ -32,16 +32,13 @@ class Response {
           }
         });
       } else {
-        let output = [];
+        let doneChannelList = [];
         this.component.channelManager.channels.forEach(channel => {
           if (channel.status === STATUS.DONE) {
-            output.push(channel.output);
+            doneChannelList.push(channel);
           }
         });
-        if(output.length === 1) {
-          output = output[0];
-        }
-        this.component.rootComponent.finish(output);
+        this.component.rootComponent.finish(doneChannelList);
       }
     }
   }
