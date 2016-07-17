@@ -1,11 +1,10 @@
 {
   "name": "horpyna",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "utility to manage async processes",
   "main": "index.js",
   "scripts": {
     "test": "gulp test",
-    "dev": "gulp dev",
     "build": "gulp build"
   },
   "repository": {
