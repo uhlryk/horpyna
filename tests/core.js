@@ -28,7 +28,7 @@ describe("Basic functionality", () => {
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
-        expect(channelList[0].data).to.be.equal(TEST_MESSAGE_A);
+        expect(channelList[0].value).to.be.equal(TEST_MESSAGE_A);
         done();
       });
     });
@@ -60,7 +60,7 @@ describe("Basic functionality", () => {
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(spyCustomFunc.calledBefore(spyComponent)).to.be.true;
-        expect(channelList[0].data).to.be.equal(TEST_MESSAGE_B);
+        expect(channelList[0].value).to.be.equal(TEST_MESSAGE_B);
         done();
       });
     });
@@ -70,8 +70,8 @@ describe("Basic functionality", () => {
       component.final();
       component.run(TEST_MESSAGE_A, channelList => {
         expect(channelList.length).to.be.equal(1);
-        expect(channelList[0].data.length).to.be.equal(1);
-        expect(channelList[0].data[0]).to.be.equal(TEST_MESSAGE_A);
+        expect(channelList[0].value.length).to.be.equal(1);
+        expect(channelList[0].value[0]).to.be.equal(TEST_MESSAGE_A);
         done();
       });
     });
@@ -80,12 +80,12 @@ describe("Basic functionality", () => {
     it("should return value to child component", done => {
       let componentA = new class extends Horpyna.Component {
         onProcess(request, response) {
-          response.send(request.data[0]);
+          response.send(request.value[0]);
         }
       };
       let componentB = new class extends Horpyna.Component {
         onProcess(request, response) {
-          expect(request.data[0]).to.be.equal(TEST_MESSAGE_A);
+          expect(request.value[0]).to.be.equal(TEST_MESSAGE_A);
           response.send();
           done();
         }
@@ -95,7 +95,7 @@ describe("Basic functionality", () => {
       componentA.run(TEST_MESSAGE_A);
     });
 
-    it("next component should have request object with data property and count 1 if one parent send response", done => {
+    it("next component should have request object with value property and count 1 if one parent send response", done => {
       let componentParent = new class extends Horpyna.Component {
         onProcess(request, response) {
           response.send(TEST_MESSAGE_A);
@@ -103,8 +103,8 @@ describe("Basic functionality", () => {
       };
       let component = new class extends Horpyna.Component {
         onProcess(request, response) {
-          expect(request.data[0]).to.be.equal(TEST_MESSAGE_A);
-          expect(request.data.length).to.be.equal(1);
+          expect(request.value[0]).to.be.equal(TEST_MESSAGE_A);
+          expect(request.value.length).to.be.equal(1);
           done();
         }
       };
@@ -113,7 +113,7 @@ describe("Basic functionality", () => {
     });
 
 
-    it("next component should have request object with data array property and count 2 if one parent send response", done => {
+    it("next component should have request object with value array property and count 2 if one parent send response", done => {
       let componentGrandParent = new class extends Horpyna.Component {
         onProcess(request, response) {
           response.send();
@@ -131,7 +131,7 @@ describe("Basic functionality", () => {
       };
       let component = new class extends Horpyna.Component {
         onProcess(request, response) {
-          expect(request.data.length).to.be.equal(2);
+          expect(request.value.length).to.be.equal(2);
           done();
         }
       };
@@ -268,7 +268,7 @@ describe("Basic functionality", () => {
       let componentB = new class extends Horpyna.Component {
         onProcess(request, response) {
           spyB();
-          expect(request.data[0]).to.be.equal(TEST_MESSAGE_A);
+          expect(request.value[0]).to.be.equal(TEST_MESSAGE_A);
           response.send();
         }
       };
@@ -296,7 +296,7 @@ describe("Basic functionality", () => {
       let spyC = sinon.spy();
       let componentA = new class extends Horpyna.Component {
         onProcess(request, response) {
-          if (request.data[0]) {
+          if (request.value[0]) {
             spyAB();
             response.send(null, CHANNEL_AB);
           } else {

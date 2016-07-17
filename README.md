@@ -28,7 +28,7 @@ joined components. You can decorate components with other components to modify i
 For example you can have component which consist of 5 other components. You can reuse it, and remove some inner components
 and replace them with other components.
 
-It is also easy to test. Each component have input and output. In test you set different input data and test
+It is also easy to test. Each component have input and output. In test you set different input value and test
  output values.
 
 
@@ -53,7 +53,7 @@ and put in each class your code block*
         //custom configuration, for example creation of additional channels
       }
       onProcess(request, response) {
-        //input data is available from request.data
+        //input value is available from request.value
         //when component finish calculating response send it via response.send(componentResponse)
       }
       
@@ -84,9 +84,9 @@ or even create instances from inline classes
 *Your work consists of two parts: create components, create components chains based on your components (or use external components)*
 
 Let assume that we have few components:
-And we want to validate incoming data, 
-if data is wrong then send error message, 
-if data is  ok then use it to take users from db,
+And we want to validate incoming value, 
+if value is wrong then send error message, 
+if value is  ok then use it to take users from db,
 If there is no users then send error message
 If there is one user make some calculation.
 If there are manu users calculate somethig else.
@@ -137,7 +137,7 @@ based on simple components or complex components.
 
 #### onProcess(request:Request, response:Response)
 
-#### run(initData, endCallback)
+#### run(value, endCallback)
 
 #### onParentReady()
 
@@ -159,9 +159,7 @@ based on simple components or complex components.
 
 ### Request
 
-#### constructor(data)
-
-#### data
+#### constructor(value)
 
 ### Response
 
@@ -169,11 +167,11 @@ based on simple components or complex components.
 
 #### init()
 
-#### prepare(data, channelName)
+#### prepare(value, channelName)
 
 #### done()
 
-#### send(data, channelName)
+#### send(value, channelName)
 
 ## DEVELOPMENT
 

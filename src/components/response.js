@@ -13,16 +13,16 @@ class Response {
   init() {
     this.component.channelManager.channels.forEach(channel => {
       channel.status = STATUS.INIT;
-      channel.data = null;
+      channel.value = null;
     });
   }
 
-  prepare(data, channelName) {
+  prepare(value, channelName) {
     if(this.component.rootComponent.status === STATUS.PROCESS) {
       channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
       let channel = this.component.getChannel(channelName);
       channel.status = STATUS.DONE;
-      channel.data = data;
+      channel.value = value;
     }
   }
 
@@ -47,9 +47,9 @@ class Response {
     }
   }
 
-  send(data, channelName) {
+  send(value, channelName) {
     this.init();
-    this.prepare(data, channelName);
+    this.prepare(value, channelName);
     this.done();
   }
 

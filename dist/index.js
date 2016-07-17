@@ -144,7 +144,7 @@ require("source-map-support").install();
 	  }, {
 	    key: "onProcess",
 	    value: function onProcess(request, response) {
-	      response.send(request.data);
+	      response.send(request.value);
 	    }
 
 	    /**
@@ -155,9 +155,9 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "run",
-	    value: function run(inputData, endCallback) {
+	    value: function run(value, endCallback) {
 	      this.rootComponent.run(endCallback);
-	      this._runProcess([inputData]);
+	      this._runProcess([value]);
 	    }
 
 	    /**
@@ -166,12 +166,12 @@ require("source-map-support").install();
 
 	  }, {
 	    key: "_runProcess",
-	    value: function _runProcess(inputDataList) {
+	    value: function _runProcess(parentResponseValueList) {
 	      var _this = this;
 
 	      this.status = STATUS.PROCESS;
 	      setTimeout(function () {
-	        return _this.onProcess(new _request2.default(inputDataList), new _response2.default(_this));
+	        return _this.onProcess(new _request2.default(parentResponseValueList), new _response2.default(_this));
 	      }, 0);
 	    }
 
@@ -184,7 +184,7 @@ require("source-map-support").install();
 	    key: "onParentReady",
 	    value: function onParentReady() {
 	      if (this.parentChannelManager.isDone()) {
-	        this._runProcess(this.parentChannelManager.getChannelsData());
+	        this._runProcess(this.parentChannelManager.getChannelsValue());
 	      }
 	    }
 	  }, {
@@ -392,7 +392,7 @@ require("source-map-support").install();
 	    this.name = name;
 	    this.status = STATUS.INIT;
 	    this.connectedChildrenComponents = [];
-	    this.data = null;
+	    this.value = null;
 	  }
 
 	  _createClass(Channel, [{
@@ -451,10 +451,10 @@ require("source-map-support").install();
 	      this.channels.push(channel);
 	    }
 	  }, {
-	    key: "getChannelsData",
-	    value: function getChannelsData() {
+	    key: "getChannelsValue",
+	    value: function getChannelsValue() {
 	      return this.channels.map(function (channel) {
-	        return channel.data;
+	        return channel.value;
 	      });
 	    }
 	  }, {
@@ -517,17 +517,17 @@ require("source-map-support").install();
 	    value: function init() {
 	      this.component.channelManager.channels.forEach(function (channel) {
 	        channel.status = STATUS.INIT;
-	        channel.data = null;
+	        channel.value = null;
 	      });
 	    }
 	  }, {
 	    key: "prepare",
-	    value: function prepare(data, channelName) {
+	    value: function prepare(value, channelName) {
 	      if (this.component.rootComponent.status === STATUS.PROCESS) {
 	        channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
 	        var channel = this.component.getChannel(channelName);
 	        channel.status = STATUS.DONE;
-	        channel.data = data;
+	        channel.value = value;
 	      }
 	    }
 	  }, {
@@ -560,9 +560,9 @@ require("source-map-support").install();
 	    }
 	  }, {
 	    key: "send",
-	    value: function send(data, channelName) {
+	    value: function send(value, channelName) {
 	      this.init();
-	      this.prepare(data, channelName);
+	      this.prepare(value, channelName);
 	      this.done();
 	    }
 	  }]);
@@ -597,18 +597,18 @@ require("source-map-support").install();
 
 	/**
 	 * Request object which is passed to component onProcess method.
-	 * It contains calculated data from parent components channels
+	 * It contains calculated value from parent components channels
 	 */
 
 	var Request =
 	/**
 	 *
-	 * @param data array from parent components channels which are bind to this component
+	 * @param valueList array from parent components channels which are bind to this component
 	 */
-	function Request(data) {
+	function Request(valueList) {
 	  _classCallCheck(this, Request);
 
-	  this.data = data;
+	  this.value = valueList;
 	};
 
 	exports.default = Request;
