@@ -1,6 +1,10 @@
 import Channel from "./channel";
+import Component from "./component";
 
 class ChannelManager {
+  component: Component;
+  channels: Channel[];
+
   constructor(component) {
     this.component = component;
     this.channels = [];

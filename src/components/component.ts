@@ -3,20 +3,25 @@ import ChannelManager from "./channelManager";
 import ParentChannelManager from "./parentChannelManager";
 import Response from "./response";
 import Request from "./request";
-import * as ERROR from "../constants/errors";
+//import Channel from "./channel";
 import * as STATUS from "../constants/statuses";
 import * as CHANNEL from "../constants/channels";
 
 class Component {
+  _parentChannelManager: ParentChannelManager;
+  _channelManager: ChannelManager;
+  _status: string;
+  _finalComponentFlag: boolean;
+  _rootComponent: Root;
 
   constructor(options) {
-    this.parentChannelManager = new ParentChannelManager();
-    this.channelManager = new ChannelManager(this);
-    this.channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
-    this.status = STATUS.INIT;
-    this.finalComponentFlag = false;
-    this.rootComponent = new Root();
-    this.rootComponent.addComponent(this);
+    this._parentChannelManager = new ParentChannelManager();
+    this._channelManager = new ChannelManager(this);
+    this._channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
+    this._status = STATUS.INIT;
+    this._finalComponentFlag = false;
+    this._rootComponent = new Root();
+    this._rootComponent.addComponent(this);
     this.onInit(options);
   }
 
@@ -36,7 +41,7 @@ class Component {
    * @returns Promise promise is resolved when every component in tree is done.
    */
   run(value, endCallback) {
-    this.rootComponent.run(endCallback);
+    this._rootComponent.run(endCallback);
     this._runProcess([value]);
   }
 
@@ -44,7 +49,7 @@ class Component {
    * Start to run component logic from this.onProcess.
    */
   _runProcess(parentResponseValueList) {
-    this.status = STATUS.PROCESS;
+    this._status = STATUS.PROCESS;
     setTimeout(() => this.onProcess(new Request(parentResponseValueList), new Response(this)), 0);
   }
 
@@ -53,17 +58,17 @@ class Component {
    * By default child component start when all parent components are done.
    */
   onParentReady() {
-    if (this.parentChannelManager.isDone()) {
-      this._runProcess(this.parentChannelManager.getChannelsValue());
+    if (this._parentChannelManager.isDone()) {
+      this._runProcess(this._parentChannelManager.getChannelsValue());
     }
   }
 
   getChannel(channelName) {
-    return this.channelManager.getChannel(channelName);
+    return this._channelManager.getChannel(channelName);
   }
 
   createChannel(channelName) {
-    this.channelManager.createChannel(channelName);
+    this._channelManager.createChannel(channelName);
   }
 
   /**
@@ -71,7 +76,7 @@ class Component {
    * this means that when it is done also component chain is done
    */
   final() {
-    this.finalComponentFlag = true;
+    this._finalComponentFlag = true;
     return this;
   }
 
@@ -80,15 +85,26 @@ class Component {
    * @param component parent component
    * @param channelName parent channel name
    */
-  bind(component, channelName) {
+  bind(parent: Component, channelName: string) {
     channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
-    let parentChannel = component.getChannel(channelName);
-    this.parentChannelManager.addChannel(parentChannel);
+    let parentChannel = parent.getChannel(channelName);
+    this._parentChannelManager.addChannel(parentChannel);
     parentChannel.addComponent(this);
-    component.rootComponent.merge(this.rootComponent);
-    this.rootComponent = component.rootComponent;
+    parent.setChildRootComponent(this, this._rootComponent);
   }
 
+  setChildRootComponent(child: Component, root: Root) {
+    this._rootComponent.merge(root);
+    child.setRootComponent(this._rootComponent);
+  }
+
+  setRootComponent(root: Root) {
+    this._rootComponent = root;
+  }
+
+  getStatus() {
+    return this._status;
+  }
 }
 
 export default Component;

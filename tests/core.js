@@ -1,7 +1,7 @@
 import sinon from "sinon";
 import chai from "chai";
 import chaiThings from "chai-things";
-import Horpyna from "../src/index";
+import Horpyna from "../dist/index";
 
 chai.use(chaiThings);
 const expect = chai.expect;

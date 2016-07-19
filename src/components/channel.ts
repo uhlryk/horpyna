@@ -1,6 +1,13 @@
 import * as STATUS from "../constants/statuses";
+import Component from "./component";
 
 class Channel {
+  component: Component;
+  name: string;
+  status: string;
+  connectedChildrenComponents: Component[];
+  value: any;
+
   constructor(component, name) {
     this.component = component;
     this.name = name;

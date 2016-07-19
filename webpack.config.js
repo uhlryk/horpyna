@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var fs = require('fs');
+var failPlugin = require('webpack-fail-plugin');
 
 var node_modules = {};
 fs.readdirSync('node_modules')
@@ -11,12 +12,7 @@ fs.readdirSync('node_modules')
 module.exports = {
   module: {
     loaders: [
-      {
-        test: /.jsx?$/,
-        loaders: ['babel?presets[]=es2015,presets[]=stage-0'],
-        include: path.join(__dirname, 'src/'),
-        exclude: /node_modules/
-      },
+      { test: /\.tsx?$/, loader: 'babel-loader!ts-loader' },
       {
         test: /\.json$/,
         loader: 'json-loader'
@@ -29,18 +25,18 @@ module.exports = {
     ]
   },
   entry: [
-    './src/index.js'
+    './src/index.ts'
   ],
   plugins: [
+    failPlugin,
     new webpack.BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false })
   ],
   output: {
-    libraryTarget: "commonjs",
+    libraryTarget: "commonjs2",
     path: path.join(__dirname, './dist/'),
     filename: 'index.js'
   },
-  target: 'node',
   eslint: {
 
   },
@@ -48,7 +44,9 @@ module.exports = {
     __filename: true,
     __dirname: false
   },
-  resolve: {},
+  resolve: {
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js']
+  },
   externals: node_modules,
   debug: false,
   progress: false,
