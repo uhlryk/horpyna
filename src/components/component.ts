@@ -3,6 +3,7 @@ import ChannelManager from "./channelManager";
 import ParentChannelManager from "./parentChannelManager";
 import Response from "./response";
 import Request from "./request";
+import FinalCallback from "./finalCallback";
 //import Channel from "./channel";
 import * as STATUS from "../constants/statuses";
 import * as CHANNEL from "../constants/channels";
@@ -36,19 +37,17 @@ class Component {
   }
 
   /**
-   * triggered once from root component. It start all process.
-   * It need to have connection ready.
-   * @returns Promise promise is resolved when every component in tree is done.
+   * should be invoked when structure is build.
    */
-  run(value, endCallback) {
-    this._rootComponent.run(endCallback);
+  start(value:any, finalCallback: FinalCallback) {
+    this._rootComponent.run(finalCallback);
     this._runProcess([value]);
   }
 
   /**
    * Start to run component logic from this.onProcess.
    */
-  _runProcess(parentResponseValueList) {
+  _runProcess(parentResponseValueList:any[]) {
     this._status = STATUS.PROCESS;
     setTimeout(() => this.onProcess(new Request(parentResponseValueList), new Response(this)), 0);
   }

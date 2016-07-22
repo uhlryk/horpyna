@@ -5,7 +5,7 @@
 class Request {
   public value = [];
 
-  constructor(valueList) {
+  constructor(valueList:any[]) {
     this.value = valueList;
   }
 }

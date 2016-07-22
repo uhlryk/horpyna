@@ -10,8 +10,8 @@ This module is for better organizing multiple async processes.
 If you have:
 
  * big amount async functions 
- * some of them run only if some conditions meet 
- * some of them run multiple times 
+ * some of them start only if some conditions meet 
+ * some of them start multiple times 
  * you are bored of long promise chains with inner conditional sub chains
  * you want to reuse some parts of promise chains
  
@@ -115,7 +115,7 @@ If there are manu users calculate somethig else.
     calculateWhenManyEntities.bind(getUserList, "manyEntitiesChannel");
     calculateWhenManyEntities.final();
     
-    validateParamsComponent.run(startParameters, output => {
+    validateParamsComponent.start(startParameters, output => {
       //callback when chain finished calculation
     });
 
@@ -137,7 +137,7 @@ based on simple components or complex components.
 
 #### onProcess(request:Request, response:Response)
 
-#### run(value, endCallback)
+#### start(value, endCallback)
 
 #### onParentReady()
 

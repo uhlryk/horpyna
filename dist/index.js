@@ -143,15 +143,13 @@ module.exports =
 	            response.send(request.value);
 	        }
 	        /**
-	         * triggered once from root component. It start all process.
-	         * It need to have connection ready.
-	         * @returns Promise promise is resolved when every component in tree is done.
+	         * should be invoked when structure is build.
 	         */
 
 	    }, {
-	        key: "run",
-	        value: function run(value, endCallback) {
-	            this._rootComponent.run(endCallback);
+	        key: "start",
+	        value: function start(value, finalCallback) {
+	            this._rootComponent.run(finalCallback);
 	            this._runProcess([value]);
 	        }
 	        /**
@@ -279,16 +277,16 @@ module.exports =
 
 	    }, {
 	        key: "run",
-	        value: function run(finishCallback) {
-	            this._finishCallback = finishCallback;
+	        value: function run(finalCallback) {
+	            this._finalCallback = finalCallback;
 	            this._status = STATUS.PROCESS;
 	        }
 	    }, {
 	        key: "finish",
 	        value: function finish(output) {
 	            this._status = STATUS.DONE;
-	            if (this._finishCallback) {
-	                this._finishCallback(output);
+	            if (this._finalCallback) {
+	                this._finalCallback(output);
 	            }
 	        }
 	        /**

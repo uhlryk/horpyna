@@ -23,7 +23,7 @@ describe("Basic functionality", () => {
         }
       };
       component.final();
-      component.run(null, channelList => {
+      component.start(null, channelList => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -55,7 +55,7 @@ describe("Basic functionality", () => {
         }
       };
       component.final();
-      component.run(null, channelList => {
+      component.start(null, channelList => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
         expect(spyCustomFunc.calledOnce).to.be.true;
@@ -68,7 +68,7 @@ describe("Basic functionality", () => {
     it("should output response from first channel list and response is single element array", done => {
       let component = new Horpyna.Component();
       component.final();
-      component.run(TEST_MESSAGE_A, channelList => {
+      component.start(TEST_MESSAGE_A, channelList => {
         expect(channelList.length).to.be.equal(1);
         expect(channelList[0].value.length).to.be.equal(1);
         expect(channelList[0].value[0]).to.be.equal(TEST_MESSAGE_A);
@@ -92,7 +92,7 @@ describe("Basic functionality", () => {
       };
       componentB.final();
       componentB.bind(componentA);
-      componentA.run(TEST_MESSAGE_A);
+      componentA.start(TEST_MESSAGE_A);
     });
 
     it("next component should have request object with value property and count 1 if one parent send response", done => {
@@ -109,7 +109,7 @@ describe("Basic functionality", () => {
         }
       };
       component.bind(componentParent);
-      componentParent.run();
+      componentParent.start();
     });
 
 
@@ -139,13 +139,13 @@ describe("Basic functionality", () => {
       componentParentB.bind(componentGrandParent);
       component.bind(componentParentA);
       component.bind(componentParentB);
-      componentGrandParent.run();
+      componentGrandParent.start();
     });
 
   });
 
   describe("Check chain components", () => {
-    it("should return promise in run method and resolve it", done => {
+    it("should trigger callback in start method at finish", done => {
       let spyA = sinon.spy();
       let spyB = sinon.spy();
       let spyC = sinon.spy();
@@ -177,7 +177,7 @@ describe("Basic functionality", () => {
       componentC.final();
       componentB.bind(componentA);
       componentC.bind(componentB);
-      componentA.run(null, output => {
+      componentA.start(null, output => {
         spyComponent();
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
@@ -192,7 +192,7 @@ describe("Basic functionality", () => {
   });
 
   describe("Check branched components", () => {
-    it("should return promise in run method and resolve it", done => {
+    it("should trigger finish callback function at finish", done => {
       let spyA = sinon.spy();
       let spyB = sinon.spy();
       let spyC = sinon.spy();
@@ -235,7 +235,7 @@ describe("Basic functionality", () => {
       componentC.bind(componentA);
       componentD.bind(componentB);
       componentD.bind(componentC);
-      componentA.run(null, output => {
+      componentA.start(null, output => {
         spyComponent();
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
@@ -276,7 +276,7 @@ describe("Basic functionality", () => {
       componentB.bind(componentA, CHANNEL_AA);
       componentB.final();
 
-      componentA.run(null, otput => {
+      componentA.start(null, otput => {
         expect(spyA.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
         expect(spyA.calledBefore(spyB)).to.be.true;
@@ -324,7 +324,7 @@ describe("Basic functionality", () => {
       };
       componentC.bind(componentA, CHANNEL_AB);
       componentC.final();
-      componentA.run(null, output => {
+      componentA.start(null, output => {
         expect(spyAA.calledOnce).to.be.true;
         expect(spyAB.calledOnce).to.be.true;
         expect(spyB.calledOnce).to.be.true;
