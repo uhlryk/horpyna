@@ -1,28 +1,22 @@
-import Root from "./root";
 import ChannelManager from "./channelManager";
-import ParentChannelManager from "./parentChannelManager";
+import IResponseCallback from "./iResponseCallback";
+import Channel from "./channel";
+import InputChannel from "./inputChannel";
+import OutputChannel from "./outputChannel";
 import Response from "./response";
 import Request from "./request";
-import FinalCallback from "./finalCallback";
-//import Channel from "./channel";
-import * as STATUS from "../constants/statuses";
 import * as CHANNEL from "../constants/channels";
 
 class Component {
-  _parentChannelManager: ParentChannelManager;
-  _channelManager: ChannelManager;
-  _status: string;
-  _finalComponentFlag: boolean;
-  _rootComponent: Root;
+  private _inputChannelManager: ChannelManager;
+  private _outputChannelManager: ChannelManager;
 
   constructor(options) {
-    this._parentChannelManager = new ParentChannelManager();
-    this._channelManager = new ChannelManager(this);
-    this._channelManager.createChannel(CHANNEL.DEFAULT_CHANNEL);
-    this._status = STATUS.INIT;
-    this._finalComponentFlag = false;
-    this._rootComponent = new Root();
-    this._rootComponent.addComponent(this);
+    this._inputChannelManager = new ChannelManager();
+    this._outputChannelManager = new ChannelManager();
+    this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
+    this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
+
     this.onInit(options);
   }
 
@@ -32,78 +26,52 @@ class Component {
    */
   onInit(options) {}
 
-  onProcess(request, response) {
-    response.send(request.value);
+  onNext(request: Request, response: Response) {
+    response.send();
   }
 
-  /**
-   * should be invoked when structure is build.
-   */
-  start(value:any, finalCallback: FinalCallback) {
-    this._rootComponent.run(finalCallback);
-    this._runProcess([value]);
+  next(request: Request) {
+    let responseCallback: IResponseCallback = (value: any, channelName: string) => {
+      this.getOutputChannel(channelName).emitValue(value);
+    };
+    let response: Response = new Response(responseCallback);
+    setTimeout(() => this.onNext(request, response), 0);
   }
 
-  /**
-   * Start to run component logic from this.onProcess.
-   */
-  _runProcess(parentResponseValueList:any[]) {
-    this._status = STATUS.PROCESS;
-    setTimeout(() => this.onProcess(new Request(parentResponseValueList), new Response(this)), 0);
+  getInputChannel(channelName: string): InputChannel {
+    return (InputChannel)this._inputChannelManager.getChannel(channelName);
   }
 
-  /**
-   * When parent component is done, it inform his child components about it. Which allow them to start
-   * By default child component start when all parent components are done.
-   */
-  onParentReady() {
-    if (this._parentChannelManager.isDone()) {
-      this._runProcess(this._parentChannelManager.getChannelsValue());
-    }
+  getOutputChannel(channelName: string): OutputChannel {
+    return (OutputChannel)this._outputChannelManager.getChannel(channelName);
   }
 
-  getChannel(channelName) {
-    return this._channelManager.getChannel(channelName);
+  getOutputChannels() : Channel[] {
+    return this._outputChannelManager.getChannels();
   }
 
-  createChannel(channelName) {
-    this._channelManager.createChannel(channelName);
-  }
-
-  /**
-   * If this method is triggered before component is done, it is flagged as final component,
-   * this means that when it is done also component chain is done
-   */
-  final() {
-    this._finalComponentFlag = true;
+  createInputChannel(channelName: string): Component {
+    this._inputChannelManager.addChannel(new InputChannel(this, channelName, (value: any, parentOutput: OutputChannel, currentInput: InputChannel) => {
+      this.next(new Request(value, parentOutput, currentInput));
+    }));
     return this;
   }
 
-  /**
-   * bind parent component with this component
-   * @param component parent component
-   * @param channelName parent channel name
-   */
-  bind(parent: Component, channelName: string) {
-    channelName = channelName || CHANNEL.DEFAULT_CHANNEL;
-    let parentChannel = parent.getChannel(channelName);
-    this._parentChannelManager.addChannel(parentChannel);
-    parentChannel.addComponent(this);
-    parent.setChildRootComponent(this, this._rootComponent);
+  createOutputChannel(channelName: string): Component {
+    this._outputChannelManager.addChannel(new OutputChannel(this, channelName));
+    return this;
   }
 
-  setChildRootComponent(child: Component, root: Root) {
-    this._rootComponent.merge(root);
-    child.setRootComponent(this._rootComponent);
+  bind(parent: Component, parentChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+    let parentOutputChannel: Channel = parent.getOutputChannel(parentChannelName);
+    let currentInputChannel: Channel = this.getInputChannel(currentChannelName);
+    parentOutputChannel.addChannel(currentInputChannel);
+    currentInputChannel.addChannel(parentOutputChannel);
+
+    return this;
+
   }
 
-  setRootComponent(root: Root) {
-    this._rootComponent = root;
-  }
-
-  getStatus() {
-    return this._status;
-  }
 }
 
 export default Component;

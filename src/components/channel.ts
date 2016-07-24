@@ -1,27 +1,22 @@
-import * as STATUS from "../constants/statuses";
 import Component from "./component";
+import ChannelManager from "./channelManager";
 
-class Channel {
-  component: Component;
-  name: string;
-  status: string;
-  connectedChildrenComponents: Component[];
-  value: any;
+class Channel extends ChannelManager{
+  private _name: string;
+  private _component: Component;
 
-  constructor(component, name) {
-    this.component = component;
-    this.name = name;
-    this.status = STATUS.INIT;
-    this.connectedChildrenComponents = [];
-    this.value = null;
+  constructor(component: Component, name: string) {
+    super();
+    this._component = component;
+    this._name = name;
   }
 
-  addComponent(component) {
-    this.connectedChildrenComponents.push(component);
+  getComponent(): Component {
+    return this._component;
   }
 
-  getComponentList() {
-    return this.connectedChildrenComponents;
+  getName(): string {
+    return this._name;
   }
 
 }

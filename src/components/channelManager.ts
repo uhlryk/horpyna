@@ -1,21 +1,25 @@
 import Channel from "./channel";
-import Component from "./component";
 
 class ChannelManager {
-  component: Component;
-  channels: Channel[];
 
-  constructor(component) {
-    this.component = component;
-    this.channels = [];
+  private _channels: Channel[];
+
+  constructor() {
+    this._channels = [];
   }
 
-  createChannel(name) {
-    this.channels.push(new Channel(this.component, name));
+  addChannel(channel: Channel): void {
+    this._channels.push(channel);
   }
 
-  getChannel(name) {
-    return this.channels.find(channel => channel.name === name);
+
+  getChannel(name: string): Channel {
+    return this._channels.find(channel => channel.getName() === name);
   }
+
+  getChannels(): Channel[] {
+    return this._channels;
+  }
+
 }
 export default ChannelManager;

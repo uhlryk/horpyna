@@ -22,7 +22,7 @@ describe("Basic functionality", () => {
           response.send(TEST_MESSAGE_A);
         }
       };
-      component.final();
+      component.setFinal();
       component.start(null, channelList => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
@@ -54,7 +54,7 @@ describe("Basic functionality", () => {
           response.done();
         }
       };
-      component.final();
+      component.setFinal();
       component.start(null, channelList => {
         spyComponent();
         expect(spyComponent.calledOnce).to.be.true;
@@ -67,7 +67,7 @@ describe("Basic functionality", () => {
 
     it("should output response from first channel list and response is single element array", done => {
       let component = new Horpyna.Component();
-      component.final();
+      component.setFinal();
       component.start(TEST_MESSAGE_A, channelList => {
         expect(channelList.length).to.be.equal(1);
         expect(channelList[0].value.length).to.be.equal(1);
@@ -90,7 +90,7 @@ describe("Basic functionality", () => {
           done();
         }
       };
-      componentB.final();
+      componentB.setFinal();
       componentB.bind(componentA);
       componentA.start(TEST_MESSAGE_A);
     });
@@ -174,7 +174,7 @@ describe("Basic functionality", () => {
           }, 10);
         }
       };
-      componentC.final();
+      componentC.setFinal();
       componentB.bind(componentA);
       componentC.bind(componentB);
       componentA.start(null, output => {
@@ -230,7 +230,7 @@ describe("Basic functionality", () => {
           }, 20);
         }
       };
-      componentD.final();
+      componentD.setFinal();
       componentB.bind(componentA);
       componentC.bind(componentA);
       componentD.bind(componentB);
@@ -253,7 +253,7 @@ describe("Basic functionality", () => {
   });
 
   describe("Check channels", () => {
-    it("should return message to final component connected by custom channel", done => {
+    it("should return message to setFinal component connected by custom channel", done => {
       let spyA = sinon.spy();
       let spyB = sinon.spy();
 
@@ -274,7 +274,7 @@ describe("Basic functionality", () => {
       };
 
       componentB.bind(componentA, CHANNEL_AA);
-      componentB.final();
+      componentB.setFinal();
 
       componentA.start(null, otput => {
         expect(spyA.calledOnce).to.be.true;
@@ -323,7 +323,7 @@ describe("Basic functionality", () => {
         }
       };
       componentC.bind(componentA, CHANNEL_AB);
-      componentC.final();
+      componentC.setFinal();
       componentA.start(null, output => {
         expect(spyAA.calledOnce).to.be.true;
         expect(spyAB.calledOnce).to.be.true;

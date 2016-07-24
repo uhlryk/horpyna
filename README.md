@@ -109,11 +109,11 @@ If there are manu users calculate somethig else.
     
     let calculateWhenOneEntity = new CalculateSomething(options);
     calculateWhenOneEntity.bind(getUserList, "oneEntityChannel");
-    calculateWhenOneEntity.final();
+    calculateWhenOneEntity.setFinal();
     
     let calculateWhenManyEntities = new CalculateSomething(options);
     calculateWhenManyEntities.bind(getUserList, "manyEntitiesChannel");
-    calculateWhenManyEntities.final();
+    calculateWhenManyEntities.setFinal();
     
     validateParamsComponent.start(startParameters, output => {
       //callback when chain finished calculation
@@ -145,7 +145,7 @@ based on simple components or complex components.
 
 #### createChannel(channelName)
 
-#### final()
+#### setFinal()
 
 #### bind(component:Component, channelName)
 
