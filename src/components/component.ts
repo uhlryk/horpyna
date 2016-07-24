@@ -14,16 +14,11 @@ class Component {
   constructor(options) {
     this._inputChannelManager = new ChannelManager();
     this._outputChannelManager = new ChannelManager();
-    this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
-    this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
-
+    this._createInputChannel(CHANNEL.DEFAULT_CHANNEL);
+    this._createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.onInit(options);
   }
 
-  /**
-   * for override
-   * It is for initialize component
-   */
   onInit(options) {}
 
   onNext(request: Request, response: Response) {
@@ -32,44 +27,38 @@ class Component {
 
   next(request: Request) {
     let responseCallback: IResponseCallback = (value: any, channelName: string) => {
-      this.getOutputChannel(channelName).emitValue(value);
+      this._getOutputChannel(channelName).emitValue(value);
     };
     let response: Response = new Response(responseCallback);
     setTimeout(() => this.onNext(request, response), 0);
   }
 
-  getInputChannel(channelName: string): InputChannel {
+  bind(parent: Component, parentChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+    let parentOutputChannel: Channel = parent._getOutputChannel(parentChannelName);
+    let currentInputChannel: Channel = this._getInputChannel(currentChannelName);
+    parentOutputChannel.addChannel(currentInputChannel);
+    currentInputChannel.addChannel(parentOutputChannel);
+    return this;
+  }
+
+  private _getInputChannel(channelName: string): InputChannel {
     return (InputChannel)this._inputChannelManager.getChannel(channelName);
   }
 
-  getOutputChannel(channelName: string): OutputChannel {
+  private _getOutputChannel(channelName: string): OutputChannel {
     return (OutputChannel)this._outputChannelManager.getChannel(channelName);
   }
 
-  getOutputChannels() : Channel[] {
-    return this._outputChannelManager.getChannels();
-  }
-
-  createInputChannel(channelName: string): Component {
+  private _createInputChannel(channelName: string): Component {
     this._inputChannelManager.addChannel(new InputChannel(this, channelName, (value: any, parentOutput: OutputChannel, currentInput: InputChannel) => {
       this.next(new Request(value, parentOutput, currentInput));
     }));
     return this;
   }
 
-  createOutputChannel(channelName: string): Component {
+  private _createOutputChannel(channelName: string): Component {
     this._outputChannelManager.addChannel(new OutputChannel(this, channelName));
     return this;
-  }
-
-  bind(parent: Component, parentChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
-    let parentOutputChannel: Channel = parent.getOutputChannel(parentChannelName);
-    let currentInputChannel: Channel = this.getInputChannel(currentChannelName);
-    parentOutputChannel.addChannel(currentInputChannel);
-    currentInputChannel.addChannel(parentOutputChannel);
-
-    return this;
-
   }
 
 }
