@@ -1,11 +1,11 @@
-import Component from "./component";
 import Channel from "./channel";
 import OutputChannel from "./outputChannel";
+import IInputSetValueCallback from "./iInputSetValueCallback";
 
 class InputChannel extends Channel{
-  private _onSetValueCallback: Function;
-  constructor(component: Component, name: string, onSetValueCallback: Function) {
-    super(component, name);
+  private _onSetValueCallback: IInputSetValueCallback;
+  constructor(name: string, onSetValueCallback: IInputSetValueCallback) {
+    super(name);
     this._onSetValueCallback = onSetValueCallback;
   }
 

@@ -1,11 +1,10 @@
-import Component from "./component";
 import Channel from "./channel";
 import InputChannel from "./inputChannel";
 
 class OutputChannel extends Channel{
 
-  constructor(component: Component, name: string) {
-    super(component, name);
+  constructor(name: string) {
+    super(name);
   }
 
   emitValue(value: any): void {
