@@ -7,60 +7,92 @@ import IInputSetValueCallback from "./iInputSetValueCallback";
 import Response from "./response";
 import Request from "./request";
 import * as CHANNEL from "../constants/channels";
+import * as ERROR from "../constants/errors";
 
 class Component {
   private _inputChannelManager: ChannelManager;
   private _outputChannelManager: ChannelManager;
   private _callbackChannelManager: ChannelManager;
 
-  constructor(options) {
+  constructor(options:any) {
     this._inputChannelManager = new ChannelManager();
     this._outputChannelManager = new ChannelManager();
     this._callbackChannelManager = new ChannelManager();
-    this._createInputChannel(CHANNEL.DEFAULT_CHANNEL);
-    this._createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
+    this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
+    this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.onInit(options);
   }
 
-  onInit(options) {}
+  public onInit(options:any) {}
 
-  onNext(request: Request, response: Response) {
+  public onNext(request: Request, response: Response) {
     response.send();
   }
 
-  next(request: Request) {
-    let responseCallback: IResponseCallback = (value: any, channelName: string) => {
-      this._getOutputChannel(channelName).emitValue(value);
-    };
-    let response: Response = new Response(responseCallback);
-    setTimeout(() => this.onNext(request, response), 0);
+  public start(value:any, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+    return this.next(new Request(value, null, this.getInputChannel(targetChannelName)));
   }
 
-  bind(child: Component, childChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
-    let childInput: Channel = child._getInputChannel(childChannelName);
-    let currentOutput: Channel = this._getOutputChannel(currentChannelName);
+  public next(request: Request): Component {
+    let response: Response = new Response(this._getResponseCallback());
+    setTimeout(() => this.onNext(request, response), 0);
+    return this;
+  }
+
+  public bind(child: Component, childChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+    let childInput: Channel = child.getInputChannel(childChannelName);
+    let currentOutput: Channel = this.getOutputChannel(currentChannelName);
     childInput.addChannel(currentOutput);
     currentOutput.addChannel(childInput);
     return this;
   }
 
-  bindCallback(callback: IInputSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, callbackChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
+  public bindCallback(callback: IInputSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, callbackChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
     let callbackChannel: InputChannel = new InputChannel(callbackChannelName, callback);
     this._callbackChannelManager.addChannel(callbackChannel);
-    let currentOutput: Channel = this._getOutputChannel(currentChannelName);
+    let currentOutput: Channel = this.getOutputChannel(currentChannelName);
     currentOutput.addChannel(callbackChannel);
     return this;
   }
 
-  private _getInputChannel(channelName: string): InputChannel {
+  private _getResponseCallback(): IResponseCallback {
+    return (value: any, channelName: string) => {
+      this.getOutputChannel(channelName).emitValue(value);
+    };
+  }
+
+  public isInputChannel(channelName: string): boolean {
+    if(typeof this._inputChannelManager.getChannel(channelName) !== "undefined") {
+      return true;
+    }
+    return false;
+  }
+
+  public isOutputChannel(channelName: string): boolean {
+    if(typeof this._outputChannelManager.getChannel(channelName) !== "undefined") {
+      return true;
+    }
+    return false;
+  }
+
+  public getInputChannel(channelName: string): InputChannel {
+    if(this.isInputChannel(channelName) === false) {
+      throw Error(ERROR.NON_EXIST_CHANNEL);
+    }
     return <InputChannel> this._inputChannelManager.getChannel(channelName);
   }
 
-  private _getOutputChannel(channelName: string): OutputChannel {
+  public getOutputChannel(channelName: string): OutputChannel {
+    if(this.isOutputChannel(channelName) === false) {
+      throw Error(ERROR.NON_EXIST_CHANNEL);
+    }
     return <OutputChannel> this._outputChannelManager.getChannel(channelName);
   }
 
-  private _createInputChannel(channelName: string): Component {
+  public createInputChannel(channelName: string): Component {
+    if(this.isInputChannel(channelName) === true) {
+      throw Error(ERROR.UNIQUE_NAME_INPUT_CHANNEL);
+    }
     let inputSetValueCallback: IInputSetValueCallback = (value: any, parentOutput: OutputChannel, currentInput: InputChannel) => {
       this.next(new Request(value, parentOutput, currentInput));
     };
@@ -68,7 +100,10 @@ class Component {
     return this;
   }
 
-  private _createOutputChannel(channelName: string): Component {
+  public createOutputChannel(channelName: string): Component {
+    if(this.isOutputChannel(channelName) === true) {
+      throw Error(ERROR.UNIQUE_NAME_OUTPUT_CHANNEL);
+    }
     this._outputChannelManager.addChannel(new OutputChannel(channelName));
     return this;
   }

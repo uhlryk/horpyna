@@ -63,10 +63,47 @@ module.exports =
 
 	var _component2 = _interopRequireDefault(_component);
 
+	var _channel = __webpack_require__(5);
+
+	var _channel2 = _interopRequireDefault(_channel);
+
+	var _inputChannel = __webpack_require__(4);
+
+	var _inputChannel2 = _interopRequireDefault(_inputChannel);
+
+	var _outputChannel = __webpack_require__(6);
+
+	var _outputChannel2 = _interopRequireDefault(_outputChannel);
+
+	var _channelManager = __webpack_require__(3);
+
+	var _channelManager2 = _interopRequireDefault(_channelManager);
+
+	var _request = __webpack_require__(9);
+
+	var _request2 = _interopRequireDefault(_request);
+
+	var _response = __webpack_require__(7);
+
+	var _response2 = _interopRequireDefault(_response);
+
+	var _channels = __webpack_require__(8);
+
+	var CHANNEL = _interopRequireWildcard(_channels);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
-	    Component: _component2.default
+	    Component: _component2.default,
+	    Channel: _channel2.default,
+	    InputChannel: _inputChannel2.default,
+	    OutputChannel: _outputChannel2.default,
+	    ChannelManager: _channelManager2.default,
+	    Request: _request2.default,
+	    Response: _response2.default,
+	    CHANNEL: CHANNEL
 	};
 
 /***/ },
@@ -105,6 +142,10 @@ module.exports =
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
+	var _errors = __webpack_require__(10);
+
+	var ERROR = _interopRequireWildcard(_errors);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -118,8 +159,8 @@ module.exports =
 	        this._inputChannelManager = new _channelManager2.default();
 	        this._outputChannelManager = new _channelManager2.default();
 	        this._callbackChannelManager = new _channelManager2.default();
-	        this._createInputChannel(CHANNEL.DEFAULT_CHANNEL);
-	        this._createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
+	        this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
+	        this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
 	        this.onInit(options);
 	    }
 
@@ -132,17 +173,22 @@ module.exports =
 	            response.send();
 	        }
 	    }, {
+	        key: "start",
+	        value: function start(value) {
+	            var targetChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
+
+	            return this.next(new _request2.default(value, null, this.getInputChannel(targetChannelName)));
+	        }
+	    }, {
 	        key: "next",
 	        value: function next(request) {
 	            var _this = this;
 
-	            var responseCallback = function responseCallback(value, channelName) {
-	                _this._getOutputChannel(channelName).emitValue(value);
-	            };
-	            var response = new _response2.default(responseCallback);
+	            var response = new _response2.default(this._getResponseCallback());
 	            setTimeout(function () {
 	                return _this.onNext(request, response);
 	            }, 0);
+	            return this;
 	        }
 	    }, {
 	        key: "bind",
@@ -150,8 +196,8 @@ module.exports =
 	            var childChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
 	            var currentChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
 
-	            var childInput = child._getInputChannel(childChannelName);
-	            var currentOutput = this._getOutputChannel(currentChannelName);
+	            var childInput = child.getInputChannel(childChannelName);
+	            var currentOutput = this.getOutputChannel(currentChannelName);
 	            childInput.addChannel(currentOutput);
 	            currentOutput.addChannel(childInput);
 	            return this;
@@ -164,34 +210,71 @@ module.exports =
 
 	            var callbackChannel = new _inputChannel2.default(callbackChannelName, callback);
 	            this._callbackChannelManager.addChannel(callbackChannel);
-	            var currentOutput = this._getOutputChannel(currentChannelName);
+	            var currentOutput = this.getOutputChannel(currentChannelName);
 	            currentOutput.addChannel(callbackChannel);
 	            return this;
 	        }
 	    }, {
-	        key: "_getInputChannel",
-	        value: function _getInputChannel(channelName) {
+	        key: "_getResponseCallback",
+	        value: function _getResponseCallback() {
+	            var _this2 = this;
+
+	            return function (value, channelName) {
+	                _this2.getOutputChannel(channelName).emitValue(value);
+	            };
+	        }
+	    }, {
+	        key: "isInputChannel",
+	        value: function isInputChannel(channelName) {
+	            if (typeof this._inputChannelManager.getChannel(channelName) !== "undefined") {
+	                return true;
+	            }
+	            return false;
+	        }
+	    }, {
+	        key: "isOutputChannel",
+	        value: function isOutputChannel(channelName) {
+	            if (typeof this._outputChannelManager.getChannel(channelName) !== "undefined") {
+	                return true;
+	            }
+	            return false;
+	        }
+	    }, {
+	        key: "getInputChannel",
+	        value: function getInputChannel(channelName) {
+	            if (this.isInputChannel(channelName) === false) {
+	                throw Error(ERROR.NON_EXIST_CHANNEL);
+	            }
 	            return this._inputChannelManager.getChannel(channelName);
 	        }
 	    }, {
-	        key: "_getOutputChannel",
-	        value: function _getOutputChannel(channelName) {
+	        key: "getOutputChannel",
+	        value: function getOutputChannel(channelName) {
+	            if (this.isOutputChannel(channelName) === false) {
+	                throw Error(ERROR.NON_EXIST_CHANNEL);
+	            }
 	            return this._outputChannelManager.getChannel(channelName);
 	        }
 	    }, {
-	        key: "_createInputChannel",
-	        value: function _createInputChannel(channelName) {
-	            var _this2 = this;
+	        key: "createInputChannel",
+	        value: function createInputChannel(channelName) {
+	            var _this3 = this;
 
+	            if (this.isInputChannel(channelName) === true) {
+	                throw Error(ERROR.UNIQUE_NAME_INPUT_CHANNEL);
+	            }
 	            var inputSetValueCallback = function inputSetValueCallback(value, parentOutput, currentInput) {
-	                _this2.next(new _request2.default(value, parentOutput, currentInput));
+	                _this3.next(new _request2.default(value, parentOutput, currentInput));
 	            };
 	            this._inputChannelManager.addChannel(new _inputChannel2.default(channelName, inputSetValueCallback));
 	            return this;
 	        }
 	    }, {
-	        key: "_createOutputChannel",
-	        value: function _createOutputChannel(channelName) {
+	        key: "createOutputChannel",
+	        value: function createOutputChannel(channelName) {
+	            if (this.isOutputChannel(channelName) === true) {
+	                throw Error(ERROR.UNIQUE_NAME_OUTPUT_CHANNEL);
+	            }
 	            this._outputChannelManager.addChannel(new _outputChannel2.default(channelName));
 	            return this;
 	        }
@@ -491,6 +574,20 @@ module.exports =
 	}();
 
 	exports.default = Request;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var NON_EXIST_CHANNEL = exports.NON_EXIST_CHANNEL = "channel do not exist";
+	var UNIQUE_NAME_CHANNEL = exports.UNIQUE_NAME_CHANNEL = "channel need unique name";
+	var UNIQUE_NAME_INPUT_CHANNEL = exports.UNIQUE_NAME_INPUT_CHANNEL = UNIQUE_NAME_CHANNEL;
+	var UNIQUE_NAME_OUTPUT_CHANNEL = exports.UNIQUE_NAME_OUTPUT_CHANNEL = UNIQUE_NAME_CHANNEL;
 
 /***/ }
 /******/ ]);

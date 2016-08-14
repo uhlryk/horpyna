@@ -12,15 +12,15 @@ class Request {
     this._target = target;
   }
 
-  getValue(): any {
+  public getValue(): any {
     return this._value;
   }
 
-  getTarget(): InputChannel {
+  public getTarget(): InputChannel {
     return this._target;
   }
 
-  getSource(): OutputChannel {
+  public getSource(): OutputChannel {
     return this._source;
   }
 }
