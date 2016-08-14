@@ -137,17 +137,54 @@ describe("Component", () => {
     });
 
   });
-  describe("bind method", () => {
-    it("should bind component default output channel and target component input default channel", done => {
+  describe("join method", () => {
+    it("should connect component default output channel and target component input default channel", done => {
       let currentComponent = new Horpyna.Component();
       let targetComponent = new Horpyna.Component();
-      currentComponent.bind(targetComponent);
+      currentComponent.join(targetComponent);
 
       let currentOutputChannel = currentComponent.getOutputChannel();
       let targetInputChannel = targetComponent.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL);
 
       expect(currentOutputChannel.getChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)).to.be.equal(targetInputChannel);
       expect(targetInputChannel.getChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)).to.be.equal(currentOutputChannel);
+      done();
+    });
+
+    it("should connect component custom output channel and target component input custom channel", done => {
+      let currentChannelName = "fsg423";
+      let targetChannelName = "aewawe3";
+      let currentComponent = new Horpyna.Component();
+      currentComponent.createOutputChannel(currentChannelName);
+      let targetComponent = new Horpyna.Component();
+      targetComponent.createInputChannel(targetChannelName);
+      currentComponent.join(targetComponent, targetChannelName, currentChannelName);
+
+      let currentOutputChannel = currentComponent.getOutputChannel(currentChannelName);
+      let targetInputChannel = targetComponent.getInputChannel(targetChannelName);
+
+      expect(currentOutputChannel.getChannel(targetChannelName)).to.be.equal(targetInputChannel);
+      expect(targetInputChannel.getChannel(currentChannelName)).to.be.equal(currentOutputChannel);
+      done();
+    });
+
+    it("should throw error when target channel non exist", done => {
+      let currentChannelName = "fsg423";
+      let targetChannelName = "aewawe3";
+      let currentComponent = new Horpyna.Component();
+      currentComponent.createOutputChannel(currentChannelName);
+      let targetComponent = new Horpyna.Component();
+      expect(currentComponent.join.bind(currentComponent, targetComponent, targetChannelName, currentChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
+      done();
+    });
+
+    it("should throw error when current channel non exist", done => {
+      let currentChannelName = "fsg423";
+      let targetChannelName = "aewawe3";
+      let currentComponent = new Horpyna.Component();
+      let targetComponent = new Horpyna.Component();
+      targetComponent.createInputChannel(targetChannelName);
+      expect(currentComponent.join.bind(currentComponent, targetComponent, targetChannelName, currentChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
       done();
     });
   });

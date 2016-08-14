@@ -191,8 +191,8 @@ module.exports =
 	            return this;
 	        }
 	    }, {
-	        key: "bind",
-	        value: function bind(target) {
+	        key: "join",
+	        value: function join(target) {
 	            var targetChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
 	            var currentChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
 
@@ -203,8 +203,8 @@ module.exports =
 	            return this;
 	        }
 	    }, {
-	        key: "bindCallback",
-	        value: function bindCallback(callback) {
+	        key: "joinCallback",
+	        value: function joinCallback(callback) {
 	            var currentChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
 	            var callbackChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
 

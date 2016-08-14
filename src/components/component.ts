@@ -39,7 +39,7 @@ class Component {
     return this;
   }
 
-  public bind(target: Component, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+  public join(target: Component, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
     let targetInput: Channel = target.getInputChannel(targetChannelName);
     let currentOutput: Channel = this.getOutputChannel(currentChannelName);
     targetInput.addChannel(currentOutput);
@@ -47,7 +47,7 @@ class Component {
     return this;
   }
 
-  public bindCallback(callback: IInputSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, callbackChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
+  public joinCallback(callback: IInputSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, callbackChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
     let callbackChannel: InputChannel = new InputChannel(callbackChannelName, callback);
     this._callbackChannelManager.addChannel(callbackChannel);
     let currentOutput: Channel = this.getOutputChannel(currentChannelName);
