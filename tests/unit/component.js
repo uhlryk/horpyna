@@ -7,7 +7,7 @@ chai.use(chaiThings);
 const expect = chai.expect;
 
 describe("Component", () => {
-
+  let dummyValue = "BBBB";
   describe("constructor", () => {
 
     it("should trigger onInit method", done => {
@@ -32,14 +32,13 @@ describe("Component", () => {
   describe("start method", () => {
 
     it("should trigger next method with request args when default channel name", done => {
-      const value = "AAAA";
       let nextSpy = sinon.spy(Horpyna.Component.prototype, "next");
       let component = new Horpyna.Component();
-      component.start(value);
+      component.start(dummyValue);
       expect(nextSpy.calledOnce).to.be.true;
       let request = nextSpy.args[0][0];
       expect(request).to.be.an.instanceof(Horpyna.Request);
-      expect(request.getValue()).to.be.equal(value);
+      expect(request.getValue()).to.be.equal(dummyValue);
       let targetChannel = request.getTarget();
       expect(targetChannel).to.be.an.instanceof(Horpyna.InputChannel);
       expect(targetChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
@@ -124,7 +123,7 @@ describe("Component", () => {
 
   describe("next method", () => {
     it("should trigger onNext method with request and response objects", done => {
-      let dummyValue = "BBBB";
+
       let nextStub = sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
         expect(request).to.be.an.instanceof(Horpyna.Request);
         expect(request.getValue()).to.be.equal(dummyValue);
@@ -135,13 +134,13 @@ describe("Component", () => {
       let component = new Horpyna.Component();
       component.next(new Horpyna.Request(dummyValue, null, component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)));
     });
-
   });
-  describe("join method", () => {
+
+  describe("addJoint method", () => {
     it("should connect component default output channel and target component input default channel", done => {
       let currentComponent = new Horpyna.Component();
       let targetComponent = new Horpyna.Component();
-      currentComponent.join(targetComponent);
+      currentComponent.addJoint(targetComponent);
 
       let currentOutputChannel = currentComponent.getOutputChannel();
       let targetInputChannel = targetComponent.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL);
@@ -158,7 +157,7 @@ describe("Component", () => {
       currentComponent.createOutputChannel(currentChannelName);
       let targetComponent = new Horpyna.Component();
       targetComponent.createInputChannel(targetChannelName);
-      currentComponent.join(targetComponent, targetChannelName, currentChannelName);
+      currentComponent.addJoint(targetComponent, currentChannelName, targetChannelName);
 
       let currentOutputChannel = currentComponent.getOutputChannel(currentChannelName);
       let targetInputChannel = targetComponent.getInputChannel(targetChannelName);
@@ -174,7 +173,7 @@ describe("Component", () => {
       let currentComponent = new Horpyna.Component();
       currentComponent.createOutputChannel(currentChannelName);
       let targetComponent = new Horpyna.Component();
-      expect(currentComponent.join.bind(currentComponent, targetComponent, targetChannelName, currentChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
+      expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
       done();
     });
 
@@ -184,7 +183,44 @@ describe("Component", () => {
       let currentComponent = new Horpyna.Component();
       let targetComponent = new Horpyna.Component();
       targetComponent.createInputChannel(targetChannelName);
-      expect(currentComponent.join.bind(currentComponent, targetComponent, targetChannelName, currentChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
+      expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
+      done();
+    });
+  });
+
+  describe("addCallback method", () => {
+    it("in `next` method should trigger callback with default channel", done => {
+      let component = new Horpyna.Component();
+      component.addCallback((value, sourceChannel) => {
+        expect(value).to.be.equal(dummyValue);
+        expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
+        expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
+        done();
+      }, Horpyna.CHANNEL.DEFAULT_CHANNEL);
+      component.start(dummyValue);
+    });
+
+    it("in `next` method should trigger callback with custom channel", done => {
+      let currentChannelName = "fsg423";
+      let nextStub = sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
+        response.send(request.getValue(), currentChannelName);
+        nextStub.restore();
+      });
+      let component = new Horpyna.Component();
+      component.createOutputChannel(currentChannelName);
+      component.addCallback((value, sourceChannel) => {
+        expect(value).to.be.equal(dummyValue);
+        expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
+        expect(sourceChannel.getName()).to.be.equal(currentChannelName);
+        done();
+      }, currentChannelName);
+      component.start(dummyValue);
+    });
+
+    it("should throw error when current channel non exist", done => {
+      let currentChannelName = "fsg423";
+      let component = new Horpyna.Component();
+      expect(component.addCallback.bind(component, () => {}, currentChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
       done();
     });
   });

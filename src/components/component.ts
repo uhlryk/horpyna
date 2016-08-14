@@ -2,8 +2,10 @@ import ChannelManager from "./channelManager";
 import IResponseCallback from "./iResponseCallback";
 import Channel from "./channel";
 import InputChannel from "./inputChannel";
+import CallbackChannel from "./callbackChannel";
 import OutputChannel from "./outputChannel";
 import IInputSetValueCallback from "./iInputSetValueCallback";
+import ICallbackSetValueCallback from "./iCallbackSetValueCallback";
 import Response from "./response";
 import Request from "./request";
 import * as CHANNEL from "../constants/channels";
@@ -12,12 +14,10 @@ import * as ERROR from "../constants/errors";
 class Component {
   private _inputChannelManager: ChannelManager;
   private _outputChannelManager: ChannelManager;
-  private _callbackChannelManager: ChannelManager;
 
   constructor(options:any) {
     this._inputChannelManager = new ChannelManager();
     this._outputChannelManager = new ChannelManager();
-    this._callbackChannelManager = new ChannelManager();
     this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.onInit(options);
@@ -26,7 +26,7 @@ class Component {
   public onInit(options:any) {}
 
   public onNext(request: Request, response: Response) {
-    response.send();
+    response.send(request.getValue());
   }
 
   public start(value:any, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
@@ -39,7 +39,7 @@ class Component {
     return this;
   }
 
-  public join(target: Component, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+  public addJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
     let targetInput: Channel = target.getInputChannel(targetChannelName);
     let currentOutput: Channel = this.getOutputChannel(currentChannelName);
     targetInput.addChannel(currentOutput);
@@ -47,11 +47,9 @@ class Component {
     return this;
   }
 
-  public joinCallback(callback: IInputSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, callbackChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
-    let callbackChannel: InputChannel = new InputChannel(callbackChannelName, callback);
-    this._callbackChannelManager.addChannel(callbackChannel);
+  public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
     let currentOutput: Channel = this.getOutputChannel(currentChannelName);
-    currentOutput.addChannel(callbackChannel);
+    currentOutput.addChannel(new CallbackChannel(target));
     return this;
   }
 
@@ -84,8 +82,8 @@ class Component {
   }
 
   public _getInputChannelSetValueCallback(): IInputSetValueCallback {
-    return (value: any, parentOutput: OutputChannel, currentInput: InputChannel) => {
-      this.next(new Request(value, parentOutput, currentInput));
+    return (value: any, sourceOutput: OutputChannel, currentInput: InputChannel) => {
+      this.next(new Request(value, sourceOutput, currentInput));
     };
   }
 

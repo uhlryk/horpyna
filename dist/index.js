@@ -71,7 +71,7 @@ module.exports =
 
 	var _inputChannel2 = _interopRequireDefault(_inputChannel);
 
-	var _outputChannel = __webpack_require__(6);
+	var _outputChannel = __webpack_require__(8);
 
 	var _outputChannel2 = _interopRequireDefault(_outputChannel);
 
@@ -79,15 +79,15 @@ module.exports =
 
 	var _channelManager2 = _interopRequireDefault(_channelManager);
 
-	var _request = __webpack_require__(9);
+	var _request = __webpack_require__(10);
 
 	var _request2 = _interopRequireDefault(_request);
 
-	var _response = __webpack_require__(7);
+	var _response = __webpack_require__(9);
 
 	var _response2 = _interopRequireDefault(_response);
 
-	var _channels = __webpack_require__(8);
+	var _channels = __webpack_require__(7);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
@@ -126,23 +126,27 @@ module.exports =
 
 	var _inputChannel2 = _interopRequireDefault(_inputChannel);
 
-	var _outputChannel = __webpack_require__(6);
+	var _callbackChannel = __webpack_require__(6);
+
+	var _callbackChannel2 = _interopRequireDefault(_callbackChannel);
+
+	var _outputChannel = __webpack_require__(8);
 
 	var _outputChannel2 = _interopRequireDefault(_outputChannel);
 
-	var _response = __webpack_require__(7);
+	var _response = __webpack_require__(9);
 
 	var _response2 = _interopRequireDefault(_response);
 
-	var _request = __webpack_require__(9);
+	var _request = __webpack_require__(10);
 
 	var _request2 = _interopRequireDefault(_request);
 
-	var _channels = __webpack_require__(8);
+	var _channels = __webpack_require__(7);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
-	var _errors = __webpack_require__(10);
+	var _errors = __webpack_require__(11);
 
 	var ERROR = _interopRequireWildcard(_errors);
 
@@ -158,7 +162,6 @@ module.exports =
 
 	        this._inputChannelManager = new _channelManager2.default();
 	        this._outputChannelManager = new _channelManager2.default();
-	        this._callbackChannelManager = new _channelManager2.default();
 	        this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
 	        this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
 	        this.onInit(options);
@@ -170,7 +173,7 @@ module.exports =
 	    }, {
 	        key: "onNext",
 	        value: function onNext(request, response) {
-	            response.send();
+	            response.send(request.getValue());
 	        }
 	    }, {
 	        key: "start",
@@ -191,10 +194,10 @@ module.exports =
 	            return this;
 	        }
 	    }, {
-	        key: "join",
-	        value: function join(target) {
-	            var targetChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
-	            var currentChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
+	        key: "addJoint",
+	        value: function addJoint(target) {
+	            var currentChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
+	            var targetChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
 
 	            var targetInput = target.getInputChannel(targetChannelName);
 	            var currentOutput = this.getOutputChannel(currentChannelName);
@@ -203,15 +206,12 @@ module.exports =
 	            return this;
 	        }
 	    }, {
-	        key: "joinCallback",
-	        value: function joinCallback(callback) {
+	        key: "addCallback",
+	        value: function addCallback(target) {
 	            var currentChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
-	            var callbackChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
 
-	            var callbackChannel = new _inputChannel2.default(callbackChannelName, callback);
-	            this._callbackChannelManager.addChannel(callbackChannel);
 	            var currentOutput = this.getOutputChannel(currentChannelName);
-	            currentOutput.addChannel(callbackChannel);
+	            currentOutput.addChannel(new _callbackChannel2.default(target));
 	            return this;
 	        }
 	    }, {
@@ -262,8 +262,8 @@ module.exports =
 	        value: function _getInputChannelSetValueCallback() {
 	            var _this3 = this;
 
-	            return function (value, parentOutput, currentInput) {
-	                _this3.next(new _request2.default(value, parentOutput, currentInput));
+	            return function (value, sourceOutput, currentInput) {
+	                _this3.next(new _request2.default(value, sourceOutput, currentInput));
 	            };
 	        }
 	    }, {
@@ -373,14 +373,22 @@ module.exports =
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(InputChannel).call(this, name));
 
-	        _this._onSetValueCallback = onSetValueCallback;
+	        if (onSetValueCallback) {
+	            _this.setCallback(onSetValueCallback);
+	        }
 	        return _this;
 	    }
 
 	    _createClass(InputChannel, [{
+	        key: "setCallback",
+	        value: function setCallback(onSetValueCallback) {
+	            this._onSetValueCallback = onSetValueCallback;
+	            return this;
+	        }
+	    }, {
 	        key: "setValue",
-	        value: function setValue(value, parentOutput) {
-	            this._onSetValueCallback(value, parentOutput, this);
+	        value: function setValue(value, sourceOutput) {
+	            this._onSetValueCallback(value, sourceOutput, this);
 	        }
 	    }]);
 
@@ -449,6 +457,77 @@ module.exports =
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _inputChannel = __webpack_require__(4);
+
+	var _inputChannel2 = _interopRequireDefault(_inputChannel);
+
+	var _channels = __webpack_require__(7);
+
+	var CHANNEL = _interopRequireWildcard(_channels);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CallbackChannel = function (_InputChannel) {
+	    _inherits(CallbackChannel, _InputChannel);
+
+	    function CallbackChannel(onSetValueCallback) {
+	        _classCallCheck(this, CallbackChannel);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CallbackChannel).call(this, CHANNEL.DEFAULT_CHANNEL));
+
+	        _this.setCallback(onSetValueCallback);
+	        return _this;
+	    }
+
+	    _createClass(CallbackChannel, [{
+	        key: "setCallback",
+	        value: function setCallback(onSetValueCallback) {
+	            this._callback = onSetValueCallback;
+	            return this;
+	        }
+	    }, {
+	        key: "setValue",
+	        value: function setValue(value, sourceOutput) {
+	            this._callback(value, sourceOutput);
+	        }
+	    }]);
+
+	    return CallbackChannel;
+	}(_inputChannel2.default);
+
+	exports.default = CallbackChannel;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var DEFAULT_CHANNEL = exports.DEFAULT_CHANNEL = "default";
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _channel = __webpack_require__(5);
 
 	var _channel2 = _interopRequireDefault(_channel);
@@ -488,7 +567,7 @@ module.exports =
 	exports.default = OutputChannel;
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -499,7 +578,7 @@ module.exports =
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _channels = __webpack_require__(8);
+	var _channels = __webpack_require__(7);
 
 	var CHANNEL = _interopRequireWildcard(_channels);
 
@@ -531,18 +610,7 @@ module.exports =
 	exports.default = Response;
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var DEFAULT_CHANNEL = exports.DEFAULT_CHANNEL = "default";
-
-/***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -587,7 +655,7 @@ module.exports =
 	exports.default = Request;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
