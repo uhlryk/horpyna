@@ -113,6 +113,7 @@ describe("Component", () => {
       done();
     });
   });
+
   describe("next method", () => {
     it("should trigger onNext method with request and response objects", done => {
       let dummyValue = "BBBB";
@@ -125,6 +126,6 @@ describe("Component", () => {
       let component = new Horpyna.Component();
       component.next(new Horpyna.Request(dummyValue, null, component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)));
     });
-
   });
+
 });

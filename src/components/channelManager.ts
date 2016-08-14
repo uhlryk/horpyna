@@ -8,16 +8,20 @@ class ChannelManager {
     this._channels = [];
   }
 
-  addChannel(channel: Channel): void {
+  public isChannel(channelName: string): boolean {
+    return typeof this.getChannel(channelName) !== "undefined";
+  }
+
+  public addChannel(channel: Channel): void {
     this._channels.push(channel);
   }
 
 
-  getChannel(name: string): Channel {
+  public getChannel(name: string): Channel {
     return this._channels.find(channel => channel.getName() === name);
   }
 
-  getChannels(): Channel[] {
+  public getChannels(): Channel[] {
     return this._channels;
   }
 

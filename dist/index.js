@@ -226,12 +226,12 @@ module.exports =
 	    }, {
 	        key: "isInputChannel",
 	        value: function isInputChannel(channelName) {
-	            return typeof this._inputChannelManager.getChannel(channelName) !== "undefined";
+	            return this._inputChannelManager.isChannel(channelName);
 	        }
 	    }, {
 	        key: "isOutputChannel",
 	        value: function isOutputChannel(channelName) {
-	            return typeof this._outputChannelManager.getChannel(channelName) !== "undefined";
+	            return this._outputChannelManager.isChannel(channelName);
 	        }
 	    }, {
 	        key: "getInputChannel",
@@ -301,6 +301,11 @@ module.exports =
 	    }
 
 	    _createClass(ChannelManager, [{
+	        key: "isChannel",
+	        value: function isChannel(channelName) {
+	            return typeof this.getChannel(channelName) !== "undefined";
+	        }
+	    }, {
 	        key: "addChannel",
 	        value: function addChannel(channel) {
 	            this._channels.push(channel);
