@@ -226,18 +226,12 @@ module.exports =
 	    }, {
 	        key: "isInputChannel",
 	        value: function isInputChannel(channelName) {
-	            if (typeof this._inputChannelManager.getChannel(channelName) !== "undefined") {
-	                return true;
-	            }
-	            return false;
+	            return typeof this._inputChannelManager.getChannel(channelName) !== "undefined";
 	        }
 	    }, {
 	        key: "isOutputChannel",
 	        value: function isOutputChannel(channelName) {
-	            if (typeof this._outputChannelManager.getChannel(channelName) !== "undefined") {
-	                return true;
-	            }
-	            return false;
+	            return typeof this._outputChannelManager.getChannel(channelName) !== "undefined";
 	        }
 	    }, {
 	        key: "getInputChannel",

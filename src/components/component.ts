@@ -62,17 +62,11 @@ class Component {
   }
 
   public isInputChannel(channelName: string): boolean {
-    if(typeof this._inputChannelManager.getChannel(channelName) !== "undefined") {
-      return true;
-    }
-    return false;
+    return typeof this._inputChannelManager.getChannel(channelName) !== "undefined";
   }
 
   public isOutputChannel(channelName: string): boolean {
-    if(typeof this._outputChannelManager.getChannel(channelName) !== "undefined") {
-      return true;
-    }
-    return false;
+    return typeof this._outputChannelManager.getChannel(channelName) !== "undefined";
   }
 
   public getInputChannel(channelName: string): InputChannel {

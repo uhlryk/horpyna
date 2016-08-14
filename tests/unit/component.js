@@ -118,6 +118,7 @@ describe("Component", () => {
       let dummyValue = "BBBB";
       sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
         expect(request).to.be.an.instanceof(Horpyna.Request);
+        expect(request.getValue()).to.be.equal(dummyValue);
         expect(response).to.be.an.instanceof(Horpyna.Response);
         done();
       });
