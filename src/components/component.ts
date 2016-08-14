@@ -39,11 +39,11 @@ class Component {
     return this;
   }
 
-  public bind(child: Component, childChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
-    let childInput: Channel = child.getInputChannel(childChannelName);
+  public bind(target: Component, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+    let targetInput: Channel = target.getInputChannel(targetChannelName);
     let currentOutput: Channel = this.getOutputChannel(currentChannelName);
-    childInput.addChannel(currentOutput);
-    currentOutput.addChannel(childInput);
+    targetInput.addChannel(currentOutput);
+    currentOutput.addChannel(targetInput);
     return this;
   }
 
@@ -61,22 +61,22 @@ class Component {
     };
   }
 
-  public isInputChannel(channelName: string): boolean {
+  public isInputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): boolean {
     return this._inputChannelManager.isChannel(channelName);
   }
 
-  public isOutputChannel(channelName: string): boolean {
+  public isOutputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): boolean {
     return this._outputChannelManager.isChannel(channelName);
   }
 
-  public getInputChannel(channelName: string): InputChannel {
+  public getInputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): InputChannel {
     if(this.isInputChannel(channelName) === false) {
       throw Error(ERROR.NON_EXIST_CHANNEL);
     }
     return <InputChannel> this._inputChannelManager.getChannel(channelName);
   }
 
-  public getOutputChannel(channelName: string): OutputChannel {
+  public getOutputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): OutputChannel {
     if(this.isOutputChannel(channelName) === false) {
       throw Error(ERROR.NON_EXIST_CHANNEL);
     }

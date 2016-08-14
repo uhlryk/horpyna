@@ -192,14 +192,14 @@ module.exports =
 	        }
 	    }, {
 	        key: "bind",
-	        value: function bind(child) {
-	            var childChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
+	        value: function bind(target) {
+	            var targetChannelName = arguments.length <= 1 || arguments[1] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[1];
 	            var currentChannelName = arguments.length <= 2 || arguments[2] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[2];
 
-	            var childInput = child.getInputChannel(childChannelName);
+	            var targetInput = target.getInputChannel(targetChannelName);
 	            var currentOutput = this.getOutputChannel(currentChannelName);
-	            childInput.addChannel(currentOutput);
-	            currentOutput.addChannel(childInput);
+	            targetInput.addChannel(currentOutput);
+	            currentOutput.addChannel(targetInput);
 	            return this;
 	        }
 	    }, {
@@ -225,17 +225,23 @@ module.exports =
 	        }
 	    }, {
 	        key: "isInputChannel",
-	        value: function isInputChannel(channelName) {
+	        value: function isInputChannel() {
+	            var channelName = arguments.length <= 0 || arguments[0] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[0];
+
 	            return this._inputChannelManager.isChannel(channelName);
 	        }
 	    }, {
 	        key: "isOutputChannel",
-	        value: function isOutputChannel(channelName) {
+	        value: function isOutputChannel() {
+	            var channelName = arguments.length <= 0 || arguments[0] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[0];
+
 	            return this._outputChannelManager.isChannel(channelName);
 	        }
 	    }, {
 	        key: "getInputChannel",
-	        value: function getInputChannel(channelName) {
+	        value: function getInputChannel() {
+	            var channelName = arguments.length <= 0 || arguments[0] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[0];
+
 	            if (this.isInputChannel(channelName) === false) {
 	                throw Error(ERROR.NON_EXIST_CHANNEL);
 	            }
@@ -243,7 +249,9 @@ module.exports =
 	        }
 	    }, {
 	        key: "getOutputChannel",
-	        value: function getOutputChannel(channelName) {
+	        value: function getOutputChannel() {
+	            var channelName = arguments.length <= 0 || arguments[0] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[0];
+
 	            if (this.isOutputChannel(channelName) === false) {
 	                throw Error(ERROR.NON_EXIST_CHANNEL);
 	            }

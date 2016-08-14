@@ -59,9 +59,17 @@ describe("Component", () => {
       done();
     });
 
-    it("should create default channel in constructor", done => {
+    it("should create default channel in constructor and get it by name", done => {
       let component = new Horpyna.Component();
       let channel = component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL);
+      expect(channel).to.be.an.instanceof(Horpyna.InputChannel);
+      expect(channel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
+      done();
+    });
+
+    it("should create default channel in constructor and get it by default value", done => {
+      let component = new Horpyna.Component();
+      let channel = component.getInputChannel();
       expect(channel).to.be.an.instanceof(Horpyna.InputChannel);
       expect(channel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
       done();
