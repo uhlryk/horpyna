@@ -125,15 +125,30 @@ describe("Component", () => {
   describe("next method", () => {
     it("should trigger onNext method with request and response objects", done => {
       let dummyValue = "BBBB";
-      sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
+      let nextStub = sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
         expect(request).to.be.an.instanceof(Horpyna.Request);
         expect(request.getValue()).to.be.equal(dummyValue);
         expect(response).to.be.an.instanceof(Horpyna.Response);
+        nextStub.restore();
         done();
       });
       let component = new Horpyna.Component();
       component.next(new Horpyna.Request(dummyValue, null, component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)));
     });
-  });
 
+  });
+  describe("bind method", () => {
+    it("should bind component default output channel and target component input default channel", done => {
+      let currentComponent = new Horpyna.Component();
+      let targetComponent = new Horpyna.Component();
+      currentComponent.bind(targetComponent);
+
+      let currentOutputChannel = currentComponent.getOutputChannel();
+      let targetInputChannel = targetComponent.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL);
+
+      expect(currentOutputChannel.getChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)).to.be.equal(targetInputChannel);
+      expect(targetInputChannel.getChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)).to.be.equal(currentOutputChannel);
+      done();
+    });
+  });
 });
