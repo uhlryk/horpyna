@@ -258,17 +258,21 @@ module.exports =
 	            return this._outputChannelManager.getChannel(channelName);
 	        }
 	    }, {
-	        key: "createInputChannel",
-	        value: function createInputChannel(channelName) {
+	        key: "_getInputChannelSetValueCallback",
+	        value: function _getInputChannelSetValueCallback() {
 	            var _this3 = this;
 
+	            return function (value, parentOutput, currentInput) {
+	                _this3.next(new _request2.default(value, parentOutput, currentInput));
+	            };
+	        }
+	    }, {
+	        key: "createInputChannel",
+	        value: function createInputChannel(channelName) {
 	            if (this.isInputChannel(channelName) === true) {
 	                throw Error(ERROR.UNIQUE_NAME_INPUT_CHANNEL);
 	            }
-	            var inputSetValueCallback = function inputSetValueCallback(value, parentOutput, currentInput) {
-	                _this3.next(new _request2.default(value, parentOutput, currentInput));
-	            };
-	            this._inputChannelManager.addChannel(new _inputChannel2.default(channelName, inputSetValueCallback));
+	            this._inputChannelManager.addChannel(new _inputChannel2.default(channelName, this._getInputChannelSetValueCallback()));
 	            return this;
 	        }
 	    }, {

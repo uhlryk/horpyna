@@ -83,14 +83,17 @@ class Component {
     return <OutputChannel> this._outputChannelManager.getChannel(channelName);
   }
 
+  public _getInputChannelSetValueCallback(): IInputSetValueCallback {
+    return (value: any, parentOutput: OutputChannel, currentInput: InputChannel) => {
+      this.next(new Request(value, parentOutput, currentInput));
+    };
+  }
+
   public createInputChannel(channelName: string): Component {
     if(this.isInputChannel(channelName) === true) {
       throw Error(ERROR.UNIQUE_NAME_INPUT_CHANNEL);
     }
-    let inputSetValueCallback: IInputSetValueCallback = (value: any, parentOutput: OutputChannel, currentInput: InputChannel) => {
-      this.next(new Request(value, parentOutput, currentInput));
-    };
-    this._inputChannelManager.addChannel(new InputChannel(channelName, inputSetValueCallback));
+    this._inputChannelManager.addChannel(new InputChannel(channelName, this._getInputChannelSetValueCallback()));
     return this;
   }
 
