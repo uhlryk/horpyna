@@ -186,6 +186,18 @@ describe("Component", () => {
       expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
       done();
     });
+
+    it("should throw error when two channels have joint already", done => {
+      let currentChannelName = "fsg423";
+      let targetChannelName = "aewawe3";
+      let currentComponent = new Horpyna.Component();
+      currentComponent.createOutputChannel(currentChannelName);
+      let targetComponent = new Horpyna.Component();
+      targetComponent.createInputChannel(targetChannelName);
+      currentComponent.addJoint(targetComponent, currentChannelName, targetChannelName);
+      expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.ONE_JOINT_PER_CHANNEL_PAIR);
+      done();
+    });
   });
 
   describe("addCallback method", () => {

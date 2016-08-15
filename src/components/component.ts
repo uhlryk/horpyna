@@ -42,8 +42,12 @@ class Component {
   public addJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
     let targetInput: Channel = target.getInputChannel(targetChannelName);
     let currentOutput: Channel = this.getOutputChannel(currentChannelName);
-    targetInput.addChannel(currentOutput);
-    currentOutput.addChannel(targetInput);
+    if(targetInput.isChannel(currentOutput) === false && currentOutput.isChannel(targetInput) === false) {
+      targetInput.addChannel(currentOutput);
+      currentOutput.addChannel(targetInput);
+    } else {
+      throw Error(ERROR.ONE_JOINT_PER_CHANNEL_PAIR);
+    }
     return this;
   }
 
@@ -60,11 +64,11 @@ class Component {
   }
 
   public isInputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): boolean {
-    return this._inputChannelManager.isChannel(channelName);
+    return this._inputChannelManager.isChannelByName(channelName);
   }
 
   public isOutputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): boolean {
-    return this._outputChannelManager.isChannel(channelName);
+    return this._outputChannelManager.isChannelByName(channelName);
   }
 
   public getInputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): InputChannel {

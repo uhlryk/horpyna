@@ -201,8 +201,12 @@ module.exports =
 
 	            var targetInput = target.getInputChannel(targetChannelName);
 	            var currentOutput = this.getOutputChannel(currentChannelName);
-	            targetInput.addChannel(currentOutput);
-	            currentOutput.addChannel(targetInput);
+	            if (targetInput.isChannel(currentOutput) === false && currentOutput.isChannel(targetInput) === false) {
+	                targetInput.addChannel(currentOutput);
+	                currentOutput.addChannel(targetInput);
+	            } else {
+	                throw Error(ERROR.ONE_JOINT_PER_CHANNEL_PAIR);
+	            }
 	            return this;
 	        }
 	    }, {
@@ -228,14 +232,14 @@ module.exports =
 	        value: function isInputChannel() {
 	            var channelName = arguments.length <= 0 || arguments[0] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[0];
 
-	            return this._inputChannelManager.isChannel(channelName);
+	            return this._inputChannelManager.isChannelByName(channelName);
 	        }
 	    }, {
 	        key: "isOutputChannel",
 	        value: function isOutputChannel() {
 	            var channelName = arguments.length <= 0 || arguments[0] === undefined ? CHANNEL.DEFAULT_CHANNEL : arguments[0];
 
-	            return this._outputChannelManager.isChannel(channelName);
+	            return this._outputChannelManager.isChannelByName(channelName);
 	        }
 	    }, {
 	        key: "getInputChannel",
@@ -313,9 +317,16 @@ module.exports =
 	    }
 
 	    _createClass(ChannelManager, [{
-	        key: "isChannel",
-	        value: function isChannel(channelName) {
+	        key: "isChannelByName",
+	        value: function isChannelByName(channelName) {
 	            return typeof this.getChannel(channelName) !== "undefined";
+	        }
+	    }, {
+	        key: "isChannel",
+	        value: function isChannel(testChannel) {
+	            return this.getChannels().some(function (channel) {
+	                return channel === testChannel;
+	            });
 	        }
 	    }, {
 	        key: "addChannel",
@@ -663,6 +674,7 @@ module.exports =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var ONE_JOINT_PER_CHANNEL_PAIR = exports.ONE_JOINT_PER_CHANNEL_PAIR = "two channels can have only one joint";
 	var NON_EXIST_CHANNEL = exports.NON_EXIST_CHANNEL = "channel do not exist";
 	var UNIQUE_NAME_CHANNEL = exports.UNIQUE_NAME_CHANNEL = "channel need unique name";
 	var UNIQUE_NAME_INPUT_CHANNEL = exports.UNIQUE_NAME_INPUT_CHANNEL = UNIQUE_NAME_CHANNEL;

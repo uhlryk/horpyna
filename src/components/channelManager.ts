@@ -8,8 +8,12 @@ class ChannelManager {
     this._channels = [];
   }
 
-  public isChannel(channelName: string): boolean {
+  public isChannelByName(channelName: string): boolean {
     return typeof this.getChannel(channelName) !== "undefined";
+  }
+
+  public isChannel(testChannel: Channel): boolean {
+    return this.getChannels().some(channel => channel === testChannel);
   }
 
   public addChannel(channel: Channel): void {
