@@ -52,14 +52,14 @@ and put in each class your code block*
       onInit() {
         //custom configuration, for example creation of additional channels
       }
-      onProcess(request, response) {
+      onNext(request, response) {
         //input value is available from request.value
         //when component finish calculating response send it via response.send(componentResponse)
       }
       
     }
     
-    export default CustomCOmponent1;
+    export default CustomComponent1;
 
 YOU SHOULD BUILD COMPONENTS WITH OPTIONS WHICH SHOULD ALLOW YOUR COMPONENTS TO BE FLEXIBLE,
 GREAT IDEA IS TO TREAT SOME PARAMS FROM PARENT COMPONENTS AS OPTIONS WHICH CHANGING COMPONENT BEHAVIOR,
@@ -68,14 +68,14 @@ if you wish create your components `inline` :
 
     let CustomComponent1 = class extends Horpyna.Component {
       onInit() { ... }
-      onProcess(request, response) { ... }
+      onNext(request, response) { ... }
     }
     
 or even create instances from inline classes
 
     let customComponent1 = new class extends Horpyna.Component {
       onInit() { ... }
-      onProcess(request, response) { ... }
+      onNext(request, response) { ... }
     }
 
 
@@ -99,23 +99,21 @@ If there are manu users calculate somethig else.
     let validateParamsComponent = new ValidateParams();
     
     let validateErrorMessageComponent = new SendResponse(options);
-    validateErrorMessageComponent.bind(validateParamsComponent, "customErrorChannel");
+    validateParamsComponent.addJoint(validateErrorMessageComponent, "customErrorChannel");
     
     let getUserList = new GetEntityFromDb(options);
-    getUserList.bind(validateParamsComponent);
+    validateParamsComponent.addJoint(getUserList);
     
     let zeroUsersErrorMessageComponent = new SendResponse(options);
-    zeroUsersErrorMessageComponent.bind(getUserList, "otherCustomErrorChannel");
+    getUserList.addJoint(zeroUsersErrorMessageComponent, "otherCustomErrorChannel");
     
     let calculateWhenOneEntity = new CalculateSomething(options);
-    calculateWhenOneEntity.bind(getUserList, "oneEntityChannel");
-    calculateWhenOneEntity.setFinal();
+    getUserList.addJoint(calculateWhenOneEntity, "oneEntityChannel");
     
     let calculateWhenManyEntities = new CalculateSomething(options);
-    calculateWhenManyEntities.bind(getUserList, "manyEntitiesChannel");
-    calculateWhenManyEntities.setFinal();
+    getUserList.addJoint(calculateWhenManyEntities, "manyEntitiesChannel");
     
-    validateParamsComponent.start(startParameters, output => {
+    validateParamsComponent.start(startParameters, outputChannel => {
       //callback when chain finished calculation
     });
 
@@ -129,60 +127,12 @@ based on simple components or complex components.
 
 ## API
 
-### Component
-
-#### constructor(options)
-
-#### onInit(options)
-
-#### onProcess(request:Request, response:Response)
-
-#### start(value, endCallback)
-
-#### onParentReady()
-
-#### getChannel(channelName):Channel
-
-#### createChannel(channelName)
-
-#### setFinal()
-
-#### bind(component:Component, channelName)
-
-### Channel
-
-#### constructor(component, name)
-
-#### addComponent(component)
-
-#### getComponentList()
-
-### Request
-
-#### constructor(value)
-
-### Response
-
-#### constructor(component)
-
-#### init()
-
-#### prepare(value, channelName)
-
-#### done()
-
-#### send(value, channelName)
-
 ## DEVELOPMENT
 
 ### COMMANDS 
 
 If you wish to help with this module, below there are instructions.
-
-Run dev build and watch on files changes:
-
-    npm run dev
-    
+   
 Run production build:
 
     npm run build
