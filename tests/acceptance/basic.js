@@ -81,4 +81,62 @@ describe("Basic functionality", () => {
       parentComponent.start(dummyValue);
     })
   });
+
+  describe("Check branched connection cA joint CB1 and CB2; CB1 joint CC; CB2 joint CC", () => {
+    it("should invoke twice next method in the CC component", done => {
+      let spyFirst = sinon.spy();
+      let spySecondA = sinon.spy();
+      let spySecondB = sinon.spy();
+      let spyThird = sinon.spy();
+      let firstComponent = new class extends Horpyna.Component {
+        onNext(request, response) {
+          spyFirst();
+          response.send(request.getValue());
+        }
+      };
+      let secondAComponent = new class extends Horpyna.Component {
+        onNext(request, response) {
+          spySecondA();
+          response.send(request.getValue());
+        }
+      };
+      let secondBComponent = new class extends Horpyna.Component {
+        onNext(request, response) {
+          spySecondB();
+          response.send(request.getValue());
+        }
+      };
+      let calls = 0;
+      let thirdComponent = new class extends Horpyna.Component {
+        onNext(request, response) {
+          spyThird();
+          calls ++;
+          console.log(calls);
+          if(calls === 2) {
+            response.send(request.getValue());
+          }
+        }
+      };
+
+      firstComponent.addJoint(secondAComponent);
+      firstComponent.addJoint(secondBComponent);
+      secondAComponent.addJoint(thirdComponent);
+      secondBComponent.addJoint(thirdComponent);
+      thirdComponent.addCallback((value, sourceChannel) => {
+        expect(spyFirst.calledOnce).to.be.true;
+        expect(spySecondA.calledOnce).to.be.true;
+        expect(spySecondB.calledOnce).to.be.true;
+        expect(spyThird.calledTwice).to.be.true;
+        expect(spyThird.calledAfter(spySecondA)).to.be.true;
+        expect(spyThird.calledAfter(spySecondB)).to.be.true;
+        expect(spySecondA.calledAfter(spyFirst)).to.be.true;
+        expect(spySecondB.calledAfter(spyFirst)).to.be.true;
+        expect(value).to.be.equal(dummyValue);
+        expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
+        expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
+        done();
+      });
+      firstComponent.start(dummyValue);
+    });
+  });
 });
