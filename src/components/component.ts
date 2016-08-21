@@ -20,6 +20,7 @@ class Component {
     this._outputChannelManager = new ChannelManager();
     this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
+    this.createOutputChannel(CHANNEL.ERROR_CHANNEL);
     this.onInit(options);
   }
 
@@ -35,7 +36,13 @@ class Component {
 
   public next(request: Request): Component {
     const response: Response = new Response(this._getResponseCallback());
-    setTimeout(() => this.onNext(request, response), 0);
+    setTimeout(() => {
+      try {
+        this.onNext(request, response);
+      } catch(error) {
+        response.send(error, CHANNEL.ERROR_CHANNEL);
+      }
+    }, 0);
     return this;
   }
 

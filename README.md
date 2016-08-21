@@ -23,14 +23,16 @@ It helps with modularity, reusability and testify of your code.
 
 You split your code into smaller independent parts. Each of them you wrap into Horpyna Component. You customize
 each component. And then it is funniest part. You can join components together, then built new components from 
-joined components. You can decorate components with other components to modify it functionality. 
+joined components. You can decorate components with other components to modify its functionality. 
 
 For example you can have component which consist of 5 other components. You can reuse it, and remove some inner components
 and replace them with other components.
 
-It is also easy to test. Each component have input and output. In test you set different input value and test
+It is also easy to test. Each component has input and output. In test you set different input value and test
  output values.
 
+Each component has input and output channels. By default components have default and error channel.
+Each input channel can be connected with any number of output channels from other components.
 
 ## INSTALLATION
 

@@ -134,6 +134,23 @@ describe("Component", () => {
       let component = new Horpyna.Component();
       component.next(new Horpyna.Request(dummyValue, null, component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)));
     });
+
+    it("should trigger response send with channel Error if onNext has errro", done => {
+      const errorMessage = "Some Error";
+      const nextStub = sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
+        nextStub.restore();
+        throw Error(errorMessage);
+      });
+      const sendStub = sinon.stub(Horpyna.Response.prototype, "send", (value, channelName) => {
+        expect(value).to.be.an.instanceof(Error);
+        expect(value.message).to.be.equal(errorMessage);
+        expect(channelName).to.be.equal(Horpyna.CHANNEL.ERROR_CHANNEL);
+        sendStub.restore();
+        done();
+      });
+      const component = new Horpyna.Component();
+      component.next(new Horpyna.Request(dummyValue, null, component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)));
+    });
   });
 
   describe("addJoint method", () => {
@@ -236,4 +253,5 @@ describe("Component", () => {
       done();
     });
   });
+
 });
