@@ -8,6 +8,7 @@ import IInputSetValueCallback from "./iInputSetValueCallback";
 import ICallbackSetValueCallback from "./iCallbackSetValueCallback";
 import Response from "./response";
 import Request from "./request";
+import Joint from "./joint";
 import * as CHANNEL from "../constants/channels";
 import * as ERROR from "../constants/errors";
 
@@ -46,22 +47,12 @@ class Component {
     return this;
   }
 
-  public addJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
-    const targetInput: Channel = target.getInputChannel(targetChannelName);
-    const currentOutput: Channel = this.getOutputChannel(currentChannelName);
-    if(targetInput.isChannel(currentOutput) === false && currentOutput.isChannel(targetInput) === false) {
-      targetInput.addChannel(currentOutput);
-      currentOutput.addChannel(targetInput);
-    } else {
-      throw Error(ERROR.ONE_JOINT_PER_CHANNEL_PAIR);
-    }
-    return this;
+  public addJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
+    return new Joint(target.getInputChannel(targetChannelName), this.getOutputChannel(currentChannelName));
   }
 
-  public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
-    const currentOutput: Channel = this.getOutputChannel(currentChannelName);
-    currentOutput.addChannel(new CallbackChannel(target));
-    return this;
+  public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
+    return new Joint(this.getOutputChannel(currentChannelName), new CallbackChannel(target));
   }
 
   private _getResponseCallback(): IResponseCallback {

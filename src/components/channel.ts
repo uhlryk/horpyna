@@ -8,7 +8,7 @@ class Channel extends ChannelManager{
     this._name = name;
   }
 
-  getName(): string {
+  public getName(): string {
     return this._name;
   }
 

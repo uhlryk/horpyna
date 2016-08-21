@@ -9,7 +9,7 @@ class Response {
     this._onSendCallback = onSendCallback;
   }
 
-  send(value: any = undefined, channelName: string = CHANNEL.DEFAULT_CHANNEL): Response {
+  public send(value: any = undefined, channelName: string = CHANNEL.DEFAULT_CHANNEL): Response {
     this._onSendCallback(value, channelName);
     return this;
   }

@@ -7,7 +7,7 @@ class OutputChannel extends Channel{
     super(name, channels);
   }
 
-  emitValue(value: any): void {
+  public emitValue(value: any): void {
     const outputs: InputChannel[] = <Array<InputChannel>>this.getChannels();
     outputs.forEach((channel: InputChannel) => {
       channel.setValue(value, this);
