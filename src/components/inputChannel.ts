@@ -4,8 +4,8 @@ import IInputSetValueCallback from "./iInputSetValueCallback";
 
 class InputChannel extends Channel{
   private _onSetValueCallback: IInputSetValueCallback;
-  constructor(name: string, onSetValueCallback?: IInputSetValueCallback) {
-    super(name);
+  constructor(name: string, onSetValueCallback?: IInputSetValueCallback, channels: Channel[] = []) {
+    super(name, channels);
     if(onSetValueCallback) {
       this.setCallback(onSetValueCallback);
     }

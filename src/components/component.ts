@@ -34,14 +34,14 @@ class Component {
   }
 
   public next(request: Request): Component {
-    let response: Response = new Response(this._getResponseCallback());
+    const response: Response = new Response(this._getResponseCallback());
     setTimeout(() => this.onNext(request, response), 0);
     return this;
   }
 
   public addJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
-    let targetInput: Channel = target.getInputChannel(targetChannelName);
-    let currentOutput: Channel = this.getOutputChannel(currentChannelName);
+    const targetInput: Channel = target.getInputChannel(targetChannelName);
+    const currentOutput: Channel = this.getOutputChannel(currentChannelName);
     if(targetInput.isChannel(currentOutput) === false && currentOutput.isChannel(targetInput) === false) {
       targetInput.addChannel(currentOutput);
       currentOutput.addChannel(targetInput);
@@ -52,7 +52,7 @@ class Component {
   }
 
   public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL) {
-    let currentOutput: Channel = this.getOutputChannel(currentChannelName);
+    const currentOutput: Channel = this.getOutputChannel(currentChannelName);
     currentOutput.addChannel(new CallbackChannel(target));
     return this;
   }
