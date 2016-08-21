@@ -98,26 +98,28 @@ If there are manu users calculate somethig else.
     import CalculateSomething from "calculateSomething";
     import SendResponse from "sendResponse";
     
-    let validateParamsComponent = new ValidateParams();
+    const validateParamsComponent = new ValidateParams();
     
-    let validateErrorMessageComponent = new SendResponse(options);
+    const validateErrorMessageComponent = new SendResponse(options);
     validateParamsComponent.addJoint(validateErrorMessageComponent, "customErrorChannel");
     
-    let getUserList = new GetEntityFromDb(options);
+    const getUserList = new GetEntityFromDb(options);
     validateParamsComponent.addJoint(getUserList);
     
-    let zeroUsersErrorMessageComponent = new SendResponse(options);
+    const zeroUsersErrorMessageComponent = new SendResponse(options);
     getUserList.addJoint(zeroUsersErrorMessageComponent, "otherCustomErrorChannel");
     
-    let calculateWhenOneEntity = new CalculateSomething(options);
+    const calculateWhenOneEntity = new CalculateSomething(options);
     getUserList.addJoint(calculateWhenOneEntity, "oneEntityChannel");
     
-    let calculateWhenManyEntities = new CalculateSomething(options);
+    const calculateWhenManyEntities = new CalculateSomething(options);
     getUserList.addJoint(calculateWhenManyEntities, "manyEntitiesChannel");
     
-    validateParamsComponent.start(startParameters, outputChannel => {
-      //callback when chain finished calculation
+    getUserList.addCallback((value, channel) => {
+      //callback when getUserList finished calculation
     });
+        
+    validateParamsComponent.start(startParameters);
 
 
 You can create one component which will contain this component chain. And you can easy build new component chains
