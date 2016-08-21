@@ -4,8 +4,8 @@ class ChannelManager {
 
   private _channels: Channel[];
 
-  constructor() {
-    this._channels = [];
+  constructor(channels: Channel[] = []) {
+    this._channels = channels;
   }
 
   public isChannelByName(channelName: string): boolean {

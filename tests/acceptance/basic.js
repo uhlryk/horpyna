@@ -111,7 +111,6 @@ describe("Basic functionality", () => {
         onNext(request, response) {
           spyThird();
           calls ++;
-          console.log(calls);
           if(calls === 2) {
             response.send(request.getValue());
           }

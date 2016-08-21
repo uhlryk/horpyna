@@ -30,7 +30,10 @@ module.exports = {
   plugins: [
     failPlugin,
     new webpack.BannerPlugin('require("source-map-support").install();',
-      { raw: true, entryOnly: false })
+      { raw: true, entryOnly: false }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: { warnings: false }
+    })
   ],
   output: {
     libraryTarget: "commonjs2",
