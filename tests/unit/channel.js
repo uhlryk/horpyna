@@ -7,6 +7,18 @@ chai.use(chaiThings);
 const expect = chai.expect;
 
 describe("Channel", () => {
+  const channelName = "123456789";
+  const channel = new Horpyna.Channel(channelName);
 
+  it("should be instance of channelManager", done => {
+    expect(channel).to.be.instanceof(Horpyna.ChannelManager);
+    done();
+  });
 
+  describe("getName method", () => {
+    it("should return channel name", done => {
+      expect(channel.getName()).to.be.equal(channelName);
+      done();
+    });
+  });
 });
