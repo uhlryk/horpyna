@@ -5,8 +5,9 @@ import Horpyna from "../../dist/index";
 
 chai.use(chaiThings);
 const expect = chai.expect;
-const channelName = "1234567890";
+
 describe("InputChannel", () => {
+  const channelName = "1234567890";
   const inputChannel = new Horpyna.InputChannel(channelName);
 
   it("should be instance of Channel", done => {

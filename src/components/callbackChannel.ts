@@ -6,8 +6,8 @@ import * as CHANNEL from "../constants/channels";
 
 class CallbackChannel extends InputChannel {
   private _callback: ICallbackSetValueCallback;
-  constructor(onSetValueCallback: ICallbackSetValueCallback) {
-    super(CHANNEL.DEFAULT_CHANNEL);
+  constructor(onSetValueCallback: ICallbackSetValueCallback, channels: Channel[] = []) {
+    super(CHANNEL.DEFAULT_CHANNEL, undefined, channels);
     this.setCallback(onSetValueCallback);
   }
 
