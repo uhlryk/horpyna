@@ -17,7 +17,7 @@ describe("Response", () => {
       response.send(mockValue, mockChannelName);
       expect(spyCallbackFunc.calledOnce).to.be.true;
       expect(spyCallbackFunc.args[0][0]).to.be.equal(mockValue);
-      expect(spyCallbackFunc.args[0][1]).to.be.equal(mockChannelName);g
+      expect(spyCallbackFunc.args[0][1]).to.be.equal(mockChannelName);
       done();
     });
   });
