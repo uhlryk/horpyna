@@ -3,8 +3,8 @@ import InputChannel from "./inputChannel";
 
 class OutputChannel extends Channel{
 
-  constructor(name: string) {
-    super(name);
+  constructor(name: string, channels: Channel[] = []) {
+    super(name, channels);
   }
 
   emitValue(value: any): void {
