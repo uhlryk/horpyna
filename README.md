@@ -91,7 +91,7 @@ if value is wrong then send error message,
 if value is  ok then use it to take users from db,
 If there is no users then send error message
 If there is one user make some calculation.
-If there are manu users calculate somethig else.
+If there are many users calculate something else.
     
     import ValidateParams from "validateParams";
     import getEnityFromDb from "GetEnityFromDb";
@@ -99,7 +99,7 @@ If there are manu users calculate somethig else.
     import SendResponse from "sendResponse";
     
     const validateParamsComponent = new ValidateParams();
-    
+    validateParamsComponent.setInput(startParameters);
     const validateErrorMessageComponent = new SendResponse(options);
     validateParamsComponent.addJoint(validateErrorMessageComponent, "customErrorChannel");
     
@@ -118,9 +118,7 @@ If there are manu users calculate somethig else.
     getUserList.addCallback((value, channel) => {
       //callback when getUserList finished calculation
     });
-        
-    validateParamsComponent.start(startParameters);
-
+    
 
 You can create one component which will contain this component chain. And you can easy build new component chains
 based on simple components or complex components.

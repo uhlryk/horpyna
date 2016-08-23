@@ -29,12 +29,12 @@ describe("Component", () => {
     });
   });
 
-  describe("start method", () => {
+  describe("setInput method", () => {
 
     it("should trigger next method with request args when default channel name", done => {
       const nextSpy = sinon.spy(Horpyna.Component.prototype, "next");
       const component = new Horpyna.Component();
-      component.start(dummyValue);
+      component.setInput(dummyValue);
       expect(nextSpy.calledOnce).to.be.true;
       const request = nextSpy.args[0][0];
       expect(request).to.be.an.instanceof(Horpyna.Request);
@@ -227,7 +227,7 @@ describe("Component", () => {
         expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
         done();
       }, Horpyna.CHANNEL.DEFAULT_CHANNEL);
-      component.start(dummyValue);
+      component.setInput(dummyValue);
       expect(joint).to.be.an.instanceof(Horpyna.Joint);
     });
 
@@ -246,7 +246,7 @@ describe("Component", () => {
         done();
       }, currentChannelName);
 
-      component.start(dummyValue);
+      component.setInput(dummyValue);
       expect(joint).to.be.an.instanceof(Horpyna.Joint);
     });
 

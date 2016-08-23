@@ -31,7 +31,7 @@ class Component {
     response.send(request.getValue());
   }
 
-  public start(value:any, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
+  public setInput(value:any, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Component {
     return this.next(new Request(value, null, this.getInputChannel(targetChannelName)));
   }
 

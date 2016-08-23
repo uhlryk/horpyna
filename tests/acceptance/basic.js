@@ -18,7 +18,7 @@ describe("Basic functionality", () => {
           response.send(request.getValue());
         }
       };
-      component.start(dummyValue);
+      component.setInput(dummyValue);
       component.addCallback((value, sourceChannel) => {
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(value).to.be.equal(dummyValue);
@@ -41,7 +41,7 @@ describe("Basic functionality", () => {
       };
       component.createInputChannel(targetChannelName);
       component.createOutputChannel(responseChannelName);
-      component.start(dummyValue, targetChannelName);
+      component.setInput(dummyValue, targetChannelName);
       component.addCallback((value, sourceChannel) => {
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(value).to.be.equal(dummyValue);
@@ -68,6 +68,7 @@ describe("Basic functionality", () => {
           response.send(request.getValue());
         }
       };
+      parentComponent.setInput(dummyValue);
       parentComponent.addJoint(childComponent);
       childComponent.addCallback((value, sourceChannel) => {
         expect(spyParentFunc.calledOnce).to.be.true;
@@ -78,7 +79,6 @@ describe("Basic functionality", () => {
         expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
         done();
       });
-      parentComponent.start(dummyValue);
     })
   });
 
@@ -94,6 +94,7 @@ describe("Basic functionality", () => {
           response.send(request.getValue());
         }
       };
+      firstComponent.setInput(dummyValue);
       let secondAComponent = new class extends Horpyna.Component {
         onNext(request, response) {
           spySecondA();
@@ -116,7 +117,6 @@ describe("Basic functionality", () => {
           }
         }
       };
-
       firstComponent.addJoint(secondAComponent);
       firstComponent.addJoint(secondBComponent);
       secondAComponent.addJoint(thirdComponent);
@@ -135,7 +135,7 @@ describe("Basic functionality", () => {
         expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
         done();
       });
-      firstComponent.start(dummyValue);
+
     });
   });
 });
