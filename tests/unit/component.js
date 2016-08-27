@@ -29,6 +29,17 @@ describe("Component", () => {
     });
   });
 
+  describe("setState & getState method & clearState", () => {
+    it("should save and load data and then clear it", done => {
+      const component = new Horpyna.Component();
+      component.setState(dummyValue);
+      expect(component.getState()).to.be.equal(dummyValue);
+      component.clearState();
+      expect(component.getState()).to.be.null;
+      done();
+    });
+  });
+
   describe("setInput method", () => {
 
     it("should trigger next method with request args when default channel name", done => {

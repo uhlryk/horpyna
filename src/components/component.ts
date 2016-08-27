@@ -9,14 +9,17 @@ import ICallbackSetValueCallback from "./iCallbackSetValueCallback";
 import Response from "./response";
 import Request from "./request";
 import Joint from "./joint";
+import State from "./state";
 import * as CHANNEL from "../constants/channels";
 import * as ERROR from "../constants/errors";
 
 class Component {
   private _inputChannelManager: ChannelManager;
   private _outputChannelManager: ChannelManager;
+  private _state: State;
 
   constructor(options:any) {
+    this._state = new State();
     this._inputChannelManager = new ChannelManager();
     this._outputChannelManager = new ChannelManager();
     this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
@@ -60,6 +63,21 @@ class Component {
       this.getOutputChannel(channelName).emitValue(value);
     };
   }
+
+  public setState(value: any): Component {
+    this._state.setState(value);
+    return this;
+  }
+
+  public getState(): any {
+    return this._state.getState();
+  }
+
+  public clearState(): Component {
+    this._state.clearState();
+    return this;
+  }
+
 
   public isInputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): boolean {
     return this._inputChannelManager.isChannelByName(channelName);

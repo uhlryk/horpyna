@@ -5,6 +5,7 @@ import OutputChannel from "./components/outputChannel";
 import CallbackChannel from "./components/callbackChannel";
 import ChannelManager from "./components/channelManager";
 import Joint from "./components/joint";
+import State from "./components/state";
 import Request from "./components/request";
 import Response from "./components/response";
 
@@ -19,6 +20,7 @@ export default {
   CallbackChannel,
   ChannelManager,
   Joint,
+  State,
   Request,
   Response,
   CHANNEL,
