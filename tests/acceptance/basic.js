@@ -69,7 +69,7 @@ describe("Basic functionality", () => {
         }
       };
       parentComponent.setInput(dummyValue);
-      parentComponent.addJoint(childComponent);
+      parentComponent.createJoint(childComponent);
       childComponent.addCallback((value, sourceChannel) => {
         expect(spyParentFunc.calledOnce).to.be.true;
         expect(spyChildFunc.calledOnce).to.be.true;
@@ -117,10 +117,10 @@ describe("Basic functionality", () => {
           }
         }
       };
-      firstComponent.addJoint(secondAComponent);
-      firstComponent.addJoint(secondBComponent);
-      secondAComponent.addJoint(thirdComponent);
-      secondBComponent.addJoint(thirdComponent);
+      firstComponent.createJoint(secondAComponent);
+      firstComponent.createJoint(secondBComponent);
+      secondAComponent.createJoint(thirdComponent);
+      secondBComponent.createJoint(thirdComponent);
       thirdComponent.addCallback((value, sourceChannel) => {
         expect(spyFirst.calledOnce).to.be.true;
         expect(spySecondA.calledOnce).to.be.true;

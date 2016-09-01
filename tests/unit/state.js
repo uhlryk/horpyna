@@ -11,8 +11,6 @@ describe("State", () => {
   const dummyValue2 = "234567890";
   const state = new Horpyna.State(dummyValue1);
 
-
-
   describe("getState method", () => {
     it("should return value", done => {
       expect(state.getState()).to.be.equal(dummyValue1);

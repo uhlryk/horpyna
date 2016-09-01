@@ -101,19 +101,19 @@ If there are many users calculate something else.
     const validateParamsComponent = new ValidateParams();
     validateParamsComponent.setInput(startParameters);
     const validateErrorMessageComponent = new SendResponse(options);
-    validateParamsComponent.addJoint(validateErrorMessageComponent, "customErrorChannel");
+    validateParamsComponent.createJoint(validateErrorMessageComponent, "customErrorChannel");
     
     const getUserList = new GetEntityFromDb(options);
-    validateParamsComponent.addJoint(getUserList);
+    validateParamsComponent.createJoint(getUserList);
     
     const zeroUsersErrorMessageComponent = new SendResponse(options);
-    getUserList.addJoint(zeroUsersErrorMessageComponent, "otherCustomErrorChannel");
+    getUserList.createJoint(zeroUsersErrorMessageComponent, "otherCustomErrorChannel");
     
     const calculateWhenOneEntity = new CalculateSomething(options);
-    getUserList.addJoint(calculateWhenOneEntity, "oneEntityChannel");
+    getUserList.createJoint(calculateWhenOneEntity, "oneEntityChannel");
     
     const calculateWhenManyEntities = new CalculateSomething(options);
-    getUserList.addJoint(calculateWhenManyEntities, "manyEntitiesChannel");
+    getUserList.createJoint(calculateWhenManyEntities, "manyEntitiesChannel");
     
     getUserList.addCallback((value, channel) => {
       //callback when getUserList finished calculation

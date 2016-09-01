@@ -10,6 +10,7 @@ import Response from "./response";
 import Request from "./request";
 import Joint from "./joint";
 import State from "./state";
+import Structure from "./structure";
 import * as CHANNEL from "../constants/channels";
 import * as ERROR from "../constants/errors";
 
@@ -17,9 +18,11 @@ class Component {
   private _inputChannelManager: ChannelManager;
   private _outputChannelManager: ChannelManager;
   private _state: State;
+  private _structure: Structure;
 
   constructor(options:any) {
     this._state = new State();
+    this._structure = new Structure();
     this._inputChannelManager = new ChannelManager();
     this._outputChannelManager = new ChannelManager();
     this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
@@ -30,7 +33,7 @@ class Component {
 
   public onInit(options:any) {}
 
-  public onNext(request: Request, response: Response) {
+  public onNext(request: Request, response: Response, structure: Structure) {
     response.send(request.getValue());
   }
 
@@ -42,7 +45,7 @@ class Component {
     const response: Response = new Response(this._getResponseCallback());
     setTimeout(() => {
       try {
-        this.onNext(request, response);
+        this.onNext(request, response, this.getStructure());
       } catch(error) {
         response.send(error, CHANNEL.ERROR_CHANNEL);
       }
@@ -50,7 +53,7 @@ class Component {
     return this;
   }
 
-  public addJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
+  public createJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
     return new Joint(target.getInputChannel(targetChannelName), this.getOutputChannel(currentChannelName));
   }
 
@@ -62,6 +65,10 @@ class Component {
     return (value: any, channelName: string) => {
       this.getOutputChannel(channelName).emitValue(value);
     };
+  }
+
+  public getStructure(): Structure {
+    return this._structure;
   }
 
   public setState(value: any): Component {
@@ -77,7 +84,6 @@ class Component {
     this._state.clearState();
     return this;
   }
-
 
   public isInputChannel(channelName: string = CHANNEL.DEFAULT_CHANNEL): boolean {
     return this._inputChannelManager.isChannelByName(channelName);

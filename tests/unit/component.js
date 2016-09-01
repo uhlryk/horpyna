@@ -164,11 +164,11 @@ describe("Component", () => {
     });
   });
 
-  describe("addJoint method", () => {
+  describe("createJoint method", () => {
     it("should connect component default output channel and target component input default channel", done => {
       const currentComponent = new Horpyna.Component();
       const targetComponent = new Horpyna.Component();
-      const joint = currentComponent.addJoint(targetComponent);
+      const joint = currentComponent.createJoint(targetComponent);
 
       const currentOutputChannel = currentComponent.getOutputChannel();
       const targetInputChannel = targetComponent.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL);
@@ -186,7 +186,7 @@ describe("Component", () => {
       currentComponent.createOutputChannel(currentChannelName);
       const targetComponent = new Horpyna.Component();
       targetComponent.createInputChannel(targetChannelName);
-      const joint = currentComponent.addJoint(targetComponent, currentChannelName, targetChannelName);
+      const joint = currentComponent.createJoint(targetComponent, currentChannelName, targetChannelName);
 
       const currentOutputChannel = currentComponent.getOutputChannel(currentChannelName);
       const targetInputChannel = targetComponent.getInputChannel(targetChannelName);
@@ -202,7 +202,7 @@ describe("Component", () => {
       const currentComponent = new Horpyna.Component();
       currentComponent.createOutputChannel(currentChannelName);
       const targetComponent = new Horpyna.Component();
-      expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
+      expect(currentComponent.createJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
       done();
     });
 
@@ -212,7 +212,7 @@ describe("Component", () => {
       const currentComponent = new Horpyna.Component();
       const targetComponent = new Horpyna.Component();
       targetComponent.createInputChannel(targetChannelName);
-      expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
+      expect(currentComponent.createJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.NON_EXIST_CHANNEL);
       done();
     });
 
@@ -223,8 +223,8 @@ describe("Component", () => {
       currentComponent.createOutputChannel(currentChannelName);
       const targetComponent = new Horpyna.Component();
       targetComponent.createInputChannel(targetChannelName);
-      currentComponent.addJoint(targetComponent, currentChannelName, targetChannelName);
-      expect(currentComponent.addJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.ONE_JOINT_PER_CHANNEL_PAIR);
+      currentComponent.createJoint(targetComponent, currentChannelName, targetChannelName);
+      expect(currentComponent.createJoint.bind(currentComponent, targetComponent, currentChannelName, targetChannelName)).to.throw(Error, Error.ONE_JOINT_PER_CHANNEL_PAIR);
       done();
     });
   });
