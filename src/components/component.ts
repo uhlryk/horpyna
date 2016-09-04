@@ -28,12 +28,12 @@ class Component {
     this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.ERROR_CHANNEL);
-    this.onInit(options);
+    this.onInit(options, this.getStructure());
   }
 
-  public onInit(options:any) {}
+  public onInit(options:any, structure: Structure) {}
 
-  public onNext(request: Request, response: Response, structure: Structure) {
+  public onNext(request: Request, response: Response, runStructure) {
     response.send(request.getValue());
   }
 
@@ -45,12 +45,18 @@ class Component {
     const response: Response = new Response(this._getResponseCallback());
     setTimeout(() => {
       try {
-        this.onNext(request, response, this.getStructure());
+        this.onNext(request, response, this._prepareRunStructure(request, response));
       } catch(error) {
         response.send(error, CHANNEL.ERROR_CHANNEL);
       }
     }, 0);
     return this;
+  }
+
+  private _prepareRunStructure(request, response) {
+    return () => {
+
+    }
   }
 
   public createJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
