@@ -11,8 +11,10 @@ class Structure {
     this._joints = new Map<Joint>();
   }
 
-  public createComponent(name: string, AnyComponent: typeof Component, options: any) {
-    this._components.add(name, new AnyComponent(options));
+  public createComponent(name: string, AnyComponent: typeof Component, options: any): Component {
+    const component: Component = new AnyComponent(options);
+    this._components.add(name, component);
+    return component;
   }
 
   public getComponent(name: string): Component {

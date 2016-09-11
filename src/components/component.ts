@@ -60,7 +60,7 @@ class Component {
   }
 
   public createJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
-    return new Joint(target.getInputChannel(targetChannelName), this.getOutputChannel(currentChannelName));
+    return new Joint(this.getOutputChannel(currentChannelName), target.getInputChannel(targetChannelName));
   }
 
   public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
