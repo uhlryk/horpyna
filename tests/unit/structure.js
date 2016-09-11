@@ -40,11 +40,12 @@ describe("Structure", () => {
       done();
     });
 
-    it("should create and get joint without options", done => {
+    it("should create and get joint", done => {
       const jointName = "jointName";
       structure.createJoint(jointName, sourceComponentName, sourceChannelName, targetComponentName, targetChannelName);
       const joint = structure.getJoint(jointName);
       expect(joint).to.be.instanceof(Horpyna.Joint);
+      expect(joint.getName()).to.be.equal(jointName);
       const sourceChannel = joint.getSource();
       const targetChannel = joint.getTarget();
       expect(sourceChannel.getName()).to.be.equal(sourceChannelName);

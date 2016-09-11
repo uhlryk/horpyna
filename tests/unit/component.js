@@ -21,10 +21,19 @@ describe("Component", () => {
     it("should trigger onInit method and pass options object from constructor params", done => {
       const onInitSpy = sinon.spy(Horpyna.Component.prototype, "onInit");
       const options = {};
-      new Horpyna.Component(options);
+      new Horpyna.Component(null, options);
       expect(onInitSpy.calledOnce).to.be.true;
       expect(onInitSpy.args[0][0]).to.be.equal(options);
       onInitSpy.restore();
+      done();
+    });
+  });
+
+  describe("getName", () => {
+    it("should return name", done => {
+      const name = "someName";
+      const component = new Horpyna.Component(name);
+      expect(component.getName()).to.be.equal(name);
       done();
     });
   });

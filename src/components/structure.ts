@@ -12,7 +12,7 @@ class Structure {
   }
 
   public createComponent(name: string, AnyComponent: typeof Component, options: any): Component {
-    const component: Component = new AnyComponent(options);
+    const component: Component = new AnyComponent(name, options);
     this._components.add(name, component);
     return component;
   }
@@ -24,7 +24,7 @@ class Structure {
   public createJoint(name: string, sourceComponentName: string, sourceChannelName: string, targetComponentName: string, targetChannelName: string) {
     const sourceComponent: Component = this._components.get(sourceComponentName);
     const targetComponent: Component = this._components.get(targetComponentName);
-    const joint = sourceComponent.createJoint(targetComponent, sourceChannelName, targetChannelName);
+    const joint = new Joint(name, sourceComponent.getOutputChannel(sourceChannelName), targetComponent.getInputChannel(targetChannelName));
     this._joints.add(name , joint);
     return joint;
   }

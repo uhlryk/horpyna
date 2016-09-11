@@ -19,8 +19,10 @@ class Component {
   private _outputChannelManager: ChannelManager;
   private _state: State;
   private _structure: Structure;
+  private _name: string;
 
-  constructor(options:any) {
+  constructor(name:string, options:any) {
+    this._name = name;
     this._state = new State();
     this._structure = new Structure();
     this._inputChannelManager = new ChannelManager();
@@ -29,6 +31,10 @@ class Component {
     this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.ERROR_CHANNEL);
     this.onInit(options, this.getStructure());
+  }
+
+  public getName(): string {
+    return this._name;
   }
 
   public onInit(options:any, structure: Structure) {}
@@ -59,12 +65,18 @@ class Component {
     }
   }
 
+  /**
+   * @deprecated
+   */
   public createJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
-    return new Joint(this.getOutputChannel(currentChannelName), target.getInputChannel(targetChannelName));
+    return new Joint(null, this.getOutputChannel(currentChannelName), target.getInputChannel(targetChannelName));
   }
 
+  /**
+   * @deprecated
+   */
   public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
-    return new Joint(this.getOutputChannel(currentChannelName), new CallbackChannel(target));
+    return new Joint(null, this.getOutputChannel(currentChannelName), new CallbackChannel(target));
   }
 
   private _getResponseCallback(): IResponseCallback {

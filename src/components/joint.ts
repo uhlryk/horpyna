@@ -4,11 +4,17 @@ import * as ERROR from "../constants/errors";
 class Joint {
   private _source: Channel;
   private _target: Channel;
+  private _name: string;
 
-  constructor(source: Channel, target: Channel) {
+  constructor(name: string, source: Channel, target: Channel) {
+    this._name = name;
     this._source = source;
     this._target = target;
     this._join(this.getSource(), this.getTarget());
+  }
+
+  public getName(): string {
+    return this._name;
   }
 
   private _join(source: Channel, target: Channel): Joint {
