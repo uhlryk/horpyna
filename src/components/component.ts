@@ -2,10 +2,8 @@ import ChannelManager from "./channelManager";
 import IResponseCallback from "./iResponseCallback";
 import Channel from "./channel";
 import InputChannel from "./inputChannel";
-import CallbackChannel from "./callbackChannel";
 import OutputChannel from "./outputChannel";
 import IInputSetValueCallback from "./iInputSetValueCallback";
-import ICallbackSetValueCallback from "./iCallbackSetValueCallback";
 import Response from "./response";
 import Request from "./request";
 import Joint from "./joint";
@@ -21,7 +19,7 @@ class Component {
   private _structure: Structure;
   private _name: string;
 
-  constructor(name:string, options:any) {
+  constructor(name:string, options:any = {}) {
     this._name = name;
     this._state = new State();
     this._structure = new Structure();
@@ -63,20 +61,6 @@ class Component {
     return () => {
 
     }
-  }
-
-  /**
-   * @deprecated
-   */
-  public createJoint(target: Component, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL, targetChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
-    return new Joint(null, this.getOutputChannel(currentChannelName), target.getInputChannel(targetChannelName));
-  }
-
-  /**
-   * @deprecated
-   */
-  public addCallback(target: ICallbackSetValueCallback, currentChannelName: string = CHANNEL.DEFAULT_CHANNEL): Joint {
-    return new Joint(null, this.getOutputChannel(currentChannelName), new CallbackChannel(target));
   }
 
   private _getResponseCallback(): IResponseCallback {

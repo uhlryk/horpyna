@@ -6,7 +6,7 @@ import Horpyna from "../../dist/index";
 chai.use(chaiThings);
 const expect = chai.expect;
 
-describe("Basic functionality", () => {
+describe("Basic functionality (without factories)", () => {
   let dummyValue = "BBBB";
 
   describe("Check basic single block", () => {
@@ -19,13 +19,13 @@ describe("Basic functionality", () => {
         }
       };
       component.setInput(dummyValue);
-      component.addCallback((value, sourceChannel) => {
+      new Horpyna.Joint("someName", component.getOutputChannel(), new Horpyna.CallbackChannel((value, sourceChannel) => {
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(value).to.be.equal(dummyValue);
         expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
         expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
         done();
-      });
+      }));
     });
 
     it("should trigger overridden onNext: target channel custom, response channel custom", done => {
@@ -42,13 +42,13 @@ describe("Basic functionality", () => {
       component.createInputChannel(targetChannelName);
       component.createOutputChannel(responseChannelName);
       component.setInput(dummyValue, targetChannelName);
-      component.addCallback((value, sourceChannel) => {
+      new Horpyna.Joint("someName", component.getOutputChannel(responseChannelName), new Horpyna.CallbackChannel((value, sourceChannel) => {
         expect(spyCustomFunc.calledOnce).to.be.true;
         expect(value).to.be.equal(dummyValue);
         expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
         expect(sourceChannel.getName()).to.be.equal(responseChannelName);
         done();
-      }, responseChannelName);
+      }));
     });
   });
 
@@ -69,8 +69,8 @@ describe("Basic functionality", () => {
         }
       };
       parentComponent.setInput(dummyValue);
-      parentComponent.createJoint(childComponent);
-      childComponent.addCallback((value, sourceChannel) => {
+      new Horpyna.Joint("normalJoint", parentComponent.getOutputChannel(), childComponent.getInputChannel());
+      new Horpyna.Joint("someName", childComponent.getOutputChannel(), new Horpyna.CallbackChannel((value, sourceChannel) => {
         expect(spyParentFunc.calledOnce).to.be.true;
         expect(spyChildFunc.calledOnce).to.be.true;
         expect(spyParentFunc.calledBefore(spyChildFunc)).to.be.true;
@@ -78,7 +78,7 @@ describe("Basic functionality", () => {
         expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
         expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
         done();
-      });
+      }));
     })
   });
 
@@ -117,11 +117,11 @@ describe("Basic functionality", () => {
           }
         }
       };
-      firstComponent.createJoint(secondAComponent);
-      firstComponent.createJoint(secondBComponent);
-      secondAComponent.createJoint(thirdComponent);
-      secondBComponent.createJoint(thirdComponent);
-      thirdComponent.addCallback((value, sourceChannel) => {
+      new Horpyna.Joint("firstSecondA", firstComponent.getOutputChannel(), secondAComponent.getInputChannel());
+      new Horpyna.Joint("firstSecondB", firstComponent.getOutputChannel(), secondBComponent.getInputChannel());
+      new Horpyna.Joint("secondAThird", secondAComponent.getOutputChannel(), thirdComponent.getInputChannel());
+      new Horpyna.Joint("secondBThird", secondBComponent.getOutputChannel(), thirdComponent.getInputChannel());
+      new Horpyna.Joint("someName", thirdComponent.getOutputChannel(), new Horpyna.CallbackChannel((value, sourceChannel) => {
         expect(spyFirst.calledOnce).to.be.true;
         expect(spySecondA.calledOnce).to.be.true;
         expect(spySecondB.calledOnce).to.be.true;
@@ -134,7 +134,7 @@ describe("Basic functionality", () => {
         expect(sourceChannel).to.be.an.instanceof(Horpyna.OutputChannel);
         expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
         done();
-      });
+      }));
 
     });
   });

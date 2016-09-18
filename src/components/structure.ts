@@ -1,6 +1,10 @@
 import Map from "./map";
 import Component from "./component";
+import Channel from "./channel";
 import Joint from "./joint";
+import ICallbackSetValueCallback from "./iCallbackSetValueCallback";
+import CallbackChannel from "./callbackChannel";
+import * as CHANNEL from "../constants/channels";
 
 class Structure {
   private _components: Map<Component>;
@@ -11,7 +15,7 @@ class Structure {
     this._joints = new Map<Joint>();
   }
 
-  public createComponent(name: string, AnyComponent: typeof Component, options: any): Component {
+  public createComponent(name: string, AnyComponent: typeof Component, options: any = {}): Component {
     const component: Component = new AnyComponent(name, options);
     this._components.add(name, component);
     return component;
@@ -21,10 +25,14 @@ class Structure {
     return this._components.get(name);
   }
 
-  public createJoint(name: string, sourceComponentName: string, sourceChannelName: string, targetComponentName: string, targetChannelName: string) {
-    const sourceComponent: Component = this._components.get(sourceComponentName);
-    const targetComponent: Component = this._components.get(targetComponentName);
-    const joint = new Joint(name, sourceComponent.getOutputChannel(sourceChannelName), targetComponent.getInputChannel(targetChannelName));
+  public createJoint(name: string, sourceOutput: Channel, targetInput: Channel): Joint {
+    const joint = new Joint(name, sourceOutput, targetInput);
+    this._joints.add(name , joint);
+    return joint;
+  }
+
+  public createCallback(name: string, sourceOutput: Channel, callback: ICallbackSetValueCallback): Joint {
+    const joint = new Joint(name, sourceOutput, new CallbackChannel(callback));
     this._joints.add(name , joint);
     return joint;
   }
@@ -32,6 +40,7 @@ class Structure {
   public getJoint(name: string): Joint {
     return this._joints.get(name);
   }
+
 }
 
 export default Structure;
