@@ -21,4 +21,13 @@ describe("Channel", () => {
       done();
     });
   });
+
+  describe("setComponent&getComponent method", () => {
+    it("should return component", done => {
+      const component = new Horpyna.Component("someComponent");
+      channel.setComponent(component);
+      expect(channel.getComponent()).to.be.equal(component);
+      done();
+    });
+  });
 });

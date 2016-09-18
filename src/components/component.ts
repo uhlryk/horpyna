@@ -119,7 +119,9 @@ class Component {
     if(this.isInputChannel(channelName) === true) {
       throw Error(ERROR.UNIQUE_NAME_INPUT_CHANNEL);
     }
-    this._inputChannelManager.addChannel(new InputChannel(channelName, this._getInputChannelSetValueCallback()));
+    const channel = new InputChannel(channelName, this._getInputChannelSetValueCallback());
+    channel.setComponent(this);
+    this._inputChannelManager.addChannel(channel);
     return this;
   }
 
@@ -127,7 +129,9 @@ class Component {
     if(this.isOutputChannel(channelName) === true) {
       throw Error(ERROR.UNIQUE_NAME_OUTPUT_CHANNEL);
     }
-    this._outputChannelManager.addChannel(new OutputChannel(channelName));
+    const channel = new OutputChannel(channelName);
+    channel.setComponent(this);
+    this._outputChannelManager.addChannel(channel);
     return this;
   }
 
