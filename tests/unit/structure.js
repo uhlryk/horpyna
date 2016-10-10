@@ -58,6 +58,7 @@ describe("Structure", () => {
     });
 
   });
+  // TODO: tests for callbacks
 
   //describe("createJoint method", () => {
   //

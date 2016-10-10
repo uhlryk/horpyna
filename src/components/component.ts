@@ -45,6 +45,7 @@ class Component {
     return this.next(new Request(value, null, this.getInputChannel(targetChannelName)));
   }
 
+  // TODO: allow to set custom next function
   public next(request: Request): Component {
     const response: Response = new Response(this._getResponseCallback());
     setTimeout(() => {
@@ -59,6 +60,7 @@ class Component {
     return this;
   }
 
+  // TODO: use bind instead of returning new arrow function
   private _getResponseCallback(): IResponseCallback {
     return (value: any, channelName: string) => {
       this.getOutputChannel(channelName).emitValue(value);
@@ -69,6 +71,7 @@ class Component {
     return this._structure;
   }
 
+  //TODO: change bellow setState, getState, clearState to getState where we will return state
   public setState(value: any): Component {
     this._state.setState(value);
     return this;

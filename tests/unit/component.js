@@ -68,6 +68,8 @@ describe("Component", () => {
     }));
   });
 
+  // TODO: tests for callbacks
+
   describe("setInput method", () => {
 
     it("should trigger next method with request args when default channel name", done => {

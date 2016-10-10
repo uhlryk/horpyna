@@ -5,7 +5,7 @@ class Joint {
   private _source: Channel;
   private _target: Channel;
   private _name: string;
-
+  // TODO: Join should be responsible for connection Channels - now it only participated and help channels to connect each other
   constructor(name: string, source: Channel, target: Channel) {
     this._name = name;
     this._source = source;
