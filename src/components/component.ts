@@ -28,16 +28,16 @@ class Component {
     this.createInputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.DEFAULT_CHANNEL);
     this.createOutputChannel(CHANNEL.ERROR_CHANNEL);
-    this.onInit(options, this.getStructure());
+    this.onInit(options);
   }
 
   public getName(): string {
     return this._name;
   }
 
-  public onInit(options:any, structure: Structure) {}
+  public onInit(options:any) {}
 
-  public onNext(request: Request, response: Response, runStructure) {
+  public onNext(request: Request, response: Response, structure: Structure) {
     response.send(request.getValue());
   }
 
@@ -48,19 +48,15 @@ class Component {
   public next(request: Request): Component {
     const response: Response = new Response(this._getResponseCallback());
     setTimeout(() => {
+      const structure = this.getStructure();
       try {
-        this.onNext(request, response, this._prepareRunStructure(request, response));
+        this.onNext(request, response, structure);
       } catch(error) {
         response.send(error, CHANNEL.ERROR_CHANNEL);
       }
+      structure.clear();
     }, 0);
     return this;
-  }
-
-  private _prepareRunStructure(request, response) {
-    return () => {
-
-    }
   }
 
   private _getResponseCallback(): IResponseCallback {

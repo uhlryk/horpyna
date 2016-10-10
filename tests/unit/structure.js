@@ -105,7 +105,7 @@ describe("Structure", () => {
   //      expect(sourceChannel.getName()).to.be.equal(Horpyna.CHANNEL.DEFAULT_CHANNEL);
   //      done();
   //    }, Horpyna.CHANNEL.DEFAULT_CHANNEL);
-  //    component.setInput(dummyValue);
+  //    component.runSetInput(dummyValue);
   //    expect(joint).to.be.an.instanceof(Horpyna.Joint);
   //  });
   //
@@ -124,7 +124,7 @@ describe("Structure", () => {
   //      done();
   //    }, currentChannelName);
   //
-  //    component.setInput(dummyValue);
+  //    component.runSetInput(dummyValue);
   //    expect(joint).to.be.an.instanceof(Horpyna.Joint);
   //  });
   //

@@ -49,6 +49,25 @@ describe("Component", () => {
     });
   });
 
+  describe("use Structure object in Component", done => {
+    const innerComponentName = "innerComponent";
+    const callbackName = "innerCallback";
+    const customComponent = new class extends Horpyna.Component {
+      onNext(request, response, structure) {
+        const innerComponent = structure.createComponent(innerComponentName, Horpyna.Component);
+        structure.createCallback(callbackName, innerComponent.getOutputChannel(), (value, source) => {
+          response.send(request.getValue());
+        });
+      }
+    };
+    customComponent.setInput(dummyValue);
+    new Horpyna.Joint(null, customComponent.getOutputChannel(), new Horpyna.CallbackChannel((value, source) => {
+      expect(value).to.be.equal(dummyValue);
+      expect(source).to.be.equal(customComponent.getOutputChannel());
+      done();
+    }));
+  });
+
   describe("setInput method", () => {
 
     it("should trigger next method with request args when default channel name", done => {
@@ -155,7 +174,7 @@ describe("Component", () => {
       component.next(new Horpyna.Request(dummyValue, null, component.getInputChannel(Horpyna.CHANNEL.DEFAULT_CHANNEL)));
     });
 
-    it("should trigger response send with channel Error if onNext has errro", done => {
+    it("should trigger response send with channel Error if onNext has error", done => {
       const errorMessage = "Some Error";
       const nextStub = sinon.stub(Horpyna.Component.prototype, "onNext", (request, response) => {
         nextStub.restore();

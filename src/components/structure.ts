@@ -41,6 +41,11 @@ class Structure {
     return this._joints.get(name);
   }
 
+  public clear(): Structure {
+    this._components = new Map<Component>();
+    this._joints = new Map<Joint>();
+    return this;
+  }
 }
 
 export default Structure;
