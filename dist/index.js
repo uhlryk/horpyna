@@ -1,1 +1,129 @@
-require("source-map-support").install(),module.exports=function(e){function t(r){if(n[r])return n[r].exports;var u=n[r]={exports:{},id:r,loaded:!1};return e[r].call(u.exports,u,u.exports,t),u.loaded=!0,u.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t,n){e.exports=n(1)},function(e,t,n){"use strict";function r(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);return t["default"]=e,t}function u(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(t,"__esModule",{value:!0});var a=n(2),o=u(a),i=n(5),l=u(i),c=n(4),f=u(c),s=n(6),h=u(s),p=n(15),v=u(p),_=n(3),d=u(_),y=n(13),b=u(y),C=n(10),g=u(C),O=n(11),w=u(O),E=n(9),N=u(E),k=n(7),m=u(k),j=n(8),P=r(j),A=n(14),M=r(A);t["default"]={Component:o["default"],Channel:l["default"],InputChannel:f["default"],OutputChannel:h["default"],CallbackChannel:v["default"],ChannelManager:d["default"],Joint:b["default"],State:g["default"],Structure:w["default"],Request:N["default"],Response:m["default"],CHANNEL:P,ERROR:M}},function(e,t,n){"use strict";function r(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);return t["default"]=e,t}function u(e){return e&&e.__esModule?e:{"default":e}}function a(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=n(3),l=u(i),c=n(4),f=u(c),s=n(6),h=u(s),p=n(7),v=u(p),_=n(9),d=u(_),y=n(10),b=u(y),C=n(11),g=u(C),O=n(8),w=r(O),E=n(14),N=r(E),k=function(){function e(t){var n=arguments.length<=1||void 0===arguments[1]?{}:arguments[1];a(this,e),this._name=t,this._state=new b["default"],this._structure=new g["default"],this._inputChannelManager=new l["default"],this._outputChannelManager=new l["default"],this.createInputChannel(w.DEFAULT_CHANNEL),this.createOutputChannel(w.DEFAULT_CHANNEL),this.createOutputChannel(w.ERROR_CHANNEL),this.onInit(n)}return o(e,[{key:"getName",value:function(){return this._name}},{key:"onInit",value:function(e){}},{key:"onNext",value:function(e,t,n){t.send(e.getValue())}},{key:"setInput",value:function(e){var t=arguments.length<=1||void 0===arguments[1]?w.DEFAULT_CHANNEL:arguments[1];return this.next(new d["default"](e,null,this.getInputChannel(t)))}},{key:"next",value:function(e){var t=this,n=new v["default"](this._getResponseCallback());return setTimeout(function(){var r=t.getStructure();try{t.onNext(e,n,r)}catch(u){n.send(u,w.ERROR_CHANNEL)}r.clear()},0),this}},{key:"_getResponseCallback",value:function(){var e=this;return function(t,n){e.getOutputChannel(n).emitValue(t)}}},{key:"getStructure",value:function(){return this._structure}},{key:"setState",value:function(e){return this._state.setState(e),this}},{key:"getState",value:function(){return this._state.getState()}},{key:"clearState",value:function(){return this._state.clearState(),this}},{key:"isInputChannel",value:function(){var e=arguments.length<=0||void 0===arguments[0]?w.DEFAULT_CHANNEL:arguments[0];return this._inputChannelManager.isChannelByName(e)}},{key:"isOutputChannel",value:function(){var e=arguments.length<=0||void 0===arguments[0]?w.DEFAULT_CHANNEL:arguments[0];return this._outputChannelManager.isChannelByName(e)}},{key:"getInputChannel",value:function(){var e=arguments.length<=0||void 0===arguments[0]?w.DEFAULT_CHANNEL:arguments[0];if(this.isInputChannel(e)===!1)throw Error(N.NON_EXIST_CHANNEL);return this._inputChannelManager.getChannel(e)}},{key:"getOutputChannel",value:function(){var e=arguments.length<=0||void 0===arguments[0]?w.DEFAULT_CHANNEL:arguments[0];if(this.isOutputChannel(e)===!1)throw Error(N.NON_EXIST_CHANNEL);return this._outputChannelManager.getChannel(e)}},{key:"_getInputChannelSetValueCallback",value:function(){var e=this;return function(t,n,r){e.next(new d["default"](t,n,r))}}},{key:"createInputChannel",value:function(e){if(this.isInputChannel(e)===!0)throw Error(N.UNIQUE_NAME_INPUT_CHANNEL);var t=new f["default"](e,this._getInputChannelSetValueCallback());return t.setComponent(this),this._inputChannelManager.addChannel(t),this}},{key:"createOutputChannel",value:function(e){if(this.isOutputChannel(e)===!0)throw Error(N.UNIQUE_NAME_OUTPUT_CHANNEL);var t=new h["default"](e);return t.setComponent(this),this._outputChannelManager.addChannel(t),this}}]),e}();t["default"]=k},function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var r=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),u=function(){function e(){var t=arguments.length<=0||void 0===arguments[0]?[]:arguments[0];n(this,e),this._channels=t}return r(e,[{key:"isChannelByName",value:function(e){return"undefined"!=typeof this.getChannel(e)}},{key:"isChannel",value:function(e){return this.getChannels().some(function(t){return t===e})}},{key:"addChannel",value:function(e){this._channels.push(e)}},{key:"getChannel",value:function(e){return this._channels.find(function(t){return t.getName()===e})}},{key:"getChannels",value:function(){return this._channels}}]),e}();t["default"]=u},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function u(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function a(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function o(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),l=n(5),c=r(l),f=function(e){function t(e,n){var r=arguments.length<=2||void 0===arguments[2]?[]:arguments[2];u(this,t);var o=a(this,Object.getPrototypeOf(t).call(this,e,r));return n&&o.setCallback(n),o}return o(t,e),i(t,[{key:"setCallback",value:function(e){return this._onSetValueCallback=e,this}},{key:"setValue",value:function(e,t){this._onSetValueCallback(e,t,this)}}]),t}(c["default"]);t["default"]=f},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function u(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function a(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function o(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),l=n(3),c=r(l),f=function(e){function t(e){var n=arguments.length<=1||void 0===arguments[1]?[]:arguments[1];u(this,t);var r=a(this,Object.getPrototypeOf(t).call(this,n));return r._name=e,r}return o(t,e),i(t,[{key:"setComponent",value:function(e){return this._component=e,this}},{key:"getComponent",value:function(){return this._component}},{key:"getName",value:function(){return this._name}}]),t}(c["default"]);t["default"]=f},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function u(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function a(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function o(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),l=n(5),c=r(l),f=function(e){function t(e){var n=arguments.length<=1||void 0===arguments[1]?[]:arguments[1];return u(this,t),a(this,Object.getPrototypeOf(t).call(this,e,n))}return o(t,e),i(t,[{key:"emitValue",value:function(e){var t=this,n=this.getChannels();n.forEach(function(n){n.setValue(e,t)})}}]),t}(c["default"]);t["default"]=f},function(e,t,n){"use strict";function r(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);return t["default"]=e,t}function u(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),o=n(8),i=r(o),l=function(){function e(t){u(this,e),this._onSendCallback=t}return a(e,[{key:"send",value:function(){var e=arguments.length<=0||void 0===arguments[0]?void 0:arguments[0],t=arguments.length<=1||void 0===arguments[1]?i.DEFAULT_CHANNEL:arguments[1];return this._onSendCallback(e,t),this}}]),e}();t["default"]=l},function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});t.DEFAULT_CHANNEL="channel_default",t.ERROR_CHANNEL="channel_error"},function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var r=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),u=function(){function e(t,r,u){n(this,e),this._value=t,this._source=r,this._target=u}return r(e,[{key:"getValue",value:function(){return this._value}},{key:"getTarget",value:function(){return this._target}},{key:"getSource",value:function(){return this._source}}]),e}();t["default"]=u},function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var r=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),u=function(){function e(){var t=arguments.length<=0||void 0===arguments[0]?null:arguments[0];n(this,e),this._value=t}return r(e,[{key:"setState",value:function(e){this._value=e}},{key:"clearState",value:function(){this._value=null}},{key:"getState",value:function(){return this._value}}]),e}();t["default"]=u},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function u(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),o=n(12),i=r(o),l=n(13),c=r(l),f=n(15),s=r(f),h=function(){function e(){u(this,e),this._components=new i["default"],this._joints=new i["default"]}return a(e,[{key:"createComponent",value:function(e,t){var n=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],r=new t(e,n);return this._components.add(e,r),r}},{key:"getComponent",value:function(e){return this._components.get(e)}},{key:"createJoint",value:function(e,t,n){var r=new c["default"](e,t,n);return this._joints.add(e,r),r}},{key:"createCallback",value:function(e,t,n){var r=new c["default"](e,t,new s["default"](n));return this._joints.add(e,r),r}},{key:"getJoint",value:function(e){return this._joints.get(e)}},{key:"clear",value:function(){return this._components=new i["default"],this._joints=new i["default"],this}}]),e}();t["default"]=h},function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var r=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),u=function(){function e(){n(this,e),this.items={}}return r(e,[{key:"add",value:function(e,t){this.items[e]=t}},{key:"has",value:function(e){return e in this.items}},{key:"get",value:function(e){return this.items[e]}}]),e}();t["default"]=u},function(e,t,n){"use strict";function r(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);return t["default"]=e,t}function u(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),o=n(14),i=r(o),l=function(){function e(t,n,r){u(this,e),this._name=t,this._source=n,this._target=r,this._join(this.getSource(),this.getTarget())}return a(e,[{key:"getName",value:function(){return this._name}},{key:"_join",value:function(e,t){if(t.isChannel(e)!==!1||e.isChannel(t)!==!1)throw Error(i.ONE_JOINT_PER_CHANNEL_PAIR);return t.addChannel(e),e.addChannel(t),this}},{key:"getSource",value:function(){return this._source}},{key:"getTarget",value:function(){return this._target}}]),e}();t["default"]=l},function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=(t.ONE_JOINT_PER_CHANNEL_PAIR="two channels can have only one joint",t.NON_EXIST_CHANNEL="channel do not exist",t.UNIQUE_NAME_CHANNEL="channel need unique name");t.UNIQUE_NAME_INPUT_CHANNEL=n,t.UNIQUE_NAME_OUTPUT_CHANNEL=n},function(e,t,n){"use strict";function r(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);return t["default"]=e,t}function u(e){return e&&e.__esModule?e:{"default":e}}function a(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function o(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function i(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var l=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),c=n(4),f=u(c),s=n(8),h=r(s),p=function(e){function t(e){var n=arguments.length<=1||void 0===arguments[1]?[]:arguments[1];a(this,t);var r=o(this,Object.getPrototypeOf(t).call(this,h.DEFAULT_CHANNEL,void 0,n));return r.setCallback(e),r}return i(t,e),l(t,[{key:"setCallback",value:function(e){return this._callback=e,this}},{key:"setValue",value:function(e,t){this._callback(e,t)}}]),t}(f["default"]);t["default"]=p}]);
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(1);
+module.exports = __webpack_require__(2);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-polyfill");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = undefined;
+
+var _Horpyna = __webpack_require__(3);
+
+var _Horpyna2 = _interopRequireDefault(_Horpyna);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _Horpyna2.default;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    createNode: function createNode() {
+        console.log("AAAAA");
+    }
+};
+
+/***/ })
+/******/ ]);
+});
+//# sourceMappingURL=index.js.map
