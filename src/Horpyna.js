@@ -6,6 +6,6 @@ export default {
         return {
             setValues: createSetValueAction({ actionFunction }),
             setCondition: createSetConditionAction({ actionFunction })
-        }
+        };
     }
-}
+};
