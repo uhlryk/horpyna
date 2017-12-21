@@ -70,25 +70,50 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(1);
-module.exports = __webpack_require__(2);
+"use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createSetValueAction;
+function createSetValueAction(_ref) {
+    var actionFunction = _ref.actionFunction,
+        _ref$conditionFunctio = _ref.conditionFunction,
+        conditionFunction = _ref$conditionFunctio === undefined ? function () {
+        return true;
+    } : _ref$conditionFunctio;
+
+    return function () {
+        if (conditionFunction.apply(undefined, arguments)) {
+            actionFunction.apply(undefined, arguments);
+        }
+    };
+}
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(2);
+module.exports = __webpack_require__(3);
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-polyfill");
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -99,7 +124,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _Horpyna = __webpack_require__(3);
+var _Horpyna = __webpack_require__(4);
 
 var _Horpyna2 = _interopRequireDefault(_Horpyna);
 
@@ -108,7 +133,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _Horpyna2.default;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -117,11 +142,54 @@ exports.default = _Horpyna2.default;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createSetValueAction = __webpack_require__(0);
+
+var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
+
+var _createSetConditionAction = __webpack_require__(5);
+
+var _createSetConditionAction2 = _interopRequireDefault(_createSetConditionAction);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
-    createNode: function createNode() {
-        console.log("AAAAA");
+    createNode: function createNode(actionFunction) {
+        console.log("Create node");
+        return {
+            setValues: (0, _createSetValueAction2.default)({ actionFunction: actionFunction }),
+            setCondition: (0, _createSetConditionAction2.default)({ actionFunction: actionFunction })
+        };
     }
 };
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createSetConditionAction;
+
+var _createSetValueAction = __webpack_require__(0);
+
+var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function createSetConditionAction(_ref) {
+    var actionFunction = _ref.actionFunction;
+
+    return function (conditionFunction) {
+        return {
+            setValues: (0, _createSetValueAction2.default)({ actionFunction: actionFunction, conditionFunction: conditionFunction })
+        };
+    };
+}
 
 /***/ })
 /******/ ]);

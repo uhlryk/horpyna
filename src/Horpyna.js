@@ -1,5 +1,11 @@
+import createSetValueAction from "./actions/createSetValueAction";
+import createSetConditionAction from "./actions/createSetConditionAction";
 export default {
-    createNode() {
-        console.log("Start");
+    createNode(actionFunction) {
+        console.log("Create node");
+        return {
+            setValues: createSetValueAction({ actionFunction }),
+            setCondition: createSetConditionAction({ actionFunction })
+        }
     }
 }
