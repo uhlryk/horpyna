@@ -11,33 +11,66 @@ describe("Hopyna", () => {
     afterEach(async () => {
         sandbox.restore();
     });
-    it("should call action function when no conditions", () => {
-        const responseStub = sandbox.stub();
-        const valueStub = sandbox.stub();
-        const actionFunctionStub = sandbox.stub().returns(responseStub);
-        Horpyna.createNode(actionFunctionStub).setValue(valueStub);
-        expect(actionFunctionStub.calledOnce).to.be.true();
-        expect(actionFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+    describe("when node conditions met", () => {
+        describe("when no child nodes", () => {
+            it("should return response from node function", () => {
+                const responseStub = sandbox.stub();
+                const valueStub = sandbox.stub();
+                const nodeFunctionStub = sandbox.stub().returns(responseStub);
+                const result = Horpyna.createNode(nodeFunctionStub)
+                    .setCondition(() => true)
+                    .setValue(valueStub);
+                expect(result).to.be.equal(responseStub);
+                expect(nodeFunctionStub.calledOnce).to.be.true();
+                expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+            });
+        });
     });
 
-    it("should call action function when conditions met", () => {
-        const responseStub = sandbox.stub();
-        const valueStub = sandbox.stub();
-        const actionFunctionStub = sandbox.stub().returns(responseStub);
-        Horpyna.createNode(actionFunctionStub)
-            .setCondition(() => true)
-            .setValue(valueStub);
-        expect(actionFunctionStub.calledOnce).to.be.true();
-        expect(actionFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+    describe("when conditions not met", () => {
+        describe("when no child nodes", () => {
+            it("should return undefined", () => {
+                const responseStub = sandbox.stub();
+                const valueStub = sandbox.stub();
+                const nodeFunctionStub = sandbox.stub().returns(responseStub);
+                const result = Horpyna.createNode(nodeFunctionStub)
+                    .setCondition(() => false)
+                    .setValue(valueStub);
+                expect(result).to.be.undefined();
+                expect(nodeFunctionStub.called).to.be.false();
+            });
+        });
     });
 
-    it("should not call action function when conditions not met", () => {
-        const responseStub = sandbox.stub();
-        const valueStub = sandbox.stub();
-        const actionFunctionStub = sandbox.stub().returns(responseStub);
-        Horpyna.createNode(actionFunctionStub)
-            .setCondition(() => false)
-            .setValue(valueStub);
-        expect(actionFunctionStub.called).to.be.false();
+    describe("when node doesn't have conditions", () => {
+        describe("when no child nodes", () => {
+            it("should return response from node function", () => {
+                const responseStub = sandbox.stub();
+                const valueStub = sandbox.stub();
+                const nodeFunctionStub = sandbox.stub().returns(responseStub);
+                const result = Horpyna.createNode(nodeFunctionStub).setValue(valueStub);
+                expect(result).to.be.equal(responseStub);
+                expect(nodeFunctionStub.calledOnce).to.be.true();
+                expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+            });
+        });
+
+        describe("when one child node without conditions", () => {
+            it("should return response from child node function", () => {
+                const responseStub = sandbox.stub();
+                const childResponseStub = sandbox.stub();
+                const valueStub = sandbox.stub();
+                const nodeFunctionStub = sandbox.stub().returns(responseStub);
+                const childNodeFunctionStub = sandbox.stub().returns(childResponseStub);
+                const result = Horpyna.createNode(nodeFunctionStub)
+                    .setChildNode(Horpyna.createNode(childNodeFunctionStub))
+                    .setValue(valueStub);
+                expect(result).to.be.equal(childResponseStub);
+                expect(nodeFunctionStub.calledOnce).to.be.true();
+                expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                expect(childNodeFunctionStub.calledOnce).to.be.true();
+                expect(childNodeFunctionStub.getCall(0).args[0]).to.be.eql(responseStub);
+            });
+        });
     });
 });
