@@ -15,8 +15,7 @@ describe("Hopyna", () => {
         const responseStub = sandbox.stub();
         const valueStub = sandbox.stub();
         const actionFunctionStub = sandbox.stub().returns(responseStub);
-        Horpyna.createNode(actionFunctionStub)
-            .setValues(valueStub);
+        Horpyna.createNode(actionFunctionStub).setValue(valueStub);
         expect(actionFunctionStub.calledOnce).to.be.true();
         expect(actionFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
     });
@@ -27,7 +26,7 @@ describe("Hopyna", () => {
         const actionFunctionStub = sandbox.stub().returns(responseStub);
         Horpyna.createNode(actionFunctionStub)
             .setCondition(() => true)
-            .setValues(valueStub);
+            .setValue(valueStub);
         expect(actionFunctionStub.calledOnce).to.be.true();
         expect(actionFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
     });
@@ -38,7 +37,7 @@ describe("Hopyna", () => {
         const actionFunctionStub = sandbox.stub().returns(responseStub);
         Horpyna.createNode(actionFunctionStub)
             .setCondition(() => false)
-            .setValues(valueStub);
+            .setValue(valueStub);
         expect(actionFunctionStub.called).to.be.false();
     });
 });

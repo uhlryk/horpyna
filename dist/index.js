@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -85,86 +85,34 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = createSetValueAction;
 function createSetValueAction(_ref) {
-    var actionFunction = _ref.actionFunction,
+    var _ref$nodeFunction = _ref.nodeFunction,
+        nodeFunction = _ref$nodeFunction === undefined ? null : _ref$nodeFunction,
         _ref$conditionFunctio = _ref.conditionFunction,
         conditionFunction = _ref$conditionFunctio === undefined ? function () {
         return true;
-    } : _ref$conditionFunctio;
+    } : _ref$conditionFunctio,
+        _ref$childNodeList = _ref.childNodeList,
+        childNodeList = _ref$childNodeList === undefined ? [] : _ref$childNodeList;
 
-    return function () {
-        if (conditionFunction.apply(undefined, arguments)) {
-            actionFunction.apply(undefined, arguments);
+    return function (value) {
+        if (conditionFunction(value)) {
+            var nodeFunctionResult = nodeFunction ? nodeFunction(value) : value;
+            var childNodeResult = getFirstChildNodeResult(childNodeList, nodeFunctionResult);
+            return childNodeResult || nodeFunctionResult;
         }
     };
 }
 
+function getFirstChildNodeResult(childNodeList, nodeFunctionResult) {
+    var result = void 0;
+    childNodeList.find(function (childNode) {
+        return result = childNode.setValue(nodeFunctionResult);
+    });
+    return result;
+}
+
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(2);
-module.exports = __webpack_require__(3);
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-polyfill");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = undefined;
-
-var _Horpyna = __webpack_require__(4);
-
-var _Horpyna2 = _interopRequireDefault(_Horpyna);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _Horpyna2.default;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createSetValueAction = __webpack_require__(0);
-
-var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
-
-var _createSetConditionAction = __webpack_require__(5);
-
-var _createSetConditionAction2 = _interopRequireDefault(_createSetConditionAction);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    createNode: function createNode(actionFunction) {
-        console.log("Create node");
-        return {
-            setValues: (0, _createSetValueAction2.default)({ actionFunction: actionFunction }),
-            setCondition: (0, _createSetConditionAction2.default)({ actionFunction: actionFunction })
-        };
-    }
-};
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -179,17 +127,130 @@ var _createSetValueAction = __webpack_require__(0);
 
 var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
 
+var _createSetChildNodeAction = __webpack_require__(2);
+
+var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeAction);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createSetConditionAction(_ref) {
-    var actionFunction = _ref.actionFunction;
+    var nodeFunction = _ref.nodeFunction,
+        childNodeList = _ref.childNodeList;
 
     return function (conditionFunction) {
         return {
-            setValues: (0, _createSetValueAction2.default)({ actionFunction: actionFunction, conditionFunction: conditionFunction })
+            setChildNode: (0, _createSetChildNodeAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList }),
+            setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList })
         };
     };
 }
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createSetChildNodeAction;
+
+var _createSetValueAction = __webpack_require__(0);
+
+var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
+
+var _createSetConditionAction = __webpack_require__(1);
+
+var _createSetConditionAction2 = _interopRequireDefault(_createSetConditionAction);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function createSetChildNodeAction(_ref) {
+    var nodeFunction = _ref.nodeFunction,
+        conditionFunction = _ref.conditionFunction,
+        _ref$childNodeList = _ref.childNodeList,
+        childNodeList = _ref$childNodeList === undefined ? [] : _ref$childNodeList;
+
+    return function (childNode) {
+        childNodeList = childNodeList.concat(childNode);
+        return {
+            setCondition: (0, _createSetConditionAction2.default)({ nodeFunction: nodeFunction, childNodeList: childNodeList }),
+            setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList })
+        };
+    };
+}
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(4);
+module.exports = __webpack_require__(5);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-polyfill");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = undefined;
+
+var _Horpyna = __webpack_require__(6);
+
+var _Horpyna2 = _interopRequireDefault(_Horpyna);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _Horpyna2.default;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createSetValueAction = __webpack_require__(0);
+
+var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
+
+var _createSetConditionAction = __webpack_require__(1);
+
+var _createSetConditionAction2 = _interopRequireDefault(_createSetConditionAction);
+
+var _createSetChildNodeAction = __webpack_require__(2);
+
+var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeAction);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    createNode: function createNode(nodeFunction) {
+        console.log("Create node");
+        return {
+            setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction }),
+            setCondition: (0, _createSetConditionAction2.default)({ nodeFunction: nodeFunction }),
+            setChildNode: (0, _createSetChildNodeAction2.default)({ nodeFunction: nodeFunction })
+        };
+    }
+};
 
 /***/ })
 /******/ ]);
