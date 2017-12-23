@@ -227,6 +227,28 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createNodeAction = __webpack_require__(7);
+
+var _createNodeAction2 = _interopRequireDefault(_createNodeAction);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    createNode: (0, _createNodeAction2.default)()
+};
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createNodeAction;
+
 var _createSetValueAction = __webpack_require__(0);
 
 var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
@@ -241,16 +263,16 @@ var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeActio
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = {
-    createNode: function createNode(nodeFunction) {
-        console.log("Create node");
+function createNodeAction() {
+    console.log("Create node");
+    return function (nodeFunction) {
         return {
             setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction }),
             setCondition: (0, _createSetConditionAction2.default)({ nodeFunction: nodeFunction }),
             setChildNode: (0, _createSetChildNodeAction2.default)({ nodeFunction: nodeFunction })
         };
-    }
-};
+    };
+}
 
 /***/ })
 /******/ ]);
