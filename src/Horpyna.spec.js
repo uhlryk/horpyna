@@ -16,13 +16,13 @@ describe("Hopyna", () => {
             it("should return response from node function", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
-                const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.do(nodeFunctionStub)
+                const branchFunctionStub = sandbox.stub().returns(responseStub);
+                const result = Horpyna.do(branchFunctionStub)
                     .when(() => true)
                     .setValue(valueStub);
                 expect(result).to.be.equal(responseStub);
-                expect(nodeFunctionStub.calledOnce).to.be.true();
-                expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                expect(branchFunctionStub.calledOnce).to.be.true();
+                expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
             });
         });
     });
@@ -32,12 +32,12 @@ describe("Hopyna", () => {
             it("should return undefined", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
-                const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.do(nodeFunctionStub)
+                const branchFunctionStub = sandbox.stub().returns(responseStub);
+                const result = Horpyna.do(branchFunctionStub)
                     .when(() => false)
                     .setValue(valueStub);
                 expect(result).to.be.undefined();
-                expect(nodeFunctionStub.called).to.be.false();
+                expect(branchFunctionStub.called).to.be.false();
             });
         });
     });
@@ -47,11 +47,11 @@ describe("Hopyna", () => {
             it("should return response from node function", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
-                const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.do(nodeFunctionStub).setValue(valueStub);
+                const branchFunctionStub = sandbox.stub().returns(responseStub);
+                const result = Horpyna.do(branchFunctionStub).setValue(valueStub);
                 expect(result).to.be.equal(responseStub);
-                expect(nodeFunctionStub.calledOnce).to.be.true();
-                expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                expect(branchFunctionStub.calledOnce).to.be.true();
+                expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
             });
         });
 
@@ -60,16 +60,16 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const childResponseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
-                const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const childNodeFunctionStub = sandbox.stub().returns(childResponseStub);
-                const result = Horpyna.do(nodeFunctionStub)
-                    .addBranch(Horpyna.do(childNodeFunctionStub))
+                const branchFunctionStub = sandbox.stub().returns(responseStub);
+                const childBranchFunctionStub = sandbox.stub().returns(childResponseStub);
+                const result = Horpyna.do(branchFunctionStub)
+                    .addBranch(Horpyna.do(childBranchFunctionStub))
                     .setValue(valueStub);
                 expect(result).to.be.equal(childResponseStub);
-                expect(nodeFunctionStub.calledOnce).to.be.true();
-                expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
-                expect(childNodeFunctionStub.calledOnce).to.be.true();
-                expect(childNodeFunctionStub.getCall(0).args[0]).to.be.eql(responseStub);
+                expect(branchFunctionStub.calledOnce).to.be.true();
+                expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                expect(childBranchFunctionStub.calledOnce).to.be.true();
+                expect(childBranchFunctionStub.getCall(0).args[0]).to.be.eql(responseStub);
             });
         });
     });
