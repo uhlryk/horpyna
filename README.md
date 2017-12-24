@@ -8,6 +8,14 @@
 
 This module is for better organizing chain processes with multiple branches.
 
+## Debugger
+
+For easy debug this library run your script with
+
+```
+DEBUG=Horpyna <command to run>
+```
+
 ## LICENSE
 
 MIT

@@ -92,10 +92,14 @@ function createSetValueAction(_ref) {
         return true;
     } : _ref$conditionFunctio,
         _ref$childBranchList = _ref.childBranchList,
-        childBranchList = _ref$childBranchList === undefined ? [] : _ref$childBranchList;
+        childBranchList = _ref$childBranchList === undefined ? [] : _ref$childBranchList,
+        debug = _ref.debug;
 
+    debug("create 'setValue' method");
     return function (value) {
+        debug("call 'setValue' function");
         if (conditionFunction(value)) {
+            debug("conditions met");
             var doFunctionResult = doFunction ? doFunction(value) : value;
             var childBranchResult = getFirstChildBranchResult(childBranchList, doFunctionResult);
             return childBranchResult || doFunctionResult;
@@ -156,18 +160,32 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createWhenAction = __webpack_require__(5);
+var _debug = __webpack_require__(5);
+
+var _debug2 = _interopRequireDefault(_debug);
+
+var _createWhenAction = __webpack_require__(6);
 
 var _createWhenAction2 = _interopRequireDefault(_createWhenAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-    when: (0, _createWhenAction2.default)()
+    when: function when() {
+        var debug = (0, _debug2.default)("Horpyna");
+        debug("initialize instance");
+        return (0, _createWhenAction2.default)({ debug: debug }).apply(undefined, arguments);
+    }
 };
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("debug");
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -178,22 +196,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = createWhenAction;
 
-var _createDoAction = __webpack_require__(6);
+var _createDoAction = __webpack_require__(7);
 
 var _createDoAction2 = _interopRequireDefault(_createDoAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createWhenAction() {
+function createWhenAction(_ref) {
+    var debug = _ref.debug;
+
+    debug("create 'when' method");
     return function (conditionFunction) {
+        debug("call 'when' function");
         return {
-            do: (0, _createDoAction2.default)({ conditionFunction: conditionFunction })
+            do: (0, _createDoAction2.default)({ conditionFunction: conditionFunction, debug: debug })
         };
     };
 }
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -208,25 +230,28 @@ var _createSetValueAction = __webpack_require__(0);
 
 var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
 
-var _createAddBranchAction = __webpack_require__(7);
+var _createAddBranchAction = __webpack_require__(8);
 
 var _createAddBranchAction2 = _interopRequireDefault(_createAddBranchAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createDoAction(_ref) {
-    var conditionFunction = _ref.conditionFunction;
+    var conditionFunction = _ref.conditionFunction,
+        debug = _ref.debug;
 
+    debug("create 'do' method");
     return function (doFunction) {
+        debug("call 'do' function");
         return {
-            setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction }),
-            addBranch: (0, _createAddBranchAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction })
+            setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, debug: debug }),
+            addBranch: (0, _createAddBranchAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, debug: debug })
         };
     };
 }
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -247,13 +272,16 @@ function createAddBranchAction(_ref) {
     var doFunction = _ref.doFunction,
         conditionFunction = _ref.conditionFunction,
         _ref$childBranchList = _ref.childBranchList,
-        childBranchList = _ref$childBranchList === undefined ? [] : _ref$childBranchList;
+        childBranchList = _ref$childBranchList === undefined ? [] : _ref$childBranchList,
+        debug = _ref.debug;
 
+    debug("create 'addBranch' method");
     return function (childBranch) {
+        debug("call 'addBranch' function");
         childBranchList = childBranchList.concat(childBranch);
         return {
-            addBranch: createAddBranchAction({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList }),
-            setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList })
+            addBranch: createAddBranchAction({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug }),
+            setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug })
         };
     };
 }

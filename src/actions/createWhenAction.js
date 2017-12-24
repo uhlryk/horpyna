@@ -1,8 +1,10 @@
 import createDoAction from "./createDoAction";
-export default function createWhenAction() {
+export default function createWhenAction({ debug }) {
+    debug("create 'when' method");
     return conditionFunction => {
+        debug("call 'when' function");
         return {
-            do: createDoAction({ conditionFunction })
+            do: createDoAction({ conditionFunction, debug })
         };
     };
 }
