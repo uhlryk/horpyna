@@ -1,10 +1,10 @@
 import createSetValueAction from "./createSetValueAction";
-import createSetConditionAction from "./createSetConditionAction";
+import createWhenAction from "./createWhenAction";
 export default function createSetChildNodeAction({ nodeFunction, conditionFunction, childNodeList = [] }) {
     return childNode => {
         childNodeList = childNodeList.concat(childNode);
         return {
-            setCondition: createSetConditionAction({ nodeFunction, childNodeList }),
+            when: createWhenAction({ nodeFunction, childNodeList }),
             setValue: createSetValueAction({ nodeFunction, conditionFunction, childNodeList })
         };
     };

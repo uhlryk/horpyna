@@ -1,12 +1,11 @@
 import createSetValueAction from "./createSetValueAction";
-import createSetConditionAction from "./createSetConditionAction";
+import createWhenAction from "./createWhenAction";
 import createSetChildNodeAction from "./createSetChildNodeAction";
-export default function createNodeAction() {
-    console.log("Create node");
+export default function createDoAction() {
     return nodeFunction => {
         return {
             setValue: createSetValueAction({ nodeFunction }),
-            setCondition: createSetConditionAction({ nodeFunction }),
+            when: createWhenAction({ nodeFunction }),
             setChildNode: createSetChildNodeAction({ nodeFunction })
         };
     };

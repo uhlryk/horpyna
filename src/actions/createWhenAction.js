@@ -1,6 +1,6 @@
 import createSetValueAction from "./createSetValueAction";
 import createSetChildNodeAction from "./createSetChildNodeAction";
-export default function createSetConditionAction({ nodeFunction, childNodeList }) {
+export default function createWhenAction({ nodeFunction, childNodeList }) {
     return conditionFunction => {
         return {
             setChildNode: createSetChildNodeAction({ nodeFunction, conditionFunction, childNodeList }),

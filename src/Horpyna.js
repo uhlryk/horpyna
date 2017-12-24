@@ -1,4 +1,4 @@
-import createNodeAction from "./actions/createNodeAction";
+import createDoAction from "./actions/createDoAction";
 export default {
-    createNode: createNodeAction()
+    do: createDoAction()
 };

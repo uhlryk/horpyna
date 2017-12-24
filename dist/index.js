@@ -121,7 +121,7 @@ function getFirstChildNodeResult(childNodeList, nodeFunctionResult) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createSetConditionAction;
+exports.default = createWhenAction;
 
 var _createSetValueAction = __webpack_require__(0);
 
@@ -133,7 +133,7 @@ var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeActio
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createSetConditionAction(_ref) {
+function createWhenAction(_ref) {
     var nodeFunction = _ref.nodeFunction,
         childNodeList = _ref.childNodeList;
 
@@ -161,9 +161,9 @@ var _createSetValueAction = __webpack_require__(0);
 
 var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
 
-var _createSetConditionAction = __webpack_require__(1);
+var _createWhenAction = __webpack_require__(1);
 
-var _createSetConditionAction2 = _interopRequireDefault(_createSetConditionAction);
+var _createWhenAction2 = _interopRequireDefault(_createWhenAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -176,7 +176,7 @@ function createSetChildNodeAction(_ref) {
     return function (childNode) {
         childNodeList = childNodeList.concat(childNode);
         return {
-            setCondition: (0, _createSetConditionAction2.default)({ nodeFunction: nodeFunction, childNodeList: childNodeList }),
+            when: (0, _createWhenAction2.default)({ nodeFunction: nodeFunction, childNodeList: childNodeList }),
             setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList })
         };
     };
@@ -227,14 +227,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createNodeAction = __webpack_require__(7);
+var _createDoAction = __webpack_require__(7);
 
-var _createNodeAction2 = _interopRequireDefault(_createNodeAction);
+var _createDoAction2 = _interopRequireDefault(_createDoAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-    createNode: (0, _createNodeAction2.default)()
+    do: (0, _createDoAction2.default)()
 };
 
 /***/ }),
@@ -247,15 +247,15 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createNodeAction;
+exports.default = createDoAction;
 
 var _createSetValueAction = __webpack_require__(0);
 
 var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
 
-var _createSetConditionAction = __webpack_require__(1);
+var _createWhenAction = __webpack_require__(1);
 
-var _createSetConditionAction2 = _interopRequireDefault(_createSetConditionAction);
+var _createWhenAction2 = _interopRequireDefault(_createWhenAction);
 
 var _createSetChildNodeAction = __webpack_require__(2);
 
@@ -263,12 +263,11 @@ var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeActio
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createNodeAction() {
-    console.log("Create node");
+function createDoAction() {
     return function (nodeFunction) {
         return {
             setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction }),
-            setCondition: (0, _createSetConditionAction2.default)({ nodeFunction: nodeFunction }),
+            when: (0, _createWhenAction2.default)({ nodeFunction: nodeFunction }),
             setChildNode: (0, _createSetChildNodeAction2.default)({ nodeFunction: nodeFunction })
         };
     };
