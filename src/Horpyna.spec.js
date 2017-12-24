@@ -17,8 +17,8 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.createNode(nodeFunctionStub)
-                    .setCondition(() => true)
+                const result = Horpyna.do(nodeFunctionStub)
+                    .when(() => true)
                     .setValue(valueStub);
                 expect(result).to.be.equal(responseStub);
                 expect(nodeFunctionStub.calledOnce).to.be.true();
@@ -33,8 +33,8 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.createNode(nodeFunctionStub)
-                    .setCondition(() => false)
+                const result = Horpyna.do(nodeFunctionStub)
+                    .when(() => false)
                     .setValue(valueStub);
                 expect(result).to.be.undefined();
                 expect(nodeFunctionStub.called).to.be.false();
@@ -48,7 +48,7 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const nodeFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.createNode(nodeFunctionStub).setValue(valueStub);
+                const result = Horpyna.do(nodeFunctionStub).setValue(valueStub);
                 expect(result).to.be.equal(responseStub);
                 expect(nodeFunctionStub.calledOnce).to.be.true();
                 expect(nodeFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
@@ -62,8 +62,8 @@ describe("Hopyna", () => {
                 const valueStub = sandbox.stub();
                 const nodeFunctionStub = sandbox.stub().returns(responseStub);
                 const childNodeFunctionStub = sandbox.stub().returns(childResponseStub);
-                const result = Horpyna.createNode(nodeFunctionStub)
-                    .setChildNode(Horpyna.createNode(childNodeFunctionStub))
+                const result = Horpyna.do(nodeFunctionStub)
+                    .setChildNode(Horpyna.do(childNodeFunctionStub))
                     .setValue(valueStub);
                 expect(result).to.be.equal(childResponseStub);
                 expect(nodeFunctionStub.calledOnce).to.be.true();
