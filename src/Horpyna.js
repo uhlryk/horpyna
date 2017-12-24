@@ -1,4 +1,4 @@
-import createDoAction from "./actions/createDoAction";
+import createWhenAction from "./actions/createWhenAction";
 export default {
-    do: createDoAction()
+    when: createWhenAction()
 };

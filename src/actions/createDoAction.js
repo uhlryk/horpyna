@@ -1,12 +1,10 @@
 import createSetValueAction from "./createSetValueAction";
-import createWhenAction from "./createWhenAction";
 import createAddBranchAction from "./createAddBranchAction";
-export default function createDoAction() {
-    return nodeFunction => {
+export default function createDoAction({ conditionFunction }) {
+    return doFunction => {
         return {
-            setValue: createSetValueAction({ nodeFunction }),
-            when: createWhenAction({ nodeFunction }),
-            addBranch: createAddBranchAction({ nodeFunction })
+            setValue: createSetValueAction({ doFunction, conditionFunction }),
+            addBranch: createAddBranchAction({ doFunction, conditionFunction })
         };
     };
 }

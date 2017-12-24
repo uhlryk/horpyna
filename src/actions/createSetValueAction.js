@@ -1,19 +1,19 @@
 export default function createSetValueAction({
-    nodeFunction = null,
+    doFunction = null,
     conditionFunction = () => true,
-    childNodeList = []
+    childBranchList = []
 }) {
     return value => {
         if (conditionFunction(value)) {
-            const nodeFunctionResult = nodeFunction ? nodeFunction(value) : value;
-            const childNodeResult = getFirstChildNodeResult(childNodeList, nodeFunctionResult);
-            return childNodeResult || nodeFunctionResult;
+            const doFunctionResult = doFunction ? doFunction(value) : value;
+            const childBranchResult = getFirstChildBranchResult(childBranchList, doFunctionResult);
+            return childBranchResult || doFunctionResult;
         }
     };
 }
 
-function getFirstChildNodeResult(childNodeList, nodeFunctionResult) {
+function getFirstChildBranchResult(childBranchList, doFunctionResult) {
     let result;
-    childNodeList.find(childNode => (result = childNode.setValue(nodeFunctionResult)));
+    childBranchList.find(childNode => (result = childNode.setValue(doFunctionResult)));
     return result;
 }

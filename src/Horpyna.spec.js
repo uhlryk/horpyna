@@ -11,30 +11,15 @@ describe("Hopyna", () => {
     afterEach(async () => {
         sandbox.restore();
     });
-    describe("when node conditions met", () => {
-        describe("when no child nodes", () => {
-            it("should return response from node function", () => {
-                const responseStub = sandbox.stub();
-                const valueStub = sandbox.stub();
-                const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.do(branchFunctionStub)
-                    .when(() => true)
-                    .setValue(valueStub);
-                expect(result).to.be.equal(responseStub);
-                expect(branchFunctionStub.calledOnce).to.be.true();
-                expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
-            });
-        });
-    });
 
     describe("when conditions not met", () => {
-        describe("when no child nodes", () => {
+        describe("when no child branches", () => {
             it("should return undefined", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.do(branchFunctionStub)
-                    .when(() => false)
+                const result = Horpyna.when(() => false)
+                    .do(branchFunctionStub)
                     .setValue(valueStub);
                 expect(result).to.be.undefined();
                 expect(branchFunctionStub.called).to.be.false();
@@ -42,28 +27,31 @@ describe("Hopyna", () => {
         });
     });
 
-    describe("when node doesn't have conditions", () => {
-        describe("when no child nodes", () => {
-            it("should return response from node function", () => {
+    describe("when main branch conditions met", () => {
+        describe("when no child branches", () => {
+            it("should return response from main branch 'do' function", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.do(branchFunctionStub).setValue(valueStub);
+                const result = Horpyna.when(() => true)
+                    .do(branchFunctionStub)
+                    .setValue(valueStub);
                 expect(result).to.be.equal(responseStub);
                 expect(branchFunctionStub.calledOnce).to.be.true();
                 expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
             });
         });
 
-        describe("when one child node without conditions", () => {
-            it("should return response from child node function", () => {
+        describe("when one child branch without conditions", () => {
+            it("should return response from child branch 'do' function", () => {
                 const responseStub = sandbox.stub();
                 const childResponseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
                 const childBranchFunctionStub = sandbox.stub().returns(childResponseStub);
-                const result = Horpyna.do(branchFunctionStub)
-                    .addBranch(Horpyna.do(childBranchFunctionStub))
+                const result = Horpyna.when(() => true)
+                    .do(branchFunctionStub)
+                    .addBranch(Horpyna.when(() => true).do(childBranchFunctionStub))
                     .setValue(valueStub);
                 expect(result).to.be.equal(childResponseStub);
                 expect(branchFunctionStub.calledOnce).to.be.true();

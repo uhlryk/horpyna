@@ -1,11 +1,10 @@
 import createSetValueAction from "./createSetValueAction";
-import createWhenAction from "./createWhenAction";
-export default function createAddBranchAction({ nodeFunction, conditionFunction, childNodeList = [] }) {
-    return childNode => {
-        childNodeList = childNodeList.concat(childNode);
+export default function createAddBranchAction({ doFunction, conditionFunction, childBranchList = [] }) {
+    return childBranch => {
+        childBranchList = childBranchList.concat(childBranch);
         return {
-            when: createWhenAction({ nodeFunction, childNodeList }),
-            setValue: createSetValueAction({ nodeFunction, conditionFunction, childNodeList })
+            addBranch: createAddBranchAction({ doFunction, conditionFunction, childBranchList }),
+            setValue: createSetValueAction({ doFunction, conditionFunction, childBranchList })
         };
     };
 }
