@@ -127,9 +127,9 @@ var _createSetValueAction = __webpack_require__(0);
 
 var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
 
-var _createSetChildNodeAction = __webpack_require__(2);
+var _createAddBranchAction = __webpack_require__(2);
 
-var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeAction);
+var _createAddBranchAction2 = _interopRequireDefault(_createAddBranchAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -139,7 +139,7 @@ function createWhenAction(_ref) {
 
     return function (conditionFunction) {
         return {
-            setChildNode: (0, _createSetChildNodeAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList }),
+            addBranch: (0, _createAddBranchAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList }),
             setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction, conditionFunction: conditionFunction, childNodeList: childNodeList })
         };
     };
@@ -155,7 +155,7 @@ function createWhenAction(_ref) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createSetChildNodeAction;
+exports.default = createAddBranchAction;
 
 var _createSetValueAction = __webpack_require__(0);
 
@@ -167,7 +167,7 @@ var _createWhenAction2 = _interopRequireDefault(_createWhenAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createSetChildNodeAction(_ref) {
+function createAddBranchAction(_ref) {
     var nodeFunction = _ref.nodeFunction,
         conditionFunction = _ref.conditionFunction,
         _ref$childNodeList = _ref.childNodeList,
@@ -257,9 +257,9 @@ var _createWhenAction = __webpack_require__(1);
 
 var _createWhenAction2 = _interopRequireDefault(_createWhenAction);
 
-var _createSetChildNodeAction = __webpack_require__(2);
+var _createAddBranchAction = __webpack_require__(2);
 
-var _createSetChildNodeAction2 = _interopRequireDefault(_createSetChildNodeAction);
+var _createAddBranchAction2 = _interopRequireDefault(_createAddBranchAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -268,7 +268,7 @@ function createDoAction() {
         return {
             setValue: (0, _createSetValueAction2.default)({ nodeFunction: nodeFunction }),
             when: (0, _createWhenAction2.default)({ nodeFunction: nodeFunction }),
-            setChildNode: (0, _createSetChildNodeAction2.default)({ nodeFunction: nodeFunction })
+            addBranch: (0, _createAddBranchAction2.default)({ nodeFunction: nodeFunction })
         };
     };
 }

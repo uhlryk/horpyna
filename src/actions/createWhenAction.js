@@ -1,9 +1,9 @@
 import createSetValueAction from "./createSetValueAction";
-import createSetChildNodeAction from "./createSetChildNodeAction";
+import createAddBranchAction from "./createAddBranchAction";
 export default function createWhenAction({ nodeFunction, childNodeList }) {
     return conditionFunction => {
         return {
-            setChildNode: createSetChildNodeAction({ nodeFunction, conditionFunction, childNodeList }),
+            addBranch: createAddBranchAction({ nodeFunction, conditionFunction, childNodeList }),
             setValue: createSetValueAction({ nodeFunction, conditionFunction, childNodeList })
         };
     };

@@ -63,7 +63,7 @@ describe("Hopyna", () => {
                 const nodeFunctionStub = sandbox.stub().returns(responseStub);
                 const childNodeFunctionStub = sandbox.stub().returns(childResponseStub);
                 const result = Horpyna.do(nodeFunctionStub)
-                    .setChildNode(Horpyna.do(childNodeFunctionStub))
+                    .addBranch(Horpyna.do(childNodeFunctionStub))
                     .setValue(valueStub);
                 expect(result).to.be.equal(childResponseStub);
                 expect(nodeFunctionStub.calledOnce).to.be.true();

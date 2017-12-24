@@ -1,6 +1,6 @@
 import createSetValueAction from "./createSetValueAction";
 import createWhenAction from "./createWhenAction";
-export default function createSetChildNodeAction({ nodeFunction, conditionFunction, childNodeList = [] }) {
+export default function createAddBranchAction({ nodeFunction, conditionFunction, childNodeList = [] }) {
     return childNode => {
         childNodeList = childNodeList.concat(childNode);
         return {
