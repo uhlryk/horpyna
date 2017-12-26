@@ -18,6 +18,6 @@ export default function createSetValueAction({
 
 function getFirstChildBranchResult(childBranchList, doFunctionResult) {
     let result;
-    Object.keys(childBranchList).find(branchName => (result = childBranchList[branchName].setValue(doFunctionResult)));
+    Object.keys(childBranchList).find(branchName => (result = childBranchList[branchName](doFunctionResult)));
     return result;
 }

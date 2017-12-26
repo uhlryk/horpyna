@@ -18,9 +18,8 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.when(() => false)
-                    .do(branchFunctionStub)
-                    .setValue(valueStub);
+                const mainBranch = Horpyna.when(() => false).do(branchFunctionStub);
+                const result = mainBranch(valueStub);
                 expect(result).to.be.undefined();
                 expect(branchFunctionStub.called).to.be.false();
             });
@@ -33,9 +32,8 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const result = Horpyna.when(() => true)
-                    .do(branchFunctionStub)
-                    .setValue(valueStub);
+                const mainBranch = Horpyna.when(() => true).do(branchFunctionStub);
+                const result = mainBranch(valueStub);
                 expect(result).to.be.equal(responseStub);
                 expect(branchFunctionStub.calledOnce).to.be.true();
                 expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
@@ -49,10 +47,10 @@ describe("Hopyna", () => {
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
                 const childBranchFunctionStub = sandbox.stub().returns(childResponseStub);
-                const result = Horpyna.when(() => true)
+                const mainBranch = Horpyna.when(() => true)
                     .do(branchFunctionStub)
-                    .addBranch("subBranchName", Horpyna.when(() => true).do(childBranchFunctionStub))
-                    .setValue(valueStub);
+                    .addBranch("subBranchName", Horpyna.when(() => true).do(childBranchFunctionStub));
+                const result = mainBranch(valueStub);
                 expect(result).to.be.equal(childResponseStub);
                 expect(branchFunctionStub.calledOnce).to.be.true();
                 expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);

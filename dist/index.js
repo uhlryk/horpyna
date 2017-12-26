@@ -110,7 +110,7 @@ function createSetValueAction(_ref) {
 function getFirstChildBranchResult(childBranchList, doFunctionResult) {
     var result = void 0;
     Object.keys(childBranchList).find(function (branchName) {
-        return result = childBranchList[branchName].setValue(doFunctionResult);
+        return result = childBranchList[branchName](doFunctionResult);
     });
     return result;
 }
@@ -243,10 +243,9 @@ function createDoAction(_ref) {
     debug("create 'do' method");
     return function (doFunction) {
         debug("call 'do' function");
-        return {
-            setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, debug: debug }),
-            addBranch: (0, _createAddBranchAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, debug: debug })
-        };
+        var setValueAction = (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, debug: debug });
+        setValueAction.addBranch = (0, _createAddBranchAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, debug: debug });
+        return setValueAction;
     };
 }
 
@@ -281,10 +280,9 @@ function createAddBranchAction(_ref) {
     return function (branchName, childBranch) {
         debug("call 'addBranch' function with name", branchName);
         childBranchList = Object.assign({}, childBranchList, _defineProperty({}, branchName, childBranch));
-        return {
-            addBranch: createAddBranchAction({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug }),
-            setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug })
-        };
+        var setValueAction = (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug });
+        setValueAction.addBranch = createAddBranchAction({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug });
+        return setValueAction;
     };
 }
 

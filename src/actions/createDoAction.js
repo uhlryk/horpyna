@@ -4,9 +4,8 @@ export default function createDoAction({ conditionFunction, debug }) {
     debug("create 'do' method");
     return doFunction => {
         debug("call 'do' function");
-        return {
-            setValue: createSetValueAction({ doFunction, conditionFunction, debug }),
-            addBranch: createAddBranchAction({ doFunction, conditionFunction, debug })
-        };
+        const setValueAction = createSetValueAction({ doFunction, conditionFunction, debug });
+        setValueAction.addBranch = createAddBranchAction({ doFunction, conditionFunction, debug });
+        return setValueAction;
     };
 }
