@@ -92,7 +92,7 @@ function createSetValueAction(_ref) {
         return true;
     } : _ref$conditionFunctio,
         _ref$childBranchList = _ref.childBranchList,
-        childBranchList = _ref$childBranchList === undefined ? [] : _ref$childBranchList,
+        childBranchList = _ref$childBranchList === undefined ? {} : _ref$childBranchList,
         debug = _ref.debug;
 
     debug("create 'setValue' method");
@@ -109,8 +109,8 @@ function createSetValueAction(_ref) {
 
 function getFirstChildBranchResult(childBranchList, doFunctionResult) {
     var result = void 0;
-    childBranchList.find(function (childNode) {
-        return result = childNode.setValue(doFunctionResult);
+    Object.keys(childBranchList).find(function (branchName) {
+        return result = childBranchList[branchName].setValue(doFunctionResult);
     });
     return result;
 }
@@ -268,17 +268,19 @@ var _createSetValueAction2 = _interopRequireDefault(_createSetValueAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function createAddBranchAction(_ref) {
     var doFunction = _ref.doFunction,
         conditionFunction = _ref.conditionFunction,
         _ref$childBranchList = _ref.childBranchList,
-        childBranchList = _ref$childBranchList === undefined ? [] : _ref$childBranchList,
+        childBranchList = _ref$childBranchList === undefined ? {} : _ref$childBranchList,
         debug = _ref.debug;
 
     debug("create 'addBranch' method");
-    return function (childBranch) {
-        debug("call 'addBranch' function");
-        childBranchList = childBranchList.concat(childBranch);
+    return function (branchName, childBranch) {
+        debug("call 'addBranch' function with name", branchName);
+        childBranchList = Object.assign({}, childBranchList, _defineProperty({}, branchName, childBranch));
         return {
             addBranch: createAddBranchAction({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug }),
             setValue: (0, _createSetValueAction2.default)({ doFunction: doFunction, conditionFunction: conditionFunction, childBranchList: childBranchList, debug: debug })

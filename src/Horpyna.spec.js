@@ -51,7 +51,7 @@ describe("Hopyna", () => {
                 const childBranchFunctionStub = sandbox.stub().returns(childResponseStub);
                 const result = Horpyna.when(() => true)
                     .do(branchFunctionStub)
-                    .addBranch(Horpyna.when(() => true).do(childBranchFunctionStub))
+                    .addBranch("subBranchName", Horpyna.when(() => true).do(childBranchFunctionStub))
                     .setValue(valueStub);
                 expect(result).to.be.equal(childResponseStub);
                 expect(branchFunctionStub.calledOnce).to.be.true();

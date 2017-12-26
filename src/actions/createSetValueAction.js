@@ -1,7 +1,7 @@
 export default function createSetValueAction({
     doFunction = null,
     conditionFunction = () => true,
-    childBranchList = [],
+    childBranchList = {},
     debug
 }) {
     debug("create 'setValue' method");
@@ -18,6 +18,6 @@ export default function createSetValueAction({
 
 function getFirstChildBranchResult(childBranchList, doFunctionResult) {
     let result;
-    childBranchList.find(childNode => (result = childNode.setValue(doFunctionResult)));
+    Object.keys(childBranchList).find(branchName => (result = childBranchList[branchName].setValue(doFunctionResult)));
     return result;
 }
