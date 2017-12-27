@@ -63,4 +63,102 @@ describe("Hopyna", () => {
             });
         });
     });
+
+    describe("when searching only direct children", () => {
+        describe("when direct child with searched name doesn't exist", () => {
+            it("should return undefined", () => {
+                const deepChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value
+                });
+                const directChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        searchBranchName: deepChildBranch
+                    }
+                });
+                const mainBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        differentBranchName: directChildBranch
+                    }
+                });
+                expect(mainBranch.getBranch("searchBranchName", false)).to.be.undefined();
+            });
+        });
+        describe("when direct child with searched name exist", () => {
+            it("should return direct child", () => {
+                const deepChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value
+                });
+                const directChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        differentBranchName: deepChildBranch
+                    }
+                });
+                const mainBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        searchBranchName: directChildBranch
+                    }
+                });
+                expect(mainBranch.getBranch("searchBranchName", false)).to.be.equal(directChildBranch);
+            });
+        });
+    });
+
+    describe("when deep searching", () => {
+        describe("when child with searched name doesn't exist", () => {
+            it("should return undefined", () => {
+                const deepChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value
+                });
+                const directChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        alsoWrongBranchName: deepChildBranch
+                    }
+                });
+                const mainBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        differentBranchName: directChildBranch
+                    }
+                });
+                expect(mainBranch.getBranch("searchBranchName")).to.be.undefined();
+            });
+        });
+        describe("when child with searched name exist", () => {
+            it("should return child branch", () => {
+                const deepChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value
+                });
+                const directChildBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        searchBranchName: deepChildBranch
+                    }
+                });
+                const mainBranch = Horpyna({
+                    condition: () => true,
+                    action: value => value,
+                    branches: {
+                        differentBranchName: directChildBranch
+                    }
+                });
+                expect(mainBranch.getBranch("searchBranchName")).to.be.equal(deepChildBranch);
+            });
+        });
+    });
 });

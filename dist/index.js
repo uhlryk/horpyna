@@ -101,6 +101,10 @@ var _createSetBranch = __webpack_require__(9);
 
 var _createSetBranch2 = _interopRequireDefault(_createSetBranch);
 
+var _createGetBranch = __webpack_require__(10);
+
+var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function response(options, debug) {
@@ -109,6 +113,7 @@ function response(options, debug) {
     setValue.changeCondition = (0, _createChangeCondition2.default)(options, debug);
     setValue.changeAction = (0, _createChangeAction2.default)(options, debug);
     setValue.setBranch = (0, _createSetBranch2.default)(options, debug);
+    setValue.getBranch = (0, _createGetBranch2.default)(options, debug);
     return setValue;
 }
 
@@ -310,6 +315,35 @@ function createSetBranch(options, debug) {
             branches: Object.assign({}, options.branches, _defineProperty({}, branchName, branch))
         });
         return (0, _response2.default)(options, debug);
+    };
+}
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createGetBranch;
+function createGetBranch(options, debug) {
+    debug("create 'getBranch' function");
+    return function (branchName) {
+        var deepSearch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+        debug("call 'getBranch' function with name", branchName);
+        var directChildBranch = options.branches[branchName];
+        if (directChildBranch) {
+            return directChildBranch;
+        }
+        if (deepSearch) {
+            return Object.keys(options.branches).reduce(function (branch, name) {
+                return branch || options.branches[name].getBranch(branchName, true);
+            }, undefined);
+        }
     };
 }
 
