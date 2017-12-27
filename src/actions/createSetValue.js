@@ -5,14 +5,11 @@ export default function createSetValue({ condition = () => true, action = value 
         if (condition(value)) {
             debug("conditions met");
             const actionResult = action(value);
-            const childBranchResult = getFirstChildBranchResult(branches, actionResult);
+            const childBranchResult = Object.keys(branches).reduce(
+                (result, branchName) => (result !== undefined ? result : branches[branchName](actionResult)),
+                undefined
+            );
             return childBranchResult || actionResult;
         }
     };
-}
-
-function getFirstChildBranchResult(branches, actionResult) {
-    let childBranchResult;
-    Object.keys(branches).find(branchName => (childBranchResult = branches[branchName](actionResult)));
-    return childBranchResult;
 }

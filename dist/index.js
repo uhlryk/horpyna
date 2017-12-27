@@ -220,18 +220,12 @@ function createSetValue(_ref, debug) {
         if (condition(value)) {
             debug("conditions met");
             var actionResult = action(value);
-            var childBranchResult = getFirstChildBranchResult(branches, actionResult);
+            var childBranchResult = Object.keys(branches).reduce(function (result, branchName) {
+                return result !== undefined ? result : branches[branchName](actionResult);
+            }, undefined);
             return childBranchResult || actionResult;
         }
     };
-}
-
-function getFirstChildBranchResult(branches, actionResult) {
-    var childBranchResult = void 0;
-    Object.keys(branches).find(function (branchName) {
-        return childBranchResult = branches[branchName](actionResult);
-    });
-    return childBranchResult;
 }
 
 /***/ }),
