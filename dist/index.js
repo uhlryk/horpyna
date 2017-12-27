@@ -89,19 +89,19 @@ var _createSetValue = __webpack_require__(6);
 
 var _createSetValue2 = _interopRequireDefault(_createSetValue);
 
-var _createChangeCondition = __webpack_require__(7);
+var _createChangeCondition = __webpack_require__(8);
 
 var _createChangeCondition2 = _interopRequireDefault(_createChangeCondition);
 
-var _createChangeAction = __webpack_require__(8);
+var _createChangeAction = __webpack_require__(9);
 
 var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
 
-var _createSetBranch = __webpack_require__(9);
+var _createSetBranch = __webpack_require__(10);
 
 var _createSetBranch2 = _interopRequireDefault(_createSetBranch);
 
-var _createGetBranch = __webpack_require__(10);
+var _createGetBranch = __webpack_require__(11);
 
 var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
 
@@ -207,6 +207,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = createSetValue;
+
+var _bluebird = __webpack_require__(7);
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function createSetValue(_ref, debug) {
     var _ref$condition = _ref.condition,
         condition = _ref$condition === undefined ? function () {
@@ -225,16 +232,24 @@ function createSetValue(_ref, debug) {
         if (condition(value)) {
             debug("conditions met");
             var actionResult = action(value);
-            var childBranchResult = Object.keys(branches).reduce(function (result, branchName) {
-                return result !== undefined ? result : branches[branchName](actionResult);
-            }, undefined);
-            return childBranchResult || actionResult;
+            return _bluebird2.default.reduce(Object.keys(branches), function (result, branchName) {
+                return result !== null ? _bluebird2.default.resolve(result) : branches[branchName](actionResult);
+            }, null).then(function (childBranchResult) {
+                return childBranchResult || actionResult;
+            });
         }
+        return _bluebird2.default.resolve(null);
     };
 }
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("bluebird");
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -261,7 +276,7 @@ function createChangeCondition(options, debug) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -288,7 +303,7 @@ function createChangeAction(options, debug) {
 }
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,7 +334,7 @@ function createSetBranch(options, debug) {
 }
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -342,7 +357,7 @@ function createGetBranch(options, debug) {
         if (deepSearch) {
             return Object.keys(options.branches).reduce(function (branch, name) {
                 return branch || options.branches[name].getBranch(branchName, true);
-            }, undefined);
+            }, null);
         }
     };
 }

@@ -1,3 +1,4 @@
+import Promise from "bluebird";
 export default function createSetValue({ condition = () => true, action = value => value, branches = {} }, debug) {
     debug("create 'setValue' function");
     return value => {
@@ -5,11 +6,13 @@ export default function createSetValue({ condition = () => true, action = value 
         if (condition(value)) {
             debug("conditions met");
             const actionResult = action(value);
-            const childBranchResult = Object.keys(branches).reduce(
-                (result, branchName) => (result !== undefined ? result : branches[branchName](actionResult)),
-                undefined
-            );
-            return childBranchResult || actionResult;
+            return Promise.reduce(
+                Object.keys(branches),
+                (result, branchName) =>
+                    result !== null ? Promise.resolve(result) : branches[branchName](actionResult),
+                null
+            ).then(childBranchResult => childBranchResult || actionResult);
         }
+        return Promise.resolve(null);
     };
 }

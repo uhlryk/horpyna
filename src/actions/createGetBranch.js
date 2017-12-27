@@ -9,7 +9,7 @@ export default function createGetBranch(options, debug) {
         if (deepSearch) {
             return Object.keys(options.branches).reduce(
                 (branch, name) => branch || options.branches[name].getBranch(branchName, true),
-                undefined
+                null
             );
         }
     };

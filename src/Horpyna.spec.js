@@ -19,9 +19,10 @@ describe("Hopyna", () => {
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
                 const mainBranch = Horpyna({ condition: () => false, action: branchFunctionStub });
-                const result = mainBranch(valueStub);
-                expect(result).to.be.undefined();
-                expect(branchFunctionStub.called).to.be.false();
+                return mainBranch(valueStub).then(result => {
+                    expect(result).to.be.null();
+                    expect(branchFunctionStub.called).to.be.false();
+                });
             });
         });
     });
@@ -33,10 +34,11 @@ describe("Hopyna", () => {
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
                 const mainBranch = Horpyna({ condition: () => true, action: branchFunctionStub });
-                const result = mainBranch(valueStub);
-                expect(result).to.be.equal(responseStub);
-                expect(branchFunctionStub.calledOnce).to.be.true();
-                expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                return mainBranch(valueStub).then(result => {
+                    expect(result).to.be.equal(responseStub);
+                    expect(branchFunctionStub.calledOnce).to.be.true();
+                    expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                });
             });
         });
 
@@ -54,12 +56,13 @@ describe("Hopyna", () => {
                         subBranchName: Horpyna({ condition: () => true, action: childBranchFunctionStub })
                     }
                 });
-                const result = mainBranch(valueStub);
-                expect(result).to.be.equal(childResponseStub);
-                expect(branchFunctionStub.calledOnce).to.be.true();
-                expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
-                expect(childBranchFunctionStub.calledOnce).to.be.true();
-                expect(childBranchFunctionStub.getCall(0).args[0]).to.be.eql(responseStub);
+                return mainBranch(valueStub).then(result => {
+                    expect(result).to.be.equal(childResponseStub);
+                    expect(branchFunctionStub.calledOnce).to.be.true();
+                    expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
+                    expect(childBranchFunctionStub.calledOnce).to.be.true();
+                    expect(childBranchFunctionStub.getCall(0).args[0]).to.be.eql(responseStub);
+                });
             });
         });
     });
@@ -134,7 +137,7 @@ describe("Hopyna", () => {
                         differentBranchName: directChildBranch
                     }
                 });
-                expect(mainBranch.getBranch("searchBranchName")).to.be.undefined();
+                expect(mainBranch.getBranch("searchBranchName")).to.be.null();
             });
         });
         describe("when child with searched name exist", () => {
