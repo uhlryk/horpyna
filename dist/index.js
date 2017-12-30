@@ -97,9 +97,9 @@ var _createChangeAction = __webpack_require__(9);
 
 var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
 
-var _createSetBranch = __webpack_require__(10);
+var _createAddBranch = __webpack_require__(10);
 
-var _createSetBranch2 = _interopRequireDefault(_createSetBranch);
+var _createAddBranch2 = _interopRequireDefault(_createAddBranch);
 
 var _createGetBranch = __webpack_require__(11);
 
@@ -112,7 +112,7 @@ function response(options, debug) {
     var setValue = (0, _createSetValue2.default)(options, debug);
     setValue.changeCondition = (0, _createChangeCondition2.default)(options, debug);
     setValue.changeAction = (0, _createChangeAction2.default)(options, debug);
-    setValue.setBranch = (0, _createSetBranch2.default)(options, debug);
+    setValue.addBranch = (0, _createAddBranch2.default)(options, debug);
     setValue.getBranch = (0, _createGetBranch2.default)(options, debug);
     return setValue;
 }
@@ -312,7 +312,7 @@ function createChangeAction(options, debug) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createSetBranch;
+exports.default = createAddBranch;
 
 var _response = __webpack_require__(0);
 
@@ -322,10 +322,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function createSetBranch(options, debug) {
-    debug("create 'setBranch' function");
+function createAddBranch(options, debug) {
+    debug("create 'addBranch' function");
     return function (branchName, branch) {
-        debug("call 'setBranch' function with name", branchName);
+        debug("call 'addBranch' function with name", branchName);
         options = Object.assign({}, options, {
             branches: Object.assign({}, options.branches, _defineProperty({}, branchName, branch))
         });
