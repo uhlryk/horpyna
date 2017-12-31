@@ -97,6 +97,32 @@ newMainBranch(11)
     .then(console.log)//13
 ```
 
+### branch.addBranch(branchName: String, subBranch: branch): branch
+
+Adds additional branch to existing one
+
+#### example
+```javascript
+import Horpyna from "Horpyna";
+const mainBranch = Horpyna({ 
+    condition: value => value > 10, 
+    action:  value => value + 1,
+    branches: {
+        maxBranch: Horpyna({
+            condition: value => value >= 15,
+            action: value => 15
+        })
+    }
+});
+const newMainBranch = mainBranch.addBranch("minBranch", Horpyna({
+    condition: value => value < 15,
+    action: value => value
+}));
+mainBranch(10)
+    .then(console.log)//null
+newMainBranch(10)
+    .then(console.log)//11
+```
 
 ## Debugger
 
