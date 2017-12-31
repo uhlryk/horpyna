@@ -7,12 +7,19 @@
 ## DESCRIPTION
 
 This module is for better organizing chain processes with multiple branches.
+It allows to design process flow by creating branches and setting conditions when 
+they should be called. 
+
+Main use case is to create flow template and reuse it with setting concrete functions instead of template ones.
+
+Main unit is a Branch. Each branch accept condition function and action function. 
+Also each branch can accept next branches. 
 
 ## API
 
 ### Horpyna(options: Object): branch
 
-Creates new branch.
+Creates new branches.
 
 #### options
 
@@ -50,9 +57,9 @@ mainBranch(15)
     .then(console.log)//15
 ```
 
-### branch.changeCondition(condition: function): branch
+### branch.changeCondition(condition: (value: any) => result: any): branch
 
-returns new branch with new condition
+Changes branch condition. Returns new branch with new condition.
 
 #### example
 ```javascript
@@ -69,6 +76,27 @@ mainBranch(11)
 newMainBranch(11)
     .then(console.log)//null
 ```
+
+### branch.changeAction(action: (value: any) => result: any): branch
+
+Changes branch action. Returns new branch with new action.
+
+#### example
+```javascript
+import Horpyna from "Horpyna";
+const mainBranch = Horpyna({ 
+    condition: value => value > 10, 
+    action:  value => value + 1,
+});
+const newMainBranch = mainBranch.changeAction(value => value + 2);
+
+mainBranch(11)
+    .then(console.log)//12
+
+newMainBranch(11)
+    .then(console.log)//13
+```
+
 
 ## Debugger
 
