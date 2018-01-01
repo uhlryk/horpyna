@@ -12,8 +12,8 @@ they should be called.
 
 Main use case is to create flow template and reuse it with setting concrete functions instead of template ones.
 
-Main unit is a Branch. Each branch accept condition function and action function. 
-Also each branch can accept next branches. 
+Main unit is a Branch. Each branch accepts condition function and action function. 
+Also each branch can accept other branches. 
 
 ## API
 
@@ -124,9 +124,50 @@ newMainBranch(10)
     .then(console.log)//11
 ```
 
+### branch,getBranch(branchName: String, deepBranch = true): branch
+
+Returns first branch by name. If deepBranch argument is true it will search in all branch tree beginning from this branch.
+
+#### example
+```javascript
+import Horpyna from "Horpyna";
+const mainBranch = Horpyna({ 
+    condition: value => value > 10, 
+    action:  value => value + 1,
+    branches: {
+        maxBranch: Horpyna({
+            condition: value => value >= 15,
+            action: value => 15
+        })
+    }
+});
+const maxBranch = mainBranch.getBranch("maxBranch");
+
+maxBranch(14)
+    .then(console.log)//null
+maxBranch(20)
+    .then(console.log)//15
+```
+
+### branch(input): promise
+
+Returns promise resolvable to calculated output.
+
+#### example
+```javascript
+import Horpyna from "Horpyna";
+const mainBranch = Horpyna({ 
+    condition: value => value > 10, 
+    action:  value => value + 1,
+});
+
+mainBranch(11)
+    .then(console.log)//12
+```
+
 ## Debugger
 
-For easy debug this library run your script with
+For easy debug run your script with
 
 ```
 DEBUG=Horpyna <command to run>
