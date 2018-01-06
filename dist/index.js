@@ -326,14 +326,11 @@ exports.default = createAddBranch;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function createAddBranch(options, debug) {
-    debug("create 'addBranch' function");
+function createAddBranch(options) {
     return function (branchName, branch) {
-        debug("call 'addBranch' function with name", branchName);
-        options = Object.assign({}, options, {
+        return Object.assign({}, options, {
             branches: Object.assign({}, options.branches, _defineProperty({}, branchName, branch))
         });
-        return options;
     };
 }
 

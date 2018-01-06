@@ -1,14 +1,11 @@
-/* eslint-disable no-unused-vars */
 import createChangeAction from "./createChangeAction";
 
 describe("createChangeAction", () => {
     let sandbox;
-    let debugStub;
     let oldActionStub;
     let newActionStub;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
-        debugStub = sandbox.stub();
         oldActionStub = sandbox.stub();
         newActionStub = sandbox.stub();
     });
@@ -24,8 +21,8 @@ describe("createChangeAction", () => {
         });
 
         it("should return options with new action", () => {
-            const method = createChangeAction(options, debugStub);
-            const newOptions = method(newActionStub);
+            const changeAction = createChangeAction(options);
+            const newOptions = changeAction(newActionStub);
             expect(newOptions).to.have.property("action", newActionStub);
         });
     });
@@ -39,8 +36,8 @@ describe("createChangeAction", () => {
         });
 
         it("should return options with new action", () => {
-            const method = createChangeAction(options, debugStub);
-            const newOptions = method(newActionStub);
+            const changeAction = createChangeAction(options);
+            const newOptions = changeAction(newActionStub);
             expect(newOptions).to.have.property("action", newActionStub);
         });
     });
