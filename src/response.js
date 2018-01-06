@@ -1,9 +1,9 @@
 import createActionCreatorResponse from "./createActionCreatorResponse";
-import createSetValue from "./actions/createSetValue";
-import createChangeCondition from "./actions/createChangeCondition";
-import createChangeAction from "./actions/createChangeAction";
-import createSetBranch from "./actions/createAddBranch";
-import createGetBranch from "./actions/createGetBranch";
+import createSetValue from "./methods/createSetValue";
+import createChangeCondition from "./methods/createChangeCondition";
+import createChangeAction from "./methods/createChangeAction";
+import createSetBranch from "./methods/createAddBranch";
+import createGetBranch from "./methods/createGetBranch";
 export default function response(options, debug) {
     options = Object.assign({}, options);
     const setValue = createSetValue(options, debug);
