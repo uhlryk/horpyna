@@ -306,12 +306,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = createChangeAction;
-function createChangeAction(options, debug) {
-    debug("create 'changeAction' function");
+function createChangeAction(options) {
     return function (newAction) {
-        options = Object.assign({}, options, { action: newAction });
-        debug("call 'changeAction' function");
-        return options;
+        return Object.assign({}, options, { action: newAction });
     };
 }
 
