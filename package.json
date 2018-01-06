@@ -1,6 +1,6 @@
 {
     "name": "horpyna",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "utility to manage async processes",
     "main": "dist/index.js",
     "scripts": {
