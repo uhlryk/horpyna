@@ -70,69 +70,25 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+__webpack_require__(1);
+module.exports = __webpack_require__(2);
 
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = response;
-
-var _createSetValue = __webpack_require__(6);
-
-var _createSetValue2 = _interopRequireDefault(_createSetValue);
-
-var _createChangeCondition = __webpack_require__(8);
-
-var _createChangeCondition2 = _interopRequireDefault(_createChangeCondition);
-
-var _createChangeAction = __webpack_require__(9);
-
-var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
-
-var _createAddBranch = __webpack_require__(10);
-
-var _createAddBranch2 = _interopRequireDefault(_createAddBranch);
-
-var _createGetBranch = __webpack_require__(11);
-
-var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function response(options, debug) {
-    options = Object.assign({}, options);
-    var setValue = (0, _createSetValue2.default)(options, debug);
-    setValue.changeCondition = (0, _createChangeCondition2.default)(options, debug);
-    setValue.changeAction = (0, _createChangeAction2.default)(options, debug);
-    setValue.addBranch = (0, _createAddBranch2.default)(options, debug);
-    setValue.getBranch = (0, _createGetBranch2.default)(options, debug);
-    return setValue;
-}
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(2);
-module.exports = __webpack_require__(3);
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-polyfill");
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -143,7 +99,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _Horpyna = __webpack_require__(4);
+var _Horpyna = __webpack_require__(3);
 
 var _Horpyna2 = _interopRequireDefault(_Horpyna);
 
@@ -152,7 +108,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _Horpyna2.default;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -163,11 +119,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = Horpyna;
 
-var _debug = __webpack_require__(5);
+var _debug = __webpack_require__(4);
 
 var _debug2 = _interopRequireDefault(_debug);
 
-var _response = __webpack_require__(0);
+var _response = __webpack_require__(5);
 
 var _response2 = _interopRequireDefault(_response);
 
@@ -191,10 +147,61 @@ function Horpyna(_ref) {
 }
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = require("debug");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = response;
+
+var _createActionCreatorResponse = __webpack_require__(6);
+
+var _createActionCreatorResponse2 = _interopRequireDefault(_createActionCreatorResponse);
+
+var _createSetValue = __webpack_require__(7);
+
+var _createSetValue2 = _interopRequireDefault(_createSetValue);
+
+var _createChangeCondition = __webpack_require__(9);
+
+var _createChangeCondition2 = _interopRequireDefault(_createChangeCondition);
+
+var _createChangeAction = __webpack_require__(10);
+
+var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
+
+var _createAddBranch = __webpack_require__(11);
+
+var _createAddBranch2 = _interopRequireDefault(_createAddBranch);
+
+var _createGetBranch = __webpack_require__(12);
+
+var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function response(options, debug) {
+    options = Object.assign({}, options);
+    var setValue = (0, _createSetValue2.default)(options, debug);
+    var actionCreatorResponse = (0, _createActionCreatorResponse2.default)(response, options, debug);
+
+    setValue.changeCondition = actionCreatorResponse(_createChangeCondition2.default);
+    setValue.changeAction = actionCreatorResponse(_createChangeAction2.default);
+    setValue.addBranch = actionCreatorResponse(_createAddBranch2.default);
+    setValue.getBranch = (0, _createGetBranch2.default)(options, debug);
+
+    return setValue;
+}
 
 /***/ }),
 /* 6 */
@@ -206,9 +213,29 @@ module.exports = require("debug");
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = createActionCreatorResponse;
+function createActionCreatorResponse(response, options, debug) {
+    return function (actionCreator) {
+        var action = actionCreator(options, debug);
+        return function () {
+            return response(action.apply(undefined, arguments), debug);
+        };
+    };
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.default = createSetValue;
 
-var _bluebird = __webpack_require__(7);
+var _bluebird = __webpack_require__(8);
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
@@ -243,37 +270,10 @@ function createSetValue(_ref, debug) {
 }
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = require("bluebird");
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = createChangeCondition;
-
-var _response = __webpack_require__(0);
-
-var _response2 = _interopRequireDefault(_response);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function createChangeCondition(options, debug) {
-    debug("create 'changeCondition' function");
-    return function (newCondition) {
-        options = Object.assign({}, options, { condition: newCondition });
-        debug("call 'changeCondition' function");
-        return (0, _response2.default)(options, debug);
-    };
-}
 
 /***/ }),
 /* 9 */
@@ -285,20 +285,13 @@ function createChangeCondition(options, debug) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createChangeAction;
-
-var _response = __webpack_require__(0);
-
-var _response2 = _interopRequireDefault(_response);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function createChangeAction(options, debug) {
-    debug("create 'changeAction' function");
-    return function (newAction) {
-        options = Object.assign({}, options, { action: newAction });
-        debug("call 'changeAction' function");
-        return (0, _response2.default)(options, debug);
+exports.default = createChangeCondition;
+function createChangeCondition(options, debug) {
+    debug("create 'changeCondition' function");
+    return function (newCondition) {
+        options = Object.assign({}, options, { condition: newCondition });
+        debug("call 'changeCondition' function");
+        return options;
     };
 }
 
@@ -312,13 +305,27 @@ function createChangeAction(options, debug) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = createChangeAction;
+function createChangeAction(options, debug) {
+    debug("create 'changeAction' function");
+    return function (newAction) {
+        options = Object.assign({}, options, { action: newAction });
+        debug("call 'changeAction' function");
+        return options;
+    };
+}
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.default = createAddBranch;
-
-var _response = __webpack_require__(0);
-
-var _response2 = _interopRequireDefault(_response);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -329,12 +336,12 @@ function createAddBranch(options, debug) {
         options = Object.assign({}, options, {
             branches: Object.assign({}, options.branches, _defineProperty({}, branchName, branch))
         });
-        return (0, _response2.default)(options, debug);
+        return options;
     };
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

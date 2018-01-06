@@ -1,4 +1,3 @@
-import response from "../response";
 export default function createAddBranch(options, debug) {
     debug("create 'addBranch' function");
     return (branchName, branch) => {
@@ -6,6 +5,6 @@ export default function createAddBranch(options, debug) {
         options = Object.assign({}, options, {
             branches: Object.assign({}, options.branches, { [branchName]: branch })
         });
-        return response(options, debug);
+        return options;
     };
 }
