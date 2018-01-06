@@ -1,7 +1,5 @@
-export default function createGetBranch(options, debug) {
-    debug("create 'getBranch' function");
+export default function createGetBranch(options) {
     return (branchName, deepSearch = true) => {
-        debug("call 'getBranch' function with name", branchName);
         const directChildBranch = options.branches[branchName];
         if (directChildBranch) {
             return directChildBranch;

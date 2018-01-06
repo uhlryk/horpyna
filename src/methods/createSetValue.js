@@ -1,10 +1,7 @@
 import Promise from "bluebird";
-export default function createSetValue({ condition = () => true, action = value => value, branches = {} }, debug) {
-    debug("create 'setValue' function");
+export default function createSetValue({ condition = () => true, action = value => value, branches = {} }) {
     return value => {
-        debug("call 'setValue' function");
         if (condition(value)) {
-            debug("conditions met");
             const actionResult = action(value);
             return Promise.reduce(
                 Object.keys(branches),

@@ -119,11 +119,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = Horpyna;
 
-var _debug = __webpack_require__(4);
-
-var _debug2 = _interopRequireDefault(_debug);
-
-var _response = __webpack_require__(5);
+var _response = __webpack_require__(4);
 
 var _response2 = _interopRequireDefault(_response);
 
@@ -141,16 +137,59 @@ function Horpyna(_ref) {
         _ref$branches = _ref.branches,
         branches = _ref$branches === undefined ? {} : _ref$branches;
 
-    var debug = (0, _debug2.default)("Horpyna");
-    debug("initialize instance");
-    return (0, _response2.default)({ condition: condition, action: action, branches: branches }, debug);
+    return (0, _response2.default)({ condition: condition, action: action, branches: branches });
 }
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("debug");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = response;
+
+var _createActionCreatorResponse = __webpack_require__(5);
+
+var _createActionCreatorResponse2 = _interopRequireDefault(_createActionCreatorResponse);
+
+var _createSetValue = __webpack_require__(6);
+
+var _createSetValue2 = _interopRequireDefault(_createSetValue);
+
+var _createChangeCondition = __webpack_require__(8);
+
+var _createChangeCondition2 = _interopRequireDefault(_createChangeCondition);
+
+var _createChangeAction = __webpack_require__(9);
+
+var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
+
+var _createAddBranch = __webpack_require__(10);
+
+var _createAddBranch2 = _interopRequireDefault(_createAddBranch);
+
+var _createGetBranch = __webpack_require__(11);
+
+var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function response(options) {
+    options = Object.assign({}, options);
+    var setValue = (0, _createSetValue2.default)(options);
+    var actionCreatorResponse = (0, _createActionCreatorResponse2.default)(response, options);
+
+    setValue.changeCondition = actionCreatorResponse(_createChangeCondition2.default);
+    setValue.changeAction = actionCreatorResponse(_createChangeAction2.default);
+    setValue.addBranch = actionCreatorResponse(_createAddBranch2.default);
+    setValue.getBranch = (0, _createGetBranch2.default)(options);
+
+    return setValue;
+}
 
 /***/ }),
 /* 5 */
@@ -162,45 +201,14 @@ module.exports = require("debug");
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = response;
-
-var _createActionCreatorResponse = __webpack_require__(6);
-
-var _createActionCreatorResponse2 = _interopRequireDefault(_createActionCreatorResponse);
-
-var _createSetValue = __webpack_require__(7);
-
-var _createSetValue2 = _interopRequireDefault(_createSetValue);
-
-var _createChangeCondition = __webpack_require__(9);
-
-var _createChangeCondition2 = _interopRequireDefault(_createChangeCondition);
-
-var _createChangeAction = __webpack_require__(10);
-
-var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
-
-var _createAddBranch = __webpack_require__(11);
-
-var _createAddBranch2 = _interopRequireDefault(_createAddBranch);
-
-var _createGetBranch = __webpack_require__(12);
-
-var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function response(options, debug) {
-    options = Object.assign({}, options);
-    var setValue = (0, _createSetValue2.default)(options, debug);
-    var actionCreatorResponse = (0, _createActionCreatorResponse2.default)(response, options, debug);
-
-    setValue.changeCondition = actionCreatorResponse(_createChangeCondition2.default);
-    setValue.changeAction = actionCreatorResponse(_createChangeAction2.default);
-    setValue.addBranch = actionCreatorResponse(_createAddBranch2.default);
-    setValue.getBranch = (0, _createGetBranch2.default)(options, debug);
-
-    return setValue;
+exports.default = createActionCreatorResponse;
+function createActionCreatorResponse(response, options) {
+    return function (actionCreator) {
+        var action = actionCreator(options);
+        return function () {
+            return response(action.apply(undefined, arguments));
+        };
+    };
 }
 
 /***/ }),
@@ -213,35 +221,15 @@ function response(options, debug) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createActionCreatorResponse;
-function createActionCreatorResponse(response, options, debug) {
-    return function (actionCreator) {
-        var action = actionCreator(options, debug);
-        return function () {
-            return response(action.apply(undefined, arguments), debug);
-        };
-    };
-}
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 exports.default = createSetValue;
 
-var _bluebird = __webpack_require__(8);
+var _bluebird = __webpack_require__(7);
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createSetValue(_ref, debug) {
+function createSetValue(_ref) {
     var _ref$condition = _ref.condition,
         condition = _ref$condition === undefined ? function () {
         return true;
@@ -253,11 +241,8 @@ function createSetValue(_ref, debug) {
         _ref$branches = _ref.branches,
         branches = _ref$branches === undefined ? {} : _ref$branches;
 
-    debug("create 'setValue' function");
     return function (value) {
-        debug("call 'setValue' function");
         if (condition(value)) {
-            debug("conditions met");
             var actionResult = action(value);
             return _bluebird2.default.reduce(Object.keys(branches), function (result, branchName) {
                 return result !== null ? _bluebird2.default.resolve(result) : branches[branchName](actionResult);
@@ -270,13 +255,13 @@ function createSetValue(_ref, debug) {
 }
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("bluebird");
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -286,17 +271,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = createChangeCondition;
-function createChangeCondition(options, debug) {
-    debug("create 'changeCondition' function");
+function createChangeCondition(options) {
     return function (newCondition) {
-        options = Object.assign({}, options, { condition: newCondition });
-        debug("call 'changeCondition' function");
-        return options;
+        return Object.assign({}, options, { condition: newCondition });
     };
 }
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -313,7 +295,7 @@ function createChangeAction(options) {
 }
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -335,7 +317,7 @@ function createAddBranch(options) {
 }
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -345,12 +327,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = createGetBranch;
-function createGetBranch(options, debug) {
-    debug("create 'getBranch' function");
+function createGetBranch(options) {
     return function (branchName) {
         var deepSearch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-        debug("call 'getBranch' function with name", branchName);
         var directChildBranch = options.branches[branchName];
         if (directChildBranch) {
             return directChildBranch;

@@ -70,8 +70,7 @@
         "webpack2-externals-plugin": "^1.0.0"
     },
     "dependencies": {
-        "bluebird": "^3.5.1",
-        "debug": "^3.0.1"
+        "bluebird": "^3.5.1"
     },
     "lint-staged": {
         "*.js": [

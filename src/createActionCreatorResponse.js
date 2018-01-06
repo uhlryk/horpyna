@@ -1,6 +1,6 @@
-export default function createActionCreatorResponse(response, options, debug) {
+export default function createActionCreatorResponse(response, options) {
     return actionCreator => {
-        const action = actionCreator(options, debug);
-        return (...args) => response(action(...args), debug);
+        const action = actionCreator(options);
+        return (...args) => response(action(...args));
     };
 }
