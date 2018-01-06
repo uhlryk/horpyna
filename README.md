@@ -165,14 +165,6 @@ mainBranch(11)
     .then(console.log)//12
 ```
 
-## Debugger
-
-For easy debug run your script with
-
-```
-DEBUG=Horpyna <command to run>
-```
-
 ## LICENSE
 
 MIT
