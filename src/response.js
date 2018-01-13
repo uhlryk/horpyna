@@ -5,7 +5,6 @@ import createChangeAction from "./methods/createChangeAction";
 import createSetBranch from "./methods/createAddBranch";
 import createGetBranch from "./methods/createGetBranch";
 export default function response(options) {
-    options = Object.assign({}, options);
     const setValue = createSetValue(options);
     const actionCreatorResponse = createActionCreatorResponse(response, options);
 

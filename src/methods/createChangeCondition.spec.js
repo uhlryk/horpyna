@@ -14,6 +14,19 @@ describe("createChangeCondition", () => {
         sandbox.restore();
     });
 
+    describe("method is mutable", () => {
+        let options;
+        beforeEach(() => {
+            options = {};
+        });
+
+        it("should return same options object", () => {
+            const changeCondition = createChangeCondition(options);
+            const newOptions = changeCondition(newConditionStub);
+            expect(newOptions).to.be.equal(options);
+        });
+    });
+
     describe("options doesn't contain any condition", () => {
         let options;
         beforeEach(() => {

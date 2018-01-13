@@ -14,6 +14,19 @@ describe("createChangeAction", () => {
         sandbox.restore();
     });
 
+    describe("method is mutable", () => {
+        let options;
+        beforeEach(() => {
+            options = {};
+        });
+
+        it("should return same options object", () => {
+            const changeAction = createChangeAction(options);
+            const newOptions = changeAction(newActionStub);
+            expect(newOptions).to.be.equal(options);
+        });
+    });
+
     describe("options doesn't contain any action", () => {
         let options;
         beforeEach(() => {

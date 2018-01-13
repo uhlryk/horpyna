@@ -14,6 +14,19 @@ describe("createAddBranch", () => {
         sandbox.restore();
     });
 
+    describe("method is mutable", () => {
+        let options;
+        beforeEach(() => {
+            options = {};
+        });
+
+        it("should return same options object", () => {
+            const addBranch = createAddBranch(options);
+            const newOptions = addBranch("testBranch", newBranchStub);
+            expect(newOptions).to.be.equal(options);
+        });
+    });
+
     describe("options doesn't contain any branches", () => {
         let options;
         beforeEach(() => {
