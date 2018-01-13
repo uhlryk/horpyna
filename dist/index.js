@@ -199,6 +199,10 @@ var _createGetBranch = __webpack_require__(12);
 
 var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
 
+var _createFindBranch = __webpack_require__(13);
+
+var _createFindBranch2 = _interopRequireDefault(_createFindBranch);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function response(options) {
@@ -209,6 +213,7 @@ function response(options) {
     setValue.changeAction = actionCreatorResponse(_createChangeAction2.default);
     setValue.addBranch = actionCreatorResponse(_createAddBranch2.default);
     setValue.getBranch = (0, _createGetBranch2.default)(options);
+    setValue.findBranch = (0, _createFindBranch2.default)(options);
 
     return setValue;
 }
@@ -371,17 +376,26 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = createGetBranch;
 function createGetBranch(options) {
     return function (branchName) {
-        var deepSearch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+        return options.branches[branchName] || null;
+    };
+}
 
-        var directChildBranch = options.branches[branchName];
-        if (directChildBranch) {
-            return directChildBranch;
-        }
-        if (deepSearch) {
-            return Object.keys(options.branches).reduce(function (branch, name) {
-                return branch || options.branches[name].getBranch(branchName, true);
-            }, null);
-        }
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createFindBranch;
+function createFindBranch(options) {
+    return function (branchName) {
+        return options.branches[branchName] || Object.keys(options.branches).reduce(function (branch, name) {
+            return branch || options.branches[name].getBranch(branchName, true);
+        }, null);
     };
 }
 

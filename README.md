@@ -128,29 +128,50 @@ mainBranch(10)
     .then(console.log)//11
 ```
 
-### branch,getBranch(branchName: String, deepBranch = true): branch
+### branch,getBranch(branchName: String): branch
 
-Returns first branch by name. If deepBranch argument is true it will search in all branch tree beginning from this branch.
+Returns first branch by name. If branch doesn't exist it will return null.
 
 #### example
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
-    condition: value => value > 10, 
-    action:  value => value + 1,
+    condition: () => true,
+    action: () => true,
     branches: {
         maxBranch: Horpyna({
-            condition: value => value >= 15,
-            action: value => 15
+            condition: () => true,
+            action: () => true
         })
     }
 });
 const maxBranch = mainBranch.getBranch("maxBranch");
+```
 
-maxBranch(14)
-    .then(console.log)//null
-maxBranch(20)
-    .then(console.log)//15
+### branch,findBranch(branchName: String): branch
+
+It will search in all branch tree beginning from current branch. If there is no such a branch it will return null.
+
+#### example
+```javascript
+import Horpyna from "Horpyna";
+const mainBranch = Horpyna({ 
+    condition: () => true,
+    action: () => true,
+    branches: {
+        maxBranch: Horpyna({
+            condition: () => true,
+            action: () => true,
+            branches: {
+                someDeepBranch: Horpyna({
+                    condition: () => true,
+                    action: () => true
+                })
+            }
+        })
+    }
+});
+const someDeepBranch = mainBranch.findBranch("someDeepBranch");
 ```
 
 ### branch(input): promise

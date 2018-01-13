@@ -88,7 +88,7 @@ describe("Hopyna", () => {
                         differentBranchName: directChildBranch
                     }
                 });
-                expect(mainBranch.getBranch("searchBranchName", false)).to.be.undefined();
+                expect(mainBranch.getBranch("searchBranchName", false)).to.be.null();
             });
         });
         describe("when direct child with searched name exist", () => {
@@ -116,7 +116,7 @@ describe("Hopyna", () => {
         });
     });
 
-    describe("when deep searching", () => {
+    describe("searching for branch", () => {
         describe("when child with searched name doesn't exist", () => {
             it("should return undefined", () => {
                 const deepChildBranch = Horpyna({
@@ -160,7 +160,7 @@ describe("Hopyna", () => {
                         differentBranchName: directChildBranch
                     }
                 });
-                expect(mainBranch.getBranch("searchBranchName")).to.be.equal(deepChildBranch);
+                expect(mainBranch.findBranch("searchBranchName")).to.be.equal(deepChildBranch);
             });
         });
     });
