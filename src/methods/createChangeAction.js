@@ -1,3 +1,4 @@
+import changeObject from "../changeObject";
 export default function createChangeAction(options) {
-    return newAction => Object.assign({}, options, { action: newAction });
+    return newAction => changeObject(options, { action: newAction });
 }

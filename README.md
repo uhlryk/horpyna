@@ -19,7 +19,7 @@ Also each branch can accept other branches.
 
 ### Horpyna(options: Object): branch
 
-Creates new branches.
+Creates new branch.
 
 #### options
 
@@ -59,7 +59,7 @@ mainBranch(15)
 
 ### branch.changeCondition(condition: (value: any) => result: any): branch
 
-Changes branch condition. Returns new branch with new condition.
+Changes branch condition. Returns branch instance.
 
 #### example
 ```javascript
@@ -68,18 +68,18 @@ const mainBranch = Horpyna({
     condition: value => value > 10, 
     action:  value => value + 1,
 });
-const newMainBranch = mainBranch.changeCondition(value => value > 11);
-
 mainBranch(11)
     .then(console.log)//12
 
-newMainBranch(11)
+mainBranch.changeCondition(value => value > 11);
+
+mainBranch(11)
     .then(console.log)//null
 ```
 
 ### branch.changeAction(action: (value: any) => result: any): branch
 
-Changes branch action. Returns new branch with new action.
+Changes branch action. Returns branch instance.
 
 #### example
 ```javascript
@@ -88,10 +88,11 @@ const mainBranch = Horpyna({
     condition: value => value > 10, 
     action:  value => value + 1,
 });
-const newMainBranch = mainBranch.changeAction(value => value + 2);
 
 mainBranch(11)
     .then(console.log)//12
+    
+mainBranch.changeAction(value => value + 2);
 
 newMainBranch(11)
     .then(console.log)//13
@@ -114,13 +115,16 @@ const mainBranch = Horpyna({
         })
     }
 });
-const newMainBranch = mainBranch.addBranch("minBranch", Horpyna({
+
+mainBranch(10)
+    .then(console.log)//null
+    
+mainBranch.addBranch("minBranch", Horpyna({
     condition: value => value < 15,
     action: value => value
 }));
+
 mainBranch(10)
-    .then(console.log)//null
-newMainBranch(10)
     .then(console.log)//11
 ```
 

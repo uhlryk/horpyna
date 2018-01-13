@@ -164,4 +164,21 @@ describe("Hopyna", () => {
             });
         });
     });
+
+    it("should iterate ten times over main branch", () => {
+        const mainBranch = Horpyna({
+            condition: value => value < 10,
+            action: value => ++value,
+            branches: {
+                finishBranch: Horpyna({
+                    condition: value => value => 10,
+                    action: () => "success"
+                })
+            }
+        });
+        mainBranch.addBranch("mainBranch", mainBranch);
+        return mainBranch(0).then(result => {
+            expect(result).to.be.eql("success");
+        });
+    });
 });
