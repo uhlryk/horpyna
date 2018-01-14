@@ -173,6 +173,9 @@ const mainBranch = Horpyna({
 });
 const someDeepBranch = mainBranch.findBranch("someDeepBranch");
 ```
+### branch,getAction(): function
+
+Returns branch action function
 
 ### branch(input): promise
 
