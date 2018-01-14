@@ -148,8 +148,9 @@ var _response2 = _interopRequireDefault(_response);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Horpyna(_ref) {
-    var _ref$condition = _ref.condition,
+function Horpyna() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$condition = _ref.condition,
         condition = _ref$condition === undefined ? function () {
         return true;
     } : _ref$condition,

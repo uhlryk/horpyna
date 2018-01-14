@@ -12,6 +12,13 @@ describe("Hopyna", () => {
         sandbox.restore();
     });
 
+    it("should use default values and return given value", () => {
+        const mainBranch = Horpyna();
+        return mainBranch(10).then(result => {
+            expect(result).to.be.equal(10);
+        });
+    });
+
     describe("when conditions not met", () => {
         describe("when no child branches", () => {
             it("should return undefined", () => {
