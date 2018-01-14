@@ -204,6 +204,10 @@ var _createFindBranch = __webpack_require__(13);
 
 var _createFindBranch2 = _interopRequireDefault(_createFindBranch);
 
+var _createGetAction = __webpack_require__(14);
+
+var _createGetAction2 = _interopRequireDefault(_createGetAction);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function response(options) {
@@ -215,6 +219,7 @@ function response(options) {
     setValue.addBranch = actionCreatorResponse(_createAddBranch2.default);
     setValue.getBranch = (0, _createGetBranch2.default)(options);
     setValue.findBranch = (0, _createFindBranch2.default)(options);
+    setValue.getAction = (0, _createGetAction2.default)(options);
 
     return setValue;
 }
@@ -398,6 +403,23 @@ function createFindBranch(options) {
         return options.branches[branchName] || Object.keys(options.branches).reduce(function (branch, name) {
             return branch || options.branches[name].getBranch(branchName, true);
         }, null);
+    };
+}
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createGetAction;
+function createGetAction(options) {
+    return function () {
+        return options.action;
     };
 }
 
