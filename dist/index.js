@@ -257,8 +257,9 @@ var _bluebird2 = _interopRequireDefault(_bluebird);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createSetValue(_ref) {
-    var _ref$condition = _ref.condition,
+function createSetValue() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$condition = _ref.condition,
         condition = _ref$condition === undefined ? function () {
         return true;
     } : _ref$condition,

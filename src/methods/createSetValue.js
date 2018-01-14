@@ -1,5 +1,5 @@
 import Promise from "bluebird";
-export default function createSetValue({ condition = () => true, action = value => value, branches = {} }) {
+export default function createSetValue({ condition = () => true, action = value => value, branches = {} } = {}) {
     return value => {
         if (condition(value)) {
             const actionResult = action(value);
