@@ -27,14 +27,14 @@ Creates new branch.
 {   name: String
     condition: Function,
     action: Function,
-    branches: Object
+    branches: Array<Branch>
 }
 ```
 
  * name - branch name
  * condition - function with condition to test
  * action - function to call if condition pass
- * branches - object where key is branch name and value a subbranch.
+ * branches - array of sub branches
  
 #### example
 
@@ -44,13 +44,13 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
-    branches: {
-        maxBranch: Horpyna({
+    branches: [
+        Horpyna({
             name: "maxBranch",
             condition: value => value >= 15,
             action: value => 15
         })
-    }
+    ]
 });
 mainBranch(10)
     .then(console.log)//null
@@ -114,19 +114,19 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
-    branches: {
-        maxBranch: Horpyna({
+    branches: [
+        Horpyna({
             name: "maxBranch",
             condition: value => value >= 15,
             action: value => 15
         })
-    }
+    ]
 });
 
 mainBranch(10)
     .then(console.log)//null
     
-mainBranch.addBranch("minBranch", Horpyna({
+mainBranch.addBranch(Horpyna({
     name: "minBranch",
     condition: value => value < 15,
     action: value => value
@@ -147,13 +147,13 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: () => true,
     action: () => true,
-    branches: {
-        maxBranch: Horpyna({
+    branches: [
+        Horpyna({
             name: "maxBranch",
             condition: () => true,
             action: () => true
         })
-    }
+    ]
 });
 const maxBranch = mainBranch.getBranch("maxBranch");
 ```
@@ -169,20 +169,20 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: () => true,
     action: () => true,
-    branches: {
-        maxBranch: Horpyna({
+    branches: [
+        Horpyna({
             name: "maxBranch",
             condition: () => true,
             action: () => true,
-            branches: {
-                someDeepBranch: Horpyna({
+            branches: [
+                Horpyna({
                     name: "someDeepBranch",
                     condition: () => true,
                     action: () => true
                 })
-            }
+            ]
         })
-    }
+    ]
 });
 const someDeepBranch = mainBranch.findBranch("someDeepBranch");
 ```

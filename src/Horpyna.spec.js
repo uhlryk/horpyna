@@ -61,13 +61,13 @@ describe("Hopyna", () => {
                     name: "mainBranch",
                     condition: () => true,
                     action: branchFunctionStub,
-                    branches: {
-                        subBranchName: Horpyna({
+                    branches: [
+                        Horpyna({
                             name: "subBranchName",
                             condition: () => true,
                             action: childBranchFunctionStub
                         })
-                    }
+                    ]
                 });
                 return mainBranch(valueStub).then(result => {
                     expect(result).to.be.equal(childResponseStub);
@@ -92,19 +92,15 @@ describe("Hopyna", () => {
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        searchBranchName: deepChildBranch
-                    }
+                    branches: [deepChildBranch]
                 });
                 const mainBranch = Horpyna({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        differentBranchName: directChildBranch
-                    }
+                    branches: [directChildBranch]
                 });
-                expect(mainBranch.getBranch("searchBranchName", false)).to.be.null();
+                expect(mainBranch.getBranch("searchBranchName")).to.be.null();
             });
         });
         describe("when direct child with searched name exist", () => {
@@ -118,19 +114,15 @@ describe("Hopyna", () => {
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        differentBranchName: deepChildBranch
-                    }
+                    branches: [deepChildBranch]
                 });
                 const mainBranch = Horpyna({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        searchBranchName: directChildBranch
-                    }
+                    branches: [directChildBranch]
                 });
-                expect(mainBranch.getBranch("searchBranchName", false)).to.be.equal(directChildBranch);
+                expect(mainBranch.getBranch("directChildBranch")).to.be.equal(directChildBranch);
             });
         });
     });
@@ -147,17 +139,13 @@ describe("Hopyna", () => {
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        alsoWrongBranchName: deepChildBranch
-                    }
+                    branches: [deepChildBranch]
                 });
                 const mainBranch = Horpyna({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        differentBranchName: directChildBranch
-                    }
+                    branches: [directChildBranch]
                 });
                 expect(mainBranch.getBranch("searchBranchName")).to.be.null();
             });
@@ -165,7 +153,7 @@ describe("Hopyna", () => {
         describe("when child with searched name exist", () => {
             it("should return child branch", () => {
                 const deepChildBranch = Horpyna({
-                    name: "deepChildBranch",
+                    name: "searchBranchName",
                     condition: () => true,
                     action: value => value
                 });
@@ -173,17 +161,13 @@ describe("Hopyna", () => {
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        searchBranchName: deepChildBranch
-                    }
+                    branches: [deepChildBranch]
                 });
                 const mainBranch = Horpyna({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
-                    branches: {
-                        differentBranchName: directChildBranch
-                    }
+                    branches: [directChildBranch]
                 });
                 expect(mainBranch.findBranch("searchBranchName")).to.be.equal(deepChildBranch);
             });
@@ -195,15 +179,15 @@ describe("Hopyna", () => {
             name: "mainBranch",
             condition: value => value < 10,
             action: value => ++value,
-            branches: {
-                finishBranch: Horpyna({
+            branches: [
+                Horpyna({
                     name: "finishBranch",
                     condition: value => value => 10,
                     action: () => "success"
                 })
-            }
+            ]
         });
-        mainBranch.addBranch("mainBranch", mainBranch);
+        mainBranch.addBranch(mainBranch);
         return mainBranch(0).then(result => {
             expect(result).to.be.eql("success");
         });

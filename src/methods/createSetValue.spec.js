@@ -84,13 +84,13 @@ describe("createSetValue", () => {
                 name: "mainBranch",
                 condition: () => true,
                 action: mainBranchActionStub,
-                branches: {
-                    subBranch: Horpyna({
+                branches: [
+                    Horpyna({
                         name: "subBranch",
                         condition: () => true,
                         action: subBranchActionStub
                     })
-                }
+                ]
             };
         });
 

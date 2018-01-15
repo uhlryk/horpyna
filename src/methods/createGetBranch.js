@@ -1,3 +1,4 @@
+import getBranch from "./helpers/getBranch";
 export default function createGetBranch(options) {
-    return branchName => options.branches[branchName] || null;
+    return branchName => getBranch(options.branches, branchName);
 }

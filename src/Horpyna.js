@@ -1,5 +1,5 @@
 import response from "./response";
-export default function Horpyna({ name, condition = () => true, action = value => value, branches = {} } = {}) {
+export default function Horpyna({ name, condition = () => true, action = value => value, branches = [] } = {}) {
     if (!name) {
         throw TypeError("Name should be provided");
     }

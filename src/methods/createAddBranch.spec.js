@@ -17,12 +17,12 @@ describe("createAddBranch", () => {
     describe("method is mutable", () => {
         let options;
         beforeEach(() => {
-            options = {};
+            options = { branches: [] };
         });
 
         it("should return same options object", () => {
             const addBranch = createAddBranch(options);
-            const newOptions = addBranch("testBranch", newBranchStub);
+            const newOptions = addBranch(newBranchStub);
             expect(newOptions).to.be.equal(options);
         });
     });
@@ -30,13 +30,13 @@ describe("createAddBranch", () => {
     describe("options doesn't contain any branches", () => {
         let options;
         beforeEach(() => {
-            options = {};
+            options = { branches: [] };
         });
 
         it("should return options with new branch", () => {
             const addBranch = createAddBranch(options);
-            const newOptions = addBranch("testBranch", newBranchStub);
-            expect(newOptions).to.have.deep.property("branches", { testBranch: newBranchStub });
+            const newOptions = addBranch(newBranchStub);
+            expect(newOptions).to.have.deep.property("branches", [newBranchStub]);
         });
     });
 
@@ -44,19 +44,16 @@ describe("createAddBranch", () => {
         let options;
         beforeEach(() => {
             options = {
-                branches: {
-                    existingBranch: oldBranchStub
-                }
+                branches: [oldBranchStub]
             };
         });
 
         it("should return options with both branches", () => {
             const addBranch = createAddBranch(options);
-            const newOptions = addBranch("testBranch", newBranchStub);
-            expect(newOptions).to.have.deep.property("branches", {
-                testBranch: newBranchStub,
-                existingBranch: oldBranchStub
-            });
+            const newOptions = addBranch(newBranchStub);
+            expect(newOptions).to.have.property("branches");
+            expect(newOptions.branches[0]).to.be.equal(oldBranchStub);
+            expect(newOptions.branches[1]).to.be.equal(newBranchStub);
         });
     });
 });
