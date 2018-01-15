@@ -81,10 +81,12 @@ describe("createSetValue", () => {
             mainBranchActionStub = sandbox.stub().callsFake(input => input);
             subBranchActionStub = sandbox.stub().callsFake(input => input);
             options = {
+                name: "mainBranch",
                 condition: () => true,
                 action: mainBranchActionStub,
                 branches: {
                     subBranch: Horpyna({
+                        name: "subBranch",
                         condition: () => true,
                         action: subBranchActionStub
                     })

@@ -150,6 +150,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Horpyna() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        name = _ref.name,
         _ref$condition = _ref.condition,
         condition = _ref$condition === undefined ? function () {
         return true;
@@ -161,7 +162,10 @@ function Horpyna() {
         _ref$branches = _ref.branches,
         branches = _ref$branches === undefined ? {} : _ref$branches;
 
-    return (0, _response2.default)({ condition: condition, action: action, branches: branches });
+    if (!name) {
+        throw TypeError("Name should be provided");
+    }
+    return (0, _response2.default)({ name: name, condition: condition, action: action, branches: branches });
 }
 
 /***/ }),

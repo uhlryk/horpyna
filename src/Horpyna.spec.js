@@ -13,7 +13,7 @@ describe("Hopyna", () => {
     });
 
     it("should use default values and return given value", () => {
-        const mainBranch = Horpyna();
+        const mainBranch = Horpyna({ name: "mainBranch" });
         return mainBranch(10).then(result => {
             expect(result).to.be.equal(10);
         });
@@ -25,7 +25,7 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const mainBranch = Horpyna({ condition: () => false, action: branchFunctionStub });
+                const mainBranch = Horpyna({ name: "mainBranch", condition: () => false, action: branchFunctionStub });
                 return mainBranch(valueStub).then(result => {
                     expect(result).to.be.null();
                     expect(branchFunctionStub.called).to.be.false();
@@ -40,7 +40,7 @@ describe("Hopyna", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const mainBranch = Horpyna({ condition: () => true, action: branchFunctionStub });
+                const mainBranch = Horpyna({ name: "mainBranch", condition: () => true, action: branchFunctionStub });
                 return mainBranch(valueStub).then(result => {
                     expect(result).to.be.equal(responseStub);
                     expect(branchFunctionStub.calledOnce).to.be.true();
@@ -57,10 +57,15 @@ describe("Hopyna", () => {
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
                 const childBranchFunctionStub = sandbox.stub().returns(childResponseStub);
                 const mainBranch = Horpyna({
+                    name: "mainBranch",
                     condition: () => true,
                     action: branchFunctionStub,
                     branches: {
-                        subBranchName: Horpyna({ condition: () => true, action: childBranchFunctionStub })
+                        subBranchName: Horpyna({
+                            name: "subBranchName",
+                            condition: () => true,
+                            action: childBranchFunctionStub
+                        })
                     }
                 });
                 return mainBranch(valueStub).then(result => {
@@ -78,10 +83,12 @@ describe("Hopyna", () => {
         describe("when direct child with searched name doesn't exist", () => {
             it("should return undefined", () => {
                 const deepChildBranch = Horpyna({
+                    name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
                 const directChildBranch = Horpyna({
+                    name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -89,6 +96,7 @@ describe("Hopyna", () => {
                     }
                 });
                 const mainBranch = Horpyna({
+                    name: "mainBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -101,10 +109,12 @@ describe("Hopyna", () => {
         describe("when direct child with searched name exist", () => {
             it("should return direct child", () => {
                 const deepChildBranch = Horpyna({
+                    name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
                 const directChildBranch = Horpyna({
+                    name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -112,6 +122,7 @@ describe("Hopyna", () => {
                     }
                 });
                 const mainBranch = Horpyna({
+                    name: "mainBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -127,10 +138,12 @@ describe("Hopyna", () => {
         describe("when child with searched name doesn't exist", () => {
             it("should return undefined", () => {
                 const deepChildBranch = Horpyna({
+                    name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
                 const directChildBranch = Horpyna({
+                    name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -138,6 +151,7 @@ describe("Hopyna", () => {
                     }
                 });
                 const mainBranch = Horpyna({
+                    name: "mainBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -150,10 +164,12 @@ describe("Hopyna", () => {
         describe("when child with searched name exist", () => {
             it("should return child branch", () => {
                 const deepChildBranch = Horpyna({
+                    name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
                 const directChildBranch = Horpyna({
+                    name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -161,6 +177,7 @@ describe("Hopyna", () => {
                     }
                 });
                 const mainBranch = Horpyna({
+                    name: "mainBranch",
                     condition: () => true,
                     action: value => value,
                     branches: {
@@ -174,10 +191,12 @@ describe("Hopyna", () => {
 
     it("should iterate ten times over main branch", () => {
         const mainBranch = Horpyna({
+            name: "mainBranch",
             condition: value => value < 10,
             action: value => ++value,
             branches: {
                 finishBranch: Horpyna({
+                    name: "finishBranch",
                     condition: value => value => 10,
                     action: () => "success"
                 })
@@ -187,5 +206,11 @@ describe("Hopyna", () => {
         return mainBranch(0).then(result => {
             expect(result).to.be.eql("success");
         });
+    });
+
+    it("should throw error when name is not provided", () => {
+        expect(() => {
+            Horpyna();
+        }).to.throw("Name should be provided");
     });
 });
