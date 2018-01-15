@@ -190,6 +190,10 @@ const someDeepBranch = mainBranch.findBranch("someDeepBranch");
 
 Returns branch action function
 
+### branch,getName(): string
+
+Returns branch name
+
 ### branch(input): promise
 
 Returns promise resolvable to calculated output.
