@@ -24,13 +24,14 @@ Creates new branch.
 #### options
 
 ```
-{
+{   name: String
     condition: Function,
     action: Function,
     branches: Object
 }
 ```
 
+ * name - branch name
  * condition - function with condition to test
  * action - function to call if condition pass
  * branches - object where key is branch name and value a subbranch.
@@ -40,10 +41,12 @@ Creates new branch.
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
     branches: {
         maxBranch: Horpyna({
+            name: "maxBranch",
             condition: value => value >= 15,
             action: value => 15
         })
@@ -65,6 +68,7 @@ Changes branch condition. Returns branch instance.
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
 });
@@ -85,6 +89,7 @@ Changes branch action. Returns branch instance.
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
 });
@@ -106,10 +111,12 @@ Adds additional branch to existing one
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
     branches: {
         maxBranch: Horpyna({
+            name: "maxBranch",
             condition: value => value >= 15,
             action: value => 15
         })
@@ -120,6 +127,7 @@ mainBranch(10)
     .then(console.log)//null
     
 mainBranch.addBranch("minBranch", Horpyna({
+    name: "minBranch",
     condition: value => value < 15,
     action: value => value
 }));
@@ -136,10 +144,12 @@ Returns first branch by name. If branch doesn't exist it will return null.
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: () => true,
     action: () => true,
     branches: {
         maxBranch: Horpyna({
+            name: "maxBranch",
             condition: () => true,
             action: () => true
         })
@@ -156,14 +166,17 @@ It will search in all branch tree beginning from current branch. If there is no 
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: () => true,
     action: () => true,
     branches: {
         maxBranch: Horpyna({
+            name: "maxBranch",
             condition: () => true,
             action: () => true,
             branches: {
                 someDeepBranch: Horpyna({
+                    name: "someDeepBranch",
                     condition: () => true,
                     action: () => true
                 })
@@ -185,6 +198,7 @@ Returns promise resolvable to calculated output.
 ```javascript
 import Horpyna from "Horpyna";
 const mainBranch = Horpyna({ 
+    name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
 });
