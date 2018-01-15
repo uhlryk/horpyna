@@ -16,6 +16,7 @@ describe("Hopyna", () => {
         const mainBranch = Horpyna({ name: "mainBranch" });
         return mainBranch(10).then(result => {
             expect(result).to.be.equal(10);
+            expect(mainBranch.getName()).to.be.equal("mainBranch");
         });
     });
 

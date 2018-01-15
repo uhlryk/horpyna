@@ -6,6 +6,7 @@ import createSetBranch from "./methods/createAddBranch";
 import createGetBranch from "./methods/createGetBranch";
 import createFindBranch from "./methods/createFindBranch";
 import createGetAction from "./methods/createGetAction";
+import createGetName from "./methods/createGetName";
 export default function response(options) {
     const setValue = createSetValue(options);
     const actionCreatorResponse = createActionCreatorResponse(response, options);
@@ -16,6 +17,7 @@ export default function response(options) {
     setValue.getBranch = createGetBranch(options);
     setValue.findBranch = createFindBranch(options);
     setValue.getAction = createGetAction(options);
+    setValue.getName = createGetName(options);
 
     return setValue;
 }

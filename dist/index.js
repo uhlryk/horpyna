@@ -212,6 +212,10 @@ var _createGetAction = __webpack_require__(14);
 
 var _createGetAction2 = _interopRequireDefault(_createGetAction);
 
+var _createGetName = __webpack_require__(15);
+
+var _createGetName2 = _interopRequireDefault(_createGetName);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function response(options) {
@@ -224,6 +228,7 @@ function response(options) {
     setValue.getBranch = (0, _createGetBranch2.default)(options);
     setValue.findBranch = (0, _createFindBranch2.default)(options);
     setValue.getAction = (0, _createGetAction2.default)(options);
+    setValue.getName = (0, _createGetName2.default)(options);
 
     return setValue;
 }
@@ -424,6 +429,23 @@ exports.default = createGetAction;
 function createGetAction(options) {
     return function () {
         return options.action;
+    };
+}
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createGetName;
+function createGetName(options) {
+    return function () {
+        return options.name;
     };
 }
 
