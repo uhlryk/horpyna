@@ -20,6 +20,14 @@ describe("Hopyna", () => {
         });
     });
 
+    it("should use 'new' keyword default values and return given value", () => {
+        const mainBranch = new Horpyna({ name: "mainBranch" });
+        return mainBranch(10).then(result => {
+            expect(result).to.be.equal(10);
+            expect(mainBranch.getName()).to.be.equal("mainBranch");
+        });
+    });
+
     describe("when conditions not met", () => {
         describe("when no child branches", () => {
             it("should return undefined", () => {

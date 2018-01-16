@@ -18,6 +18,8 @@ Also each branch can accept other branches.
 ## API
 
 ### Horpyna(options: Object): branch
+or
+### new Horpyna(options: Object): branch
 
 Creates new branch.
 
