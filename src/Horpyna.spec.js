@@ -28,6 +28,26 @@ describe("Hopyna", () => {
         });
     });
 
+    it("should convert branch objects to Branch instances", () => {
+        const mainBranch = new Horpyna({
+            name: "mainBranch",
+            branches: [
+                {
+                    name: "subBranch"
+                },
+                Horpyna({ name: "otherSubBranch" })
+            ]
+        });
+        const subBranch = mainBranch.getBranch("subBranch");
+        expect(subBranch).to.be.an.instanceof(Function);
+        expect(subBranch).to.have.property("getName");
+        expect(subBranch.getName()).to.be.equal("subBranch");
+
+        const otherSubBranch = mainBranch.getBranch("otherSubBranch");
+        expect(otherSubBranch).to.be.an.instanceof(Function);
+        expect(otherSubBranch).to.have.property("getName");
+        expect(otherSubBranch.getName()).to.be.equal("otherSubBranch");
+    });
     describe("when conditions not met", () => {
         describe("when no child branches", () => {
             it("should return undefined", () => {

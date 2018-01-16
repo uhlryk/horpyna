@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -106,130 +106,41 @@ function prepareOptions() {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = getBranchByName;
-function getBranchByName(branches, branchName) {
-    return branches.find(function (branch) {
-        return branch.getName() === branchName;
-    }) || null;
-}
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(3);
-module.exports = __webpack_require__(4);
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-polyfill");
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = undefined;
-
-var _Horpyna = __webpack_require__(5);
-
-var _Horpyna2 = _interopRequireDefault(_Horpyna);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _Horpyna2.default;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = Horpyna;
-
-var _response = __webpack_require__(6);
-
-var _response2 = _interopRequireDefault(_response);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function Horpyna() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        name = _ref.name,
-        _ref$condition = _ref.condition,
-        condition = _ref$condition === undefined ? function () {
-        return true;
-    } : _ref$condition,
-        _ref$action = _ref.action,
-        action = _ref$action === undefined ? function (value) {
-        return value;
-    } : _ref$action,
-        _ref$branches = _ref.branches,
-        branches = _ref$branches === undefined ? [] : _ref$branches;
-
-    if (!name) {
-        throw TypeError("Name should be provided");
-    }
-    return (0, _response2.default)({ name: name, condition: condition, action: action, branches: branches });
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 exports.default = response;
 
-var _createActionCreatorResponse = __webpack_require__(7);
+var _createActionCreatorResponse = __webpack_require__(8);
 
 var _createActionCreatorResponse2 = _interopRequireDefault(_createActionCreatorResponse);
 
-var _createSetValue = __webpack_require__(8);
+var _createSetValue = __webpack_require__(9);
 
 var _createSetValue2 = _interopRequireDefault(_createSetValue);
 
-var _createChangeCondition = __webpack_require__(10);
+var _createChangeCondition = __webpack_require__(11);
 
 var _createChangeCondition2 = _interopRequireDefault(_createChangeCondition);
 
-var _createChangeAction = __webpack_require__(11);
+var _createChangeAction = __webpack_require__(12);
 
 var _createChangeAction2 = _interopRequireDefault(_createChangeAction);
 
-var _createAddBranch = __webpack_require__(12);
+var _createAddBranch = __webpack_require__(13);
 
 var _createAddBranch2 = _interopRequireDefault(_createAddBranch);
 
-var _createGetBranch = __webpack_require__(13);
+var _createGetBranch = __webpack_require__(14);
 
 var _createGetBranch2 = _interopRequireDefault(_createGetBranch);
 
-var _createFindBranch = __webpack_require__(14);
+var _createFindBranch = __webpack_require__(15);
 
 var _createFindBranch2 = _interopRequireDefault(_createFindBranch);
 
-var _createGetAction = __webpack_require__(15);
+var _createGetAction = __webpack_require__(16);
 
 var _createGetAction2 = _interopRequireDefault(_createGetAction);
 
-var _createGetName = __webpack_require__(16);
+var _createGetName = __webpack_require__(17);
 
 var _createGetName2 = _interopRequireDefault(_createGetName);
 
@@ -251,7 +162,128 @@ function response(options) {
 }
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = convertToBranches;
+
+var _response = __webpack_require__(1);
+
+var _response2 = _interopRequireDefault(_response);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function convertToBranches(branches) {
+    return branches.map(function (branch) {
+        if (branch instanceof Function) {
+            return branch;
+        } else {
+            return (0, _response2.default)(branch);
+        }
+    });
+}
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getBranchByName;
+function getBranchByName(branches, branchName) {
+    return branches.find(function (branch) {
+        return branch.getName() === branchName;
+    }) || null;
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(5);
+module.exports = __webpack_require__(6);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-polyfill");
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = undefined;
+
+var _Horpyna = __webpack_require__(7);
+
+var _Horpyna2 = _interopRequireDefault(_Horpyna);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _Horpyna2.default;
+
+/***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Horpyna;
+
+var _response = __webpack_require__(1);
+
+var _response2 = _interopRequireDefault(_response);
+
+var _convertToBranches = __webpack_require__(2);
+
+var _convertToBranches2 = _interopRequireDefault(_convertToBranches);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Horpyna() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        name = _ref.name,
+        _ref$condition = _ref.condition,
+        condition = _ref$condition === undefined ? function () {
+        return true;
+    } : _ref$condition,
+        _ref$action = _ref.action,
+        action = _ref$action === undefined ? function (value) {
+        return value;
+    } : _ref$action,
+        _ref$branches = _ref.branches,
+        branches = _ref$branches === undefined ? [] : _ref$branches;
+
+    if (!name) {
+        throw TypeError("Name should be provided");
+    }
+    return (0, _response2.default)({ name: name, condition: condition, action: action, branches: (0, _convertToBranches2.default)(branches) });
+}
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -271,7 +303,7 @@ function createActionCreatorResponse(response, options) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -282,7 +314,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = createSetValue;
 
-var _bluebird = __webpack_require__(9);
+var _bluebird = __webpack_require__(10);
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
@@ -315,13 +347,13 @@ function createSetValue() {
 }
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("bluebird");
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -345,7 +377,7 @@ function createChangeCondition(options) {
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -369,7 +401,7 @@ function createChangeAction(options) {
 }
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -384,37 +416,17 @@ var _changeObject = __webpack_require__(0);
 
 var _changeObject2 = _interopRequireDefault(_changeObject);
 
+var _convertToBranches = __webpack_require__(2);
+
+var _convertToBranches2 = _interopRequireDefault(_convertToBranches);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createAddBranch(options) {
     return function (branch) {
         return (0, _changeObject2.default)(options, {
-            branches: options.branches.concat(branch)
+            branches: (0, _convertToBranches2.default)(options.branches.concat(branch))
         });
-    };
-}
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = createGetBranch;
-
-var _getBranch = __webpack_require__(1);
-
-var _getBranch2 = _interopRequireDefault(_getBranch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function createGetBranch(options) {
-    return function (branchName) {
-        return (0, _getBranch2.default)(options.branches, branchName);
     };
 }
 
@@ -428,9 +440,33 @@ function createGetBranch(options) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = createGetBranch;
+
+var _getBranch = __webpack_require__(3);
+
+var _getBranch2 = _interopRequireDefault(_getBranch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function createGetBranch(options) {
+    return function (branchName) {
+        return (0, _getBranch2.default)(options.branches, branchName);
+    };
+}
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.default = createFindBranch;
 
-var _getBranch = __webpack_require__(1);
+var _getBranch = __webpack_require__(3);
 
 var _getBranch2 = _interopRequireDefault(_getBranch);
 
@@ -445,7 +481,7 @@ function createFindBranch(options) {
 }
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -462,7 +498,7 @@ function createGetAction(options) {
 }
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -46,13 +46,11 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
-    branches: [
-        Horpyna({
-            name: "maxBranch",
-            condition: value => value >= 15,
-            action: value => 15
-        })
-    ]
+    branches: [{
+        name: "maxBranch",
+        condition: value => value >= 15,
+        action: value => 15
+    }]
 });
 mainBranch(10)
     .then(console.log)//null
@@ -116,13 +114,11 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
-    branches: [
-        Horpyna({
-            name: "maxBranch",
-            condition: value => value >= 15,
-            action: value => 15
-        })
-    ]
+    branches: [{
+        name: "maxBranch",
+        condition: value => value >= 15,
+        action: value => 15
+    }]
 });
 
 mainBranch(10)
@@ -149,13 +145,11 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: () => true,
     action: () => true,
-    branches: [
-        Horpyna({
-            name: "maxBranch",
-            condition: () => true,
-            action: () => true
-        })
-    ]
+    branches: [{
+        name: "maxBranch",
+        condition: () => true,
+        action: () => true
+    }]
 });
 const maxBranch = mainBranch.getBranch("maxBranch");
 ```
@@ -171,20 +165,16 @@ const mainBranch = Horpyna({
     name: "mainBranch",
     condition: () => true,
     action: () => true,
-    branches: [
-        Horpyna({
-            name: "maxBranch",
+    branches: [{
+        name: "maxBranch",
+        condition: () => true,
+        action: () => true,
+        branches: [{
+            name: "someDeepBranch",
             condition: () => true,
-            action: () => true,
-            branches: [
-                Horpyna({
-                    name: "someDeepBranch",
-                    condition: () => true,
-                    action: () => true
-                })
-            ]
-        })
-    ]
+            action: () => true
+        }]
+    }]
 });
 const someDeepBranch = mainBranch.findBranch("someDeepBranch");
 ```

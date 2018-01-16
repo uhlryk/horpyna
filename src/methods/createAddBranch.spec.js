@@ -1,13 +1,16 @@
+import Horpyna from "../Horpyna";
 import createAddBranch from "./createAddBranch";
 
 describe("createAddBranch", () => {
     let sandbox;
     let oldBranchStub;
     let newBranchStub;
+    let newObjectBranchStub;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
-        oldBranchStub = sandbox.stub();
-        newBranchStub = sandbox.stub();
+        oldBranchStub = Horpyna({ name: "oldBranch" });
+        newBranchStub = Horpyna({ name: "newBranch" });
+        newObjectBranchStub = { name: "newBranch" };
     });
 
     afterEach(async () => {
@@ -37,6 +40,15 @@ describe("createAddBranch", () => {
             const addBranch = createAddBranch(options);
             const newOptions = addBranch(newBranchStub);
             expect(newOptions).to.have.deep.property("branches", [newBranchStub]);
+        });
+
+        describe("new branch is an object", () => {
+            it("should return options with new branch", () => {
+                const addBranch = createAddBranch(options);
+                const newOptions = addBranch(newObjectBranchStub);
+                expect(newOptions).to.have.deep.property("branches");
+                expect(newOptions.branches[0]).to.be.instanceof(Function);
+            });
         });
     });
 
