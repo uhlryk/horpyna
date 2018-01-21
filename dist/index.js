@@ -251,7 +251,6 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = Branch;
 
 var _response = __webpack_require__(1);
 
@@ -263,7 +262,9 @@ var _convertToBranches2 = _interopRequireDefault(_convertToBranches);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Branch() {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Branch = function Branch() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         name = _ref.name,
         _ref$condition = _ref.condition,
@@ -277,11 +278,15 @@ function Branch() {
         _ref$branches = _ref.branches,
         branches = _ref$branches === undefined ? [] : _ref$branches;
 
+    _classCallCheck(this, Branch);
+
     if (!name) {
         throw TypeError("Name should be provided");
     }
     return (0, _response2.default)({ name: name, condition: condition, action: action, branches: (0, _convertToBranches2.default)(branches) });
-}
+};
+
+exports.default = Branch;
 
 /***/ }),
 /* 8 */

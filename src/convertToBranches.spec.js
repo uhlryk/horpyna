@@ -12,7 +12,7 @@ describe("convertToBranches", () => {
     });
     it("should return branches from branches", () => {
         const branches = convertToBranches([
-            Branch({
+            new Branch({
                 name: "testBranc"
             })
         ]);

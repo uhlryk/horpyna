@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, no-new */
 import Branch from "./Branch";
 
 describe("Branch", () => {
@@ -35,7 +35,7 @@ describe("Branch", () => {
                 {
                     name: "subBranch"
                 },
-                Branch({ name: "otherSubBranch" })
+                new Branch({ name: "otherSubBranch" })
             ]
         });
         const subBranch = mainBranch.getBranch("subBranch");
@@ -54,7 +54,11 @@ describe("Branch", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const mainBranch = Branch({ name: "mainBranch", condition: () => false, action: branchFunctionStub });
+                const mainBranch = new Branch({
+                    name: "mainBranch",
+                    condition: () => false,
+                    action: branchFunctionStub
+                });
                 return mainBranch(valueStub).then(result => {
                     expect(result).to.be.null();
                     expect(branchFunctionStub.called).to.be.false();
@@ -69,7 +73,11 @@ describe("Branch", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
-                const mainBranch = Branch({ name: "mainBranch", condition: () => true, action: branchFunctionStub });
+                const mainBranch = new Branch({
+                    name: "mainBranch",
+                    condition: () => true,
+                    action: branchFunctionStub
+                });
                 return mainBranch(valueStub).then(result => {
                     expect(result).to.be.equal(responseStub);
                     expect(branchFunctionStub.calledOnce).to.be.true();
@@ -85,12 +93,12 @@ describe("Branch", () => {
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
                 const childBranchFunctionStub = sandbox.stub().returns(childResponseStub);
-                const mainBranch = Branch({
+                const mainBranch = new Branch({
                     name: "mainBranch",
                     condition: () => true,
                     action: branchFunctionStub,
                     branches: [
-                        Branch({
+                        new Branch({
                             name: "subBranchName",
                             condition: () => true,
                             action: childBranchFunctionStub
@@ -111,18 +119,18 @@ describe("Branch", () => {
     describe("when searching only direct children", () => {
         describe("when direct child with searched name doesn't exist", () => {
             it("should return undefined", () => {
-                const deepChildBranch = Branch({
+                const deepChildBranch = new Branch({
                     name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
-                const directChildBranch = Branch({
+                const directChildBranch = new Branch({
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: [deepChildBranch]
                 });
-                const mainBranch = Branch({
+                const mainBranch = new Branch({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
@@ -133,18 +141,18 @@ describe("Branch", () => {
         });
         describe("when direct child with searched name exist", () => {
             it("should return direct child", () => {
-                const deepChildBranch = Branch({
+                const deepChildBranch = new Branch({
                     name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
-                const directChildBranch = Branch({
+                const directChildBranch = new Branch({
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: [deepChildBranch]
                 });
-                const mainBranch = Branch({
+                const mainBranch = new Branch({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
@@ -158,18 +166,18 @@ describe("Branch", () => {
     describe("searching for branch", () => {
         describe("when child with searched name doesn't exist", () => {
             it("should return undefined", () => {
-                const deepChildBranch = Branch({
+                const deepChildBranch = new Branch({
                     name: "deepChildBranch",
                     condition: () => true,
                     action: value => value
                 });
-                const directChildBranch = Branch({
+                const directChildBranch = new Branch({
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: [deepChildBranch]
                 });
-                const mainBranch = Branch({
+                const mainBranch = new Branch({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
@@ -180,18 +188,18 @@ describe("Branch", () => {
         });
         describe("when child with searched name exist", () => {
             it("should return child branch", () => {
-                const deepChildBranch = Branch({
+                const deepChildBranch = new Branch({
                     name: "searchBranchName",
                     condition: () => true,
                     action: value => value
                 });
-                const directChildBranch = Branch({
+                const directChildBranch = new Branch({
                     name: "directChildBranch",
                     condition: () => true,
                     action: value => value,
                     branches: [deepChildBranch]
                 });
-                const mainBranch = Branch({
+                const mainBranch = new Branch({
                     name: "mainBranch",
                     condition: () => true,
                     action: value => value,
@@ -203,12 +211,12 @@ describe("Branch", () => {
     });
 
     it("should iterate ten times over main branch", () => {
-        const mainBranch = Branch({
+        const mainBranch = new Branch({
             name: "mainBranch",
             condition: value => value < 10,
             action: value => ++value,
             branches: [
-                Branch({
+                new Branch({
                     name: "finishBranch",
                     condition: value => value => 10,
                     action: () => "success"
@@ -223,7 +231,7 @@ describe("Branch", () => {
 
     it("should throw error when name is not provided", () => {
         expect(() => {
-            Branch();
+            new Branch();
         }).to.throw("Name should be provided");
     });
 });
