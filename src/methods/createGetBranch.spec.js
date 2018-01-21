@@ -1,4 +1,4 @@
-import Horpyna from "../Horpyna";
+import Branch from "../Branch";
 import createGetBranch from "./createGetBranch";
 
 describe("createGetBranch", () => {
@@ -7,7 +7,7 @@ describe("createGetBranch", () => {
     let options;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
-        testBranch = Horpyna({ name: "testBranchName" });
+        testBranch = new Branch({ name: "testBranchName" });
         options = {
             branches: [testBranch]
         };

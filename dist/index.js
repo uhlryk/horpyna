@@ -228,17 +228,18 @@ module.exports = require("babel-polyfill");
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
-exports.default = undefined;
 
-var _Horpyna = __webpack_require__(7);
+var _Branch = __webpack_require__(7);
 
-var _Horpyna2 = _interopRequireDefault(_Horpyna);
+var _Branch2 = _interopRequireDefault(_Branch);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _Horpyna2.default;
+exports.default = {
+    Branch: _Branch2.default
+};
 
 /***/ }),
 /* 7 */
@@ -250,7 +251,7 @@ exports.default = _Horpyna2.default;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = Horpyna;
+exports.default = Branch;
 
 var _response = __webpack_require__(1);
 
@@ -262,7 +263,7 @@ var _convertToBranches2 = _interopRequireDefault(_convertToBranches);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Horpyna() {
+function Branch() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         name = _ref.name,
         _ref$condition = _ref.condition,

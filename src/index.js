@@ -1,1 +1,4 @@
-export default from "./Horpyna";
+import Branch from "./Branch";
+export default {
+    Branch
+};

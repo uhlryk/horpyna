@@ -1,4 +1,4 @@
-import Horpyna from "../Horpyna";
+import Branch from "../Branch";
 import createAddBranch from "./createAddBranch";
 
 describe("createAddBranch", () => {
@@ -8,8 +8,8 @@ describe("createAddBranch", () => {
     let newObjectBranchStub;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
-        oldBranchStub = Horpyna({ name: "oldBranch" });
-        newBranchStub = Horpyna({ name: "newBranch" });
+        oldBranchStub = new Branch({ name: "oldBranch" });
+        newBranchStub = new Branch({ name: "newBranch" });
         newObjectBranchStub = { name: "newBranch" };
     });
 

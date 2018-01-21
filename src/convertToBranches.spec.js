@@ -1,5 +1,5 @@
 import convertToBranches from "./convertToBranches";
-import Horpyna from "./Horpyna";
+import Branch from "./Branch";
 
 describe("convertToBranches", () => {
     it("should return branches from objects", () => {
@@ -12,7 +12,7 @@ describe("convertToBranches", () => {
     });
     it("should return branches from branches", () => {
         const branches = convertToBranches([
-            Horpyna({
+            Branch({
                 name: "testBranc"
             })
         ]);

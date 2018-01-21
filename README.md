@@ -15,13 +15,23 @@ Main use case is to create flow template and reuse it with setting concrete func
 Main unit is a Branch. Each branch accepts condition function and action function. 
 Also each branch can accept other branches. 
 
+## Use case
+
+```
+import { Branch} from "Horpyna";
+const branch = new Branch({
+    name: "branchName"
+})
+branch(someInput)
+    .then(response => console.log(response))
+```
+
 ## API
 
-### Horpyna(options: Object): branch
-or
-### new Horpyna(options: Object): branch
 
-Creates new branch.
+### new Branch(options: Object): branch
+
+Creates new branch instance.
 
 #### options
 
@@ -41,8 +51,8 @@ Creates new branch.
 #### example
 
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
@@ -62,12 +72,12 @@ mainBranch(15)
 
 ### branch.changeCondition(condition: (value: any) => result: any): branch
 
-Changes branch condition. Returns branch instance.
+Changes branch condition. Returns this branch instance.
 
 #### example
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
@@ -83,12 +93,12 @@ mainBranch(11)
 
 ### branch.changeAction(action: (value: any) => result: any): branch
 
-Changes branch action. Returns branch instance.
+Changes branch action. Returns this branch instance.
 
 #### example
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
@@ -99,18 +109,18 @@ mainBranch(11)
     
 mainBranch.changeAction(value => value + 2);
 
-newMainBranch(11)
+mainBranch(11)
     .then(console.log)//13
 ```
 
 ### branch.addBranch(branchName: String, subBranch: branch): branch
 
-Adds additional branch to existing one
+Adds additional branch to existing one. Returns this branch instance. 
 
 #### example
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,
@@ -124,7 +134,7 @@ const mainBranch = Horpyna({
 mainBranch(10)
     .then(console.log)//null
     
-mainBranch.addBranch(Horpyna({
+mainBranch.addBranch(new Branch({
     name: "minBranch",
     condition: value => value < 15,
     action: value => value
@@ -140,8 +150,8 @@ Returns first branch by name. If branch doesn't exist it will return null.
 
 #### example
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: () => true,
     action: () => true,
@@ -160,8 +170,8 @@ It will search in all branch tree beginning from current branch. If there is no 
 
 #### example
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: () => true,
     action: () => true,
@@ -192,8 +202,8 @@ Returns promise resolvable to calculated output.
 
 #### example
 ```javascript
-import Horpyna from "Horpyna";
-const mainBranch = Horpyna({ 
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
     name: "mainBranch",
     condition: value => value > 10, 
     action:  value => value + 1,

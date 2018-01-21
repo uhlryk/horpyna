@@ -1,5 +1,5 @@
 import createSetValue from "./createSetValue";
-import Horpyna from "../Horpyna";
+import Branch from "../Branch";
 import Promise from "bluebird";
 
 describe("createSetValue", () => {
@@ -85,7 +85,7 @@ describe("createSetValue", () => {
                 condition: () => true,
                 action: mainBranchActionStub,
                 branches: [
-                    Horpyna({
+                    new Branch({
                         name: "subBranch",
                         condition: () => true,
                         action: subBranchActionStub
