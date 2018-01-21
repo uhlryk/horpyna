@@ -1,10 +1,54 @@
-import response from "./response";
-import convertToBranches from "./convertToBranches";
+import { convertToBranches, convertToBranch } from "./convertToBranches";
+import Promise from "bluebird";
 export default class Branch {
     constructor({ name, condition = () => true, action = value => value, branches = [] } = {}) {
         if (!name) {
             throw TypeError("Name should be provided");
         }
-        return response({ name, condition, action, branches: convertToBranches(branches) });
+        this.name = name;
+        this.condition = condition;
+        this.action = action;
+        this.branches = convertToBranches(branches);
+    }
+    changeCondition(newCondition) {
+        this.condition = newCondition;
+        return this;
+    }
+    changeAction(newAction) {
+        this.action = newAction;
+        return this;
+    }
+    addBranch(branch) {
+        this.branches.push(convertToBranch(branch));
+        return this;
+    }
+    getBranch(name) {
+        return this.branches.find(branch => branch.getName() === name) || null;
+    }
+    findBranch(searchName) {
+        return (
+            this.getBranch(searchName) ||
+            Object.keys(this.branches).reduce(
+                (foundBranch, branchName) => foundBranch || this.branches[branchName].findBranch(searchName),
+                null
+            )
+        );
+    }
+    getAction() {
+        return this.action;
+    }
+    getName() {
+        return this.name;
+    }
+    setValue(value) {
+        if (this.condition(value)) {
+            const actionResult = this.action(value);
+            return Promise.reduce(
+                this.branches,
+                (result, branch) => (result !== null ? Promise.resolve(result) : branch.setValue(actionResult)),
+                null
+            ).then(childBranchResult => childBranchResult || actionResult);
+        }
+        return Promise.resolve(null);
     }
 }
