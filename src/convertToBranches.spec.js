@@ -1,4 +1,4 @@
-import convertToBranches from "./convertToBranches";
+import { convertToBranches } from "./convertToBranches";
 import Branch from "./Branch";
 
 describe("convertToBranches", () => {
@@ -8,14 +8,14 @@ describe("convertToBranches", () => {
                 name: "testBranc"
             }
         ]);
-        expect(branches[0]).to.be.instanceof(Function);
+        expect(branches[0]).to.be.instanceof(Branch);
     });
     it("should return branches from branches", () => {
         const branches = convertToBranches([
-            Branch({
+            new Branch({
                 name: "testBranc"
             })
         ]);
-        expect(branches[0]).to.be.instanceof(Function);
+        expect(branches[0]).to.be.instanceof(Branch);
     });
 });
