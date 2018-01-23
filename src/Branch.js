@@ -14,7 +14,7 @@ export default class Branch {
         this.condition = newCondition;
         return this;
     }
-    changeAction(newAction) {
+    setAction(newAction) {
         this.action = newAction;
         return this;
     }

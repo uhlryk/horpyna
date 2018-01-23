@@ -1,6 +1,6 @@
 import Branch from "./Branch";
 
-describe("Branch.changeAction", () => {
+describe("Branch.setAction", () => {
     let sandbox;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
@@ -18,7 +18,7 @@ describe("Branch.changeAction", () => {
         });
 
         it("should add new action", () => {
-            branch.changeAction(newActionStub);
+            branch.setAction(newActionStub);
             return branch.execute().then(() => {
                 expect(newActionStub.calledOnce).to.be.true();
             });
@@ -36,7 +36,7 @@ describe("Branch.changeAction", () => {
         });
 
         it("should add new action", () => {
-            branch.changeAction(newActionStub);
+            branch.setAction(newActionStub);
             return branch.execute().then(() => {
                 expect(newActionStub.calledOnce).to.be.true();
                 expect(oldActionStub.calledOnce).to.be.false();

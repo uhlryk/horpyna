@@ -91,9 +91,9 @@ mainBranch.execute(11)
     .then(console.log)//null
 ```
 
-### branch.changeAction(action: (value: any) => result: any): branch
+### branch.setAction(action: (value: any) => result: any): branch
 
-Changes branch action. Returns this branch instance.
+Changes/set branch action. Returns this branch instance.
 
 #### example
 ```javascript
@@ -107,7 +107,7 @@ const mainBranch = new Branch({
 mainBranch.execute(11)
     .then(console.log)//12
     
-mainBranch.changeAction(value => value + 2);
+mainBranch.setAction(value => value + 2);
 
 mainBranch.execute(11)
     .then(console.log)//13

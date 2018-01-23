@@ -129,8 +129,8 @@ var Branch = function () {
             return this;
         }
     }, {
-        key: "changeAction",
-        value: function changeAction(newAction) {
+        key: "setAction",
+        value: function setAction(newAction) {
             this.action = newAction;
             return this;
         }
