@@ -14,7 +14,7 @@ describe("Branch", () => {
 
     it("should use default values and return given value", () => {
         const mainBranch = new Branch({ name: "mainBranch" });
-        return mainBranch.setValue(10).then(result => {
+        return mainBranch.execute(10).then(result => {
             expect(result).to.be.equal(10);
             expect(mainBranch.getName()).to.be.equal("mainBranch");
         });
@@ -51,7 +51,7 @@ describe("Branch", () => {
                     condition: () => false,
                     action: branchFunctionStub
                 });
-                return mainBranch.setValue(valueStub).then(result => {
+                return mainBranch.execute(valueStub).then(result => {
                     expect(result).to.be.null();
                     expect(branchFunctionStub.called).to.be.false();
                 });
@@ -70,7 +70,7 @@ describe("Branch", () => {
                     condition: () => true,
                     action: branchFunctionStub
                 });
-                return mainBranch.setValue(valueStub).then(result => {
+                return mainBranch.execute(valueStub).then(result => {
                     expect(result).to.be.equal(responseStub);
                     expect(branchFunctionStub.calledOnce).to.be.true();
                     expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
@@ -97,7 +97,7 @@ describe("Branch", () => {
                         })
                     ]
                 });
-                return mainBranch.setValue(valueStub).then(result => {
+                return mainBranch.execute(valueStub).then(result => {
                     expect(result).to.be.equal(childResponseStub);
                     expect(branchFunctionStub.calledOnce).to.be.true();
                     expect(branchFunctionStub.getCall(0).args[0]).to.be.eql(valueStub);
@@ -122,7 +122,7 @@ describe("Branch", () => {
             ]
         });
         mainBranch.addBranch(mainBranch);
-        return mainBranch.setValue(0).then(result => {
+        return mainBranch.execute(0).then(result => {
             expect(result).to.be.eql("success");
         });
     });

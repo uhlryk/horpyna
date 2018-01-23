@@ -19,7 +19,7 @@ describe("Branch.changeCondition", () => {
 
         it("should add new condition", () => {
             branch.changeCondition(newConditionStub);
-            return branch.setValue().then(() => {
+            return branch.execute().then(() => {
                 expect(newConditionStub.calledOnce).to.be.true();
             });
         });
@@ -37,7 +37,7 @@ describe("Branch.changeCondition", () => {
 
         it("should add new condition", () => {
             branch.changeCondition(newConditionStub);
-            return branch.setValue().then(() => {
+            return branch.execute().then(() => {
                 expect(newConditionStub.calledOnce).to.be.true();
                 expect(oldConditionStub.calledOnce).to.be.false();
             });

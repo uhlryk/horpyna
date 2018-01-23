@@ -167,12 +167,12 @@ var Branch = function () {
             return this.name;
         }
     }, {
-        key: "setValue",
-        value: function setValue(value) {
+        key: "execute",
+        value: function execute(value) {
             if (this.condition(value)) {
                 var actionResult = this.action(value);
                 return _bluebird2.default.reduce(this.branches, function (result, branch) {
-                    return result !== null ? _bluebird2.default.resolve(result) : branch.setValue(actionResult);
+                    return result !== null ? _bluebird2.default.resolve(result) : branch.execute(actionResult);
                 }, null).then(function (childBranchResult) {
                     return childBranchResult || actionResult;
                 });

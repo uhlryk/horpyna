@@ -19,7 +19,7 @@ describe("Branch.changeAction", () => {
 
         it("should add new action", () => {
             branch.changeAction(newActionStub);
-            return branch.setValue().then(() => {
+            return branch.execute().then(() => {
                 expect(newActionStub.calledOnce).to.be.true();
             });
         });
@@ -37,7 +37,7 @@ describe("Branch.changeAction", () => {
 
         it("should add new action", () => {
             branch.changeAction(newActionStub);
-            return branch.setValue().then(() => {
+            return branch.execute().then(() => {
                 expect(newActionStub.calledOnce).to.be.true();
                 expect(oldActionStub.calledOnce).to.be.false();
             });

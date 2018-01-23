@@ -40,12 +40,12 @@ export default class Branch {
     getName() {
         return this.name;
     }
-    setValue(value) {
+    execute(value) {
         if (this.condition(value)) {
             const actionResult = this.action(value);
             return Promise.reduce(
                 this.branches,
-                (result, branch) => (result !== null ? Promise.resolve(result) : branch.setValue(actionResult)),
+                (result, branch) => (result !== null ? Promise.resolve(result) : branch.execute(actionResult)),
                 null
             ).then(childBranchResult => childBranchResult || actionResult);
         }

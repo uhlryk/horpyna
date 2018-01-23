@@ -1,4 +1,4 @@
-describe("Branch.setValue", () => {
+describe("Branch.execute", () => {
     let sandbox;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
