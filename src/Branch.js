@@ -37,6 +37,9 @@ export default class Branch {
     getAction() {
         return this.action;
     }
+    getCondition() {
+        return this.condition;
+    }
     getName() {
         return this.name;
     }

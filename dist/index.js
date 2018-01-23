@@ -162,6 +162,11 @@ var Branch = function () {
             return this.action;
         }
     }, {
+        key: "getCondition",
+        value: function getCondition() {
+            return this.condition;
+        }
+    }, {
         key: "getName",
         value: function getName() {
             return this.name;

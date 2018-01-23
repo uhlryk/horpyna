@@ -192,6 +192,10 @@ const someDeepBranch = mainBranch.findBranch("someDeepBranch");
 
 Returns branch action function
 
+### branch,getCondition(): function
+
+Returns branch condition function
+
 ### branch,getName(): string
 
 Returns branch name
