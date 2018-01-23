@@ -70,7 +70,7 @@ execute(15)
     .then(console.log)//15
 ```
 
-### branch.changeCondition(condition: (value: any) => result: any): branch
+### branch.setCondition(condition: (value: any) => result: any): branch
 
 Changes branch condition. Returns this branch instance.
 
@@ -85,7 +85,7 @@ const mainBranch = new Branch({
 mainBranch.execute(11)
     .then(console.log)//12
 
-mainBranch.changeCondition(value => value > 11);
+mainBranch.setCondition(value => value > 11);
 
 mainBranch.execute(11)
     .then(console.log)//null

@@ -10,7 +10,7 @@ export default class Branch {
         this.action = action;
         this.branches = convertToBranches(branches);
     }
-    changeCondition(newCondition) {
+    setCondition(newCondition) {
         this.condition = newCondition;
         return this;
     }

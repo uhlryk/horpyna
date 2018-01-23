@@ -1,6 +1,6 @@
 import Branch from "./Branch";
 
-describe("Branch.changeCondition", () => {
+describe("Branch.setCondition", () => {
     let sandbox;
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
@@ -18,7 +18,7 @@ describe("Branch.changeCondition", () => {
         });
 
         it("should add new condition", () => {
-            branch.changeCondition(newConditionStub);
+            branch.setCondition(newConditionStub);
             return branch.execute().then(() => {
                 expect(newConditionStub.calledOnce).to.be.true();
             });
@@ -36,7 +36,7 @@ describe("Branch.changeCondition", () => {
         });
 
         it("should add new condition", () => {
-            branch.changeCondition(newConditionStub);
+            branch.setCondition(newConditionStub);
             return branch.execute().then(() => {
                 expect(newConditionStub.calledOnce).to.be.true();
                 expect(oldConditionStub.calledOnce).to.be.false();

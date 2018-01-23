@@ -123,8 +123,8 @@ var Branch = function () {
     }
 
     _createClass(Branch, [{
-        key: "changeCondition",
-        value: function changeCondition(newCondition) {
+        key: "setCondition",
+        value: function setCondition(newCondition) {
             this.condition = newCondition;
             return this;
         }
