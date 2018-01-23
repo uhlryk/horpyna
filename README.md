@@ -62,11 +62,11 @@ const mainBranch = new Branch({
         action: value => 15
     }]
 });
-execute(10)
+mainBranch.execute(10)
     .then(console.log)//null
-execute(11)
+mainBranch.execute(11)
     .then(console.log)//12
-execute(15)
+mainBranch.execute(15)
     .then(console.log)//15
 ```
 
