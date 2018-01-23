@@ -174,12 +174,17 @@ var Branch = function () {
     }, {
         key: "execute",
         value: function execute(value) {
+            var _this2 = this;
+
             if (this.condition(value)) {
-                var actionResult = this.action(value);
-                return _bluebird2.default.reduce(this.branches, function (result, branch) {
-                    return result !== null ? _bluebird2.default.resolve(result) : branch.execute(actionResult);
-                }, null).then(function (childBranchResult) {
-                    return childBranchResult || actionResult;
+                return _bluebird2.default.resolve().then(function () {
+                    return _this2.action(value);
+                }).then(function (actionResult) {
+                    return _bluebird2.default.reduce(_this2.branches, function (result, branch) {
+                        return result !== null ? _bluebird2.default.resolve(result) : branch.execute(actionResult);
+                    }, null).then(function (childBranchResult) {
+                        return childBranchResult || actionResult;
+                    });
                 });
             }
             return _bluebird2.default.resolve(null);

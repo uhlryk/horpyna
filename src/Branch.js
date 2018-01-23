@@ -45,12 +45,15 @@ export default class Branch {
     }
     execute(value) {
         if (this.condition(value)) {
-            const actionResult = this.action(value);
-            return Promise.reduce(
-                this.branches,
-                (result, branch) => (result !== null ? Promise.resolve(result) : branch.execute(actionResult)),
-                null
-            ).then(childBranchResult => childBranchResult || actionResult);
+            return Promise.resolve()
+                .then(() => this.action(value))
+                .then(actionResult =>
+                    Promise.reduce(
+                        this.branches,
+                        (result, branch) => (result !== null ? Promise.resolve(result) : branch.execute(actionResult)),
+                        null
+                    ).then(childBranchResult => childBranchResult || actionResult)
+                );
         }
         return Promise.resolve(null);
     }

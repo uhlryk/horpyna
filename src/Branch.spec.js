@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars, no-new */
 import Branch from "./Branch";
+import Promise from "bluebird";
 
 describe("Branch", () => {
     let sandbox;
@@ -39,6 +40,17 @@ describe("Branch", () => {
         expect(otherSubBranch).to.be.an.instanceof(Branch);
         expect(otherSubBranch).to.have.property("getName");
         expect(otherSubBranch.getName()).to.be.equal("otherSubBranch");
+    });
+
+    describe("when branch action returns promise", () => {
+        it("should return value", () => {
+            const mainBranch = new Branch({
+                name: "mainBranch",
+                action: value => Promise.resolve(value + 1),
+                branches: [{ name: "otherSubBranch", action: value => value + 1 }]
+            });
+            return mainBranch.execute(10).then(value => expect(value).to.be.equal(12));
+        });
     });
     describe("when conditions not met", () => {
         describe("when no child branches", () => {
