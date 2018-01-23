@@ -22,7 +22,7 @@ import { Branch} from "Horpyna";
 const branch = new Branch({
     name: "branchName"
 })
-branch(someInput)
+branch.execute(someInput)
     .then(response => console.log(response))
 ```
 
