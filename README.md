@@ -62,11 +62,11 @@ const mainBranch = new Branch({
         action: value => 15
     }]
 });
-mainBranch(10)
+execute(10)
     .then(console.log)//null
-mainBranch(11)
+execute(11)
     .then(console.log)//12
-mainBranch(15)
+execute(15)
     .then(console.log)//15
 ```
 
@@ -82,12 +82,12 @@ const mainBranch = new Branch({
     condition: value => value > 10, 
     action:  value => value + 1,
 });
-mainBranch(11)
+mainBranch.execute(11)
     .then(console.log)//12
 
 mainBranch.changeCondition(value => value > 11);
 
-mainBranch(11)
+mainBranch.execute(11)
     .then(console.log)//null
 ```
 
@@ -104,12 +104,12 @@ const mainBranch = new Branch({
     action:  value => value + 1,
 });
 
-mainBranch(11)
+mainBranch.execute(11)
     .then(console.log)//12
     
 mainBranch.changeAction(value => value + 2);
 
-mainBranch(11)
+mainBranch.execute(11)
     .then(console.log)//13
 ```
 
@@ -131,7 +131,7 @@ const mainBranch = new Branch({
     }]
 });
 
-mainBranch(10)
+mainBranch.execute(10)
     .then(console.log)//null
     
 mainBranch.addBranch(new Branch({
@@ -140,7 +140,7 @@ mainBranch.addBranch(new Branch({
     action: value => value
 }));
 
-mainBranch(10)
+mainBranch.execute(10)
     .then(console.log)//11
 ```
 
@@ -196,7 +196,7 @@ Returns branch action function
 
 Returns branch name
 
-### branch(input): promise
+### branch.execute(input): promise
 
 Returns promise resolvable to calculated output.
 
@@ -209,7 +209,7 @@ const mainBranch = new Branch({
     action:  value => value + 1,
 });
 
-mainBranch(11)
+mainBranch.execute(11)
     .then(console.log)//12
 ```
 
