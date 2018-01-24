@@ -200,6 +200,10 @@ Returns branch condition function
 
 Returns branch name
 
+### branch,setName(name: string): branch
+
+Set new branch name
+
 ### branch.execute(input): promise
 
 Returns promise resolvable to calculated output.
