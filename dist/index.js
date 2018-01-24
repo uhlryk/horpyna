@@ -135,6 +135,12 @@ var Branch = function () {
             return this;
         }
     }, {
+        key: "setName",
+        value: function setName(newName) {
+            this.name = newName;
+            return this;
+        }
+    }, {
         key: "addBranch",
         value: function addBranch(branch) {
             this.branches.push((0, _convertToBranches.convertToBranch)(branch));

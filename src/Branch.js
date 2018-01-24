@@ -18,6 +18,10 @@ export default class Branch {
         this.action = newAction;
         return this;
     }
+    setName(newName) {
+        this.name = newName;
+        return this;
+    }
     addBranch(branch) {
         this.branches.push(convertToBranch(branch));
         return this;
