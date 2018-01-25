@@ -123,6 +123,16 @@ var Branch = function () {
     }
 
     _createClass(Branch, [{
+        key: "clone",
+        value: function clone() {
+            return new Branch({
+                name: this.name,
+                condition: this.condition,
+                action: this.action,
+                branches: this.branches.slice()
+            });
+        }
+    }, {
         key: "setCondition",
         value: function setCondition(newCondition) {
             this.condition = newCondition;

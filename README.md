@@ -204,6 +204,10 @@ Returns branch name
 
 Set new branch name
 
+### branch,clone(): branch
+
+Shallow copy current branch and return new branch
+
 ### branch.execute(input): promise
 
 Returns promise resolvable to calculated output.

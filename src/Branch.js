@@ -10,6 +10,14 @@ export default class Branch {
         this.action = action;
         this.branches = convertToBranches(branches);
     }
+    clone() {
+        return new Branch({
+            name: this.name,
+            condition: this.condition,
+            action: this.action,
+            branches: this.branches.slice()
+        });
+    }
     setCondition(newCondition) {
         this.condition = newCondition;
         return this;
