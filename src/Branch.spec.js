@@ -67,7 +67,7 @@ describe("Branch", () => {
 
     describe("when conditions not met", () => {
         describe("when no child branches", () => {
-            it("should return undefined", () => {
+            it("should return init value", () => {
                 const responseStub = sandbox.stub();
                 const valueStub = sandbox.stub();
                 const branchFunctionStub = sandbox.stub().returns(responseStub);
@@ -77,7 +77,7 @@ describe("Branch", () => {
                     action: branchFunctionStub
                 });
                 return mainBranch.execute(valueStub).then(result => {
-                    expect(result).to.be.null();
+                    expect(result).to.be.equal(valueStub);
                     expect(branchFunctionStub.called).to.be.false();
                 });
             });

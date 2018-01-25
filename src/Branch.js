@@ -1,5 +1,5 @@
 import { convertToBranches, convertToBranch } from "./convertToBranches";
-import Promise from "bluebird";
+import executeBranch from "./executeBranch";
 export default class Branch {
     constructor({ name, condition = () => true, action = value => value, branches = [] } = {}) {
         if (!name) {
@@ -34,6 +34,9 @@ export default class Branch {
         this.branches.push(convertToBranch(branch));
         return this;
     }
+    getBranches() {
+        return this.branches;
+    }
     getBranch(name) {
         return this.branches.find(branch => branch.getName() === name) || null;
     }
@@ -56,23 +59,6 @@ export default class Branch {
         return this.name;
     }
     execute(value) {
-        return Promise.resolve()
-            .then(() => this.condition(value))
-            .then(conditionResult => {
-                if (conditionResult) {
-                    return Promise.resolve()
-                        .then(() => this.action(value))
-                        .then(actionResult =>
-                            Promise.reduce(
-                                this.branches,
-                                (result, branch) =>
-                                    result !== null ? Promise.resolve(result) : branch.execute(actionResult),
-                                null
-                            ).then(childBranchResult => childBranchResult || actionResult)
-                        );
-                } else {
-                    return null;
-                }
-            });
+        return executeBranch(value, { branch: this });
     }
 }

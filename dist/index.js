@@ -88,9 +88,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _convertToBranches = __webpack_require__(4);
 
-var _bluebird = __webpack_require__(5);
+var _executeBranch = __webpack_require__(5);
 
-var _bluebird2 = _interopRequireDefault(_bluebird);
+var _executeBranch2 = _interopRequireDefault(_executeBranch);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -157,6 +157,11 @@ var Branch = function () {
             return this;
         }
     }, {
+        key: "getBranches",
+        value: function getBranches() {
+            return this.branches;
+        }
+    }, {
         key: "getBranch",
         value: function getBranch(name) {
             return this.branches.find(function (branch) {
@@ -190,25 +195,7 @@ var Branch = function () {
     }, {
         key: "execute",
         value: function execute(value) {
-            var _this2 = this;
-
-            return _bluebird2.default.resolve().then(function () {
-                return _this2.condition(value);
-            }).then(function (conditionResult) {
-                if (conditionResult) {
-                    return _bluebird2.default.resolve().then(function () {
-                        return _this2.action(value);
-                    }).then(function (actionResult) {
-                        return _bluebird2.default.reduce(_this2.branches, function (result, branch) {
-                            return result !== null ? _bluebird2.default.resolve(result) : branch.execute(actionResult);
-                        }, null).then(function (childBranchResult) {
-                            return childBranchResult || actionResult;
-                        });
-                    });
-                } else {
-                    return null;
-                }
-            });
+            return (0, _executeBranch2.default)(value, { branch: this });
         }
     }]);
 
@@ -284,6 +271,65 @@ function convertToBranch(branch) {
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = executeBranch;
+
+var _bluebird = __webpack_require__(6);
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function executeBranch(value, _ref) {
+    var currentBranch = _ref.branch;
+
+    return _bluebird2.default.resolve()
+    // TODO: consider if we want check condition of main/root branch
+    .then(function () {
+        return currentBranch.condition(value);
+    }).then(function (conditionResult) {
+        return conditionResult ? executeBranchAction(value, { branch: currentBranch }) : value;
+    });
+}
+
+function executeBranchAction(value, _ref2) {
+    var currentBranch = _ref2.branch;
+
+    return _bluebird2.default.resolve().then(function () {
+        return currentBranch.action(value);
+    }).then(function (actionResult) {
+        return getBranchByCondition(currentBranch.getBranches(), actionResult).then(function (childBranch) {
+            return [actionResult, childBranch];
+        });
+    }).spread(function (actionResult, childBranch) {
+        return childBranch ? executeBranchAction(actionResult, { branch: childBranch }) : actionResult;
+    });
+}
+
+function getBranchByCondition(branches, value) {
+    var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    if (branches.length <= index) {
+        return _bluebird2.default.resolve(null);
+    }
+    var branch = branches[index];
+    var branchCondition = branch.getCondition();
+    return _bluebird2.default.resolve().then(function () {
+        return branchCondition(value);
+    }).then(function (branchValue) {
+        return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1);
+    });
+}
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = require("bluebird");

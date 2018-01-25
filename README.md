@@ -200,6 +200,10 @@ Returns branch condition function
 
 Returns branch name
 
+### branch,getBranches(): Array<branch>
+
+Returns all child branches
+
 ### branch,setName(name: string): branch
 
 Set new branch name

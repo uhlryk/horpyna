@@ -14,7 +14,7 @@ mainBranch.getBranch("calcBranch").addBranch(mainBranch);
 console.time("measureIteration");
 mainBranch.execute(0).then(response => {
     console.log("finished", response);
-    console.timeEnd("measureIteration"); //988.085ms
+    console.timeEnd("measureIteration"); //988.085ms // 743.653ms - 781.959ms
 });
 
 console.time("comparisonIteration");
