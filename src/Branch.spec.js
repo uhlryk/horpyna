@@ -52,6 +52,19 @@ describe("Branch", () => {
             return mainBranch.execute(10).then(value => expect(value).to.be.equal(12));
         });
     });
+
+    describe("when branch condition returns promise", () => {
+        it("should return value", () => {
+            const mainBranch = new Branch({
+                name: "mainBranch",
+                condition: value => Promise.resolve(true),
+                action: value => value + 1,
+                branches: [{ name: "otherSubBranch", action: value => value + 1 }]
+            });
+            return mainBranch.execute(10).then(value => expect(value).to.be.equal(12));
+        });
+    });
+
     describe("when conditions not met", () => {
         describe("when no child branches", () => {
             it("should return undefined", () => {

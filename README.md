@@ -44,8 +44,8 @@ Creates new branch instance.
 ```
 
  * name - branch name
- * condition - function with condition to test
- * action - function to call if condition pass
+ * condition - function with condition to test. It can return promise.
+ * action - function to call if condition pass. It can return promise.
  * branches - array of sub branches
  
 #### example

@@ -48,17 +48,23 @@ export default class Branch {
         return this.name;
     }
     execute(value) {
-        if (this.condition(value)) {
-            return Promise.resolve()
-                .then(() => this.action(value))
-                .then(actionResult =>
-                    Promise.reduce(
-                        this.branches,
-                        (result, branch) => (result !== null ? Promise.resolve(result) : branch.execute(actionResult)),
-                        null
-                    ).then(childBranchResult => childBranchResult || actionResult)
-                );
-        }
-        return Promise.resolve(null);
+        return Promise.resolve()
+            .then(() => this.condition(value))
+            .then(conditionResult => {
+                if (conditionResult) {
+                    return Promise.resolve()
+                        .then(() => this.action(value))
+                        .then(actionResult =>
+                            Promise.reduce(
+                                this.branches,
+                                (result, branch) =>
+                                    result !== null ? Promise.resolve(result) : branch.execute(actionResult),
+                                null
+                            ).then(childBranchResult => childBranchResult || actionResult)
+                        );
+                } else {
+                    return null;
+                }
+            });
     }
 }
