@@ -42,6 +42,38 @@ describe("Branch", () => {
         expect(otherSubBranch.getName()).to.be.equal("otherSubBranch");
     });
 
+    it("should catch error in catch block", () => {
+        const mainBranch = new Branch({
+            name: "mainBranch",
+            action: () => {
+                throw Error("Some error");
+            },
+            branches: [
+                {
+                    name: "subBranch"
+                }
+            ]
+        });
+        return mainBranch.execute().then(() => expect.fail(), err => expect(err.message).to.be.eql("Some error"));
+    });
+
+    it("should catch error in catch branch", () => {
+        const mainBranch = new Branch({
+            name: "mainBranch",
+            action: () => {
+                throw Error("Some error");
+            },
+            branches: [
+                {
+                    name: "subBranch",
+                    catchHandlerMode: true,
+                    action: err => err.message + "AAA"
+                }
+            ]
+        });
+        return mainBranch.execute().then(err => expect(err).to.be.eql("Some errorAAA"), () => expect.fail());
+    });
+
     describe("when branch action returns promise", () => {
         it("should return value", () => {
             const mainBranch = new Branch({

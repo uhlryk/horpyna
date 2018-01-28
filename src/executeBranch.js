@@ -11,27 +11,32 @@ export default function executeBranch(value, { branch: currentBranch }) {
 function executeBranchAction(value, { branch: currentBranch }) {
     return Promise.resolve()
         .then(() => currentBranch.action(value))
-        .then(actionResult =>
-            getBranchByCondition(currentBranch.getBranches(), actionResult).then(childBranch => [
-                actionResult,
-                childBranch
-            ])
-        )
-        .spread(
-            (actionResult, childBranch) =>
-                childBranch ? executeBranchAction(actionResult, { branch: childBranch }) : actionResult
+        .then(
+            actionResult =>
+                getBranchByCondition(currentBranch.getBranches(), actionResult, 0, false).then(
+                    childBranch =>
+                        childBranch ? executeBranchAction(actionResult, { branch: childBranch }) : actionResult
+                ),
+            err =>
+                getBranchByCondition(currentBranch.getBranches(), err, 0, true).then(
+                    childBranch =>
+                        childBranch ? executeBranchAction(err, { branch: childBranch }) : Promise.reject(err)
+                )
         );
 }
 
-function getBranchByCondition(branches, value, index = 0) {
+function getBranchByCondition(branches, value, index = 0, catchHandlerMode) {
     if (branches.length <= index) {
         return Promise.resolve(null);
     }
     const branch = branches[index];
     const branchCondition = branch.getCondition();
     return Promise.resolve()
-        .then(() => branchCondition(value))
+        .then(() => branch.isCatchHandlerMode() === catchHandlerMode && branchCondition(value))
         .then(
-            branchValue => (branchValue ? Promise.resolve(branch) : getBranchByCondition(branches, value, index + 1))
+            branchValue =>
+                branchValue
+                    ? Promise.resolve(branch)
+                    : getBranchByCondition(branches, value, index + 1, catchHandlerMode)
         );
 }

@@ -1,13 +1,20 @@
 import { convertToBranches, convertToBranch } from "./convertToBranches";
 import executeBranch from "./executeBranch";
 export default class Branch {
-    constructor({ name, condition = () => true, action = value => value, branches = [] } = {}) {
+    constructor({
+        name,
+        condition = () => true,
+        action = value => value,
+        branches = [],
+        catchHandlerMode = false
+    } = {}) {
         if (!name) {
             throw TypeError("Name should be provided");
         }
         this.name = name;
         this.condition = condition;
         this.action = action;
+        this.catchHandlerMode = catchHandlerMode;
         this.branches = convertToBranches(branches);
     }
     clone() {
@@ -15,8 +22,12 @@ export default class Branch {
             name: this.name,
             condition: this.condition,
             action: this.action,
+            catchHandlerMode: this.catchHandlerMode,
             branches: this.branches.slice()
         });
+    }
+    isCatchHandlerMode() {
+        return this.catchHandlerMode;
     }
     setCondition(newCondition) {
         this.condition = newCondition;

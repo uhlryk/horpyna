@@ -109,7 +109,9 @@ var Branch = function () {
             return value;
         } : _ref$action,
             _ref$branches = _ref.branches,
-            branches = _ref$branches === undefined ? [] : _ref$branches;
+            branches = _ref$branches === undefined ? [] : _ref$branches,
+            _ref$catchHandlerMode = _ref.catchHandlerMode,
+            catchHandlerMode = _ref$catchHandlerMode === undefined ? false : _ref$catchHandlerMode;
 
         _classCallCheck(this, Branch);
 
@@ -119,6 +121,7 @@ var Branch = function () {
         this.name = name;
         this.condition = condition;
         this.action = action;
+        this.catchHandlerMode = catchHandlerMode;
         this.branches = (0, _convertToBranches.convertToBranches)(branches);
     }
 
@@ -129,8 +132,14 @@ var Branch = function () {
                 name: this.name,
                 condition: this.condition,
                 action: this.action,
+                catchHandlerMode: this.catchHandlerMode,
                 branches: this.branches.slice()
             });
+        }
+    }, {
+        key: "isCatchHandlerMode",
+        value: function isCatchHandlerMode() {
+            return this.catchHandlerMode;
         }
     }, {
         key: "setCondition",
@@ -305,16 +314,19 @@ function executeBranchAction(value, _ref2) {
     return _bluebird2.default.resolve().then(function () {
         return currentBranch.action(value);
     }).then(function (actionResult) {
-        return getBranchByCondition(currentBranch.getBranches(), actionResult).then(function (childBranch) {
-            return [actionResult, childBranch];
+        return getBranchByCondition(currentBranch.getBranches(), actionResult, 0, false).then(function (childBranch) {
+            return childBranch ? executeBranchAction(actionResult, { branch: childBranch }) : actionResult;
         });
-    }).spread(function (actionResult, childBranch) {
-        return childBranch ? executeBranchAction(actionResult, { branch: childBranch }) : actionResult;
+    }, function (err) {
+        return getBranchByCondition(currentBranch.getBranches(), err, 0, true).then(function (childBranch) {
+            return childBranch ? executeBranchAction(err, { branch: childBranch }) : _bluebird2.default.reject(err);
+        });
     });
 }
 
 function getBranchByCondition(branches, value) {
     var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var catchHandlerMode = arguments[3];
 
     if (branches.length <= index) {
         return _bluebird2.default.resolve(null);
@@ -322,9 +334,9 @@ function getBranchByCondition(branches, value) {
     var branch = branches[index];
     var branchCondition = branch.getCondition();
     return _bluebird2.default.resolve().then(function () {
-        return branchCondition(value);
+        return branch.isCatchHandlerMode() === catchHandlerMode && branchCondition(value);
     }).then(function (branchValue) {
-        return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1);
+        return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, catchHandlerMode);
     });
 }
 
