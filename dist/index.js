@@ -123,6 +123,7 @@ var Branch = function () {
         this.action = action;
         this.exceptionHandler = exceptionHandler;
         this.branches = (0, _convertToBranches.convertToBranches)(branches);
+        this.chainBranches = [];
     }
 
     _createClass(Branch, [{
@@ -135,6 +136,18 @@ var Branch = function () {
                 exceptionHandler: this.exceptionHandler,
                 branches: this.branches.slice()
             });
+        }
+    }, {
+        key: "chain",
+        value: function chain(branch) {
+            var chainBranch = (0, _convertToBranches.convertToBranch)(branch);
+            this.chainBranches.push(chainBranch);
+            return this;
+        }
+    }, {
+        key: "getChain",
+        value: function getChain() {
+            return this.chainBranches;
         }
     }, {
         key: "isExceptionHandler",
@@ -299,12 +312,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function executeBranch(value, _ref) {
     var currentBranch = _ref.branch;
 
-    return _bluebird2.default.resolve()
-    // TODO: consider if we want check condition of main/root branch
-    .then(function () {
+    return _bluebird2.default.resolve().then(function () {
         return currentBranch.condition(value);
     }).then(function (conditionResult) {
         return conditionResult ? executeBranchAction(value, { branch: currentBranch }) : value;
+    }).then(function (value) {
+        return executeChain(currentBranch.getChain(), value);
     });
 }
 
@@ -337,6 +350,18 @@ function getBranchByCondition(branches, value) {
         return branch.isExceptionHandler() === exceptionHandler && branchCondition(value);
     }).then(function (branchValue) {
         return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, exceptionHandler);
+    });
+}
+
+function executeChain(branches, value) {
+    var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    if (branches.length <= index) {
+        return _bluebird2.default.resolve(value);
+    }
+    var branch = branches[index];
+    return executeBranch(value, { branch: branch }).then(function (value) {
+        return executeChain(branches, value, index + 1);
     });
 }
 

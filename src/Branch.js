@@ -16,6 +16,7 @@ export default class Branch {
         this.action = action;
         this.exceptionHandler = exceptionHandler;
         this.branches = convertToBranches(branches);
+        this.chainBranches = [];
     }
     clone() {
         return new Branch({
@@ -25,6 +26,14 @@ export default class Branch {
             exceptionHandler: this.exceptionHandler,
             branches: this.branches.slice()
         });
+    }
+    chain(branch) {
+        const chainBranch = convertToBranch(branch);
+        this.chainBranches.push(chainBranch);
+        return this;
+    }
+    getChain() {
+        return this.chainBranches;
     }
     isExceptionHandler() {
         return this.exceptionHandler;
