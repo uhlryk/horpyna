@@ -25,18 +25,18 @@ function executeBranchAction(value, { branch: currentBranch }) {
         );
 }
 
-function getBranchByCondition(branches, value, index = 0, catchHandlerMode) {
+function getBranchByCondition(branches, value, index = 0, exceptionHandler) {
     if (branches.length <= index) {
         return Promise.resolve(null);
     }
     const branch = branches[index];
     const branchCondition = branch.getCondition();
     return Promise.resolve()
-        .then(() => branch.isCatchHandlerMode() === catchHandlerMode && branchCondition(value))
+        .then(() => branch.isExceptionHandler() === exceptionHandler && branchCondition(value))
         .then(
             branchValue =>
                 branchValue
                     ? Promise.resolve(branch)
-                    : getBranchByCondition(branches, value, index + 1, catchHandlerMode)
+                    : getBranchByCondition(branches, value, index + 1, exceptionHandler)
         );
 }

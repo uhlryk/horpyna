@@ -110,8 +110,8 @@ var Branch = function () {
         } : _ref$action,
             _ref$branches = _ref.branches,
             branches = _ref$branches === undefined ? [] : _ref$branches,
-            _ref$catchHandlerMode = _ref.catchHandlerMode,
-            catchHandlerMode = _ref$catchHandlerMode === undefined ? false : _ref$catchHandlerMode;
+            _ref$exceptionHandler = _ref.exceptionHandler,
+            exceptionHandler = _ref$exceptionHandler === undefined ? false : _ref$exceptionHandler;
 
         _classCallCheck(this, Branch);
 
@@ -121,7 +121,7 @@ var Branch = function () {
         this.name = name;
         this.condition = condition;
         this.action = action;
-        this.catchHandlerMode = catchHandlerMode;
+        this.exceptionHandler = exceptionHandler;
         this.branches = (0, _convertToBranches.convertToBranches)(branches);
     }
 
@@ -132,14 +132,14 @@ var Branch = function () {
                 name: this.name,
                 condition: this.condition,
                 action: this.action,
-                catchHandlerMode: this.catchHandlerMode,
+                exceptionHandler: this.exceptionHandler,
                 branches: this.branches.slice()
             });
         }
     }, {
-        key: "isCatchHandlerMode",
-        value: function isCatchHandlerMode() {
-            return this.catchHandlerMode;
+        key: "isExceptionHandler",
+        value: function isExceptionHandler() {
+            return this.exceptionHandler;
         }
     }, {
         key: "setCondition",
@@ -326,7 +326,7 @@ function executeBranchAction(value, _ref2) {
 
 function getBranchByCondition(branches, value) {
     var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var catchHandlerMode = arguments[3];
+    var exceptionHandler = arguments[3];
 
     if (branches.length <= index) {
         return _bluebird2.default.resolve(null);
@@ -334,9 +334,9 @@ function getBranchByCondition(branches, value) {
     var branch = branches[index];
     var branchCondition = branch.getCondition();
     return _bluebird2.default.resolve().then(function () {
-        return branch.isCatchHandlerMode() === catchHandlerMode && branchCondition(value);
+        return branch.isExceptionHandler() === exceptionHandler && branchCondition(value);
     }).then(function (branchValue) {
-        return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, catchHandlerMode);
+        return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, exceptionHandler);
     });
 }
 

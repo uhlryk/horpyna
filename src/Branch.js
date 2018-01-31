@@ -6,7 +6,7 @@ export default class Branch {
         condition = () => true,
         action = value => value,
         branches = [],
-        catchHandlerMode = false
+        exceptionHandler = false
     } = {}) {
         if (!name) {
             throw TypeError("Name should be provided");
@@ -14,7 +14,7 @@ export default class Branch {
         this.name = name;
         this.condition = condition;
         this.action = action;
-        this.catchHandlerMode = catchHandlerMode;
+        this.exceptionHandler = exceptionHandler;
         this.branches = convertToBranches(branches);
     }
     clone() {
@@ -22,12 +22,12 @@ export default class Branch {
             name: this.name,
             condition: this.condition,
             action: this.action,
-            catchHandlerMode: this.catchHandlerMode,
+            exceptionHandler: this.exceptionHandler,
             branches: this.branches.slice()
         });
     }
-    isCatchHandlerMode() {
-        return this.catchHandlerMode;
+    isExceptionHandler() {
+        return this.exceptionHandler;
     }
     setCondition(newCondition) {
         this.condition = newCondition;

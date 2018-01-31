@@ -47,6 +47,7 @@ Creates new branch instance.
  * condition - function with condition to test. It can return promise.
  * action - function to call if condition pass. It can return promise.
  * branches - array of sub branches
+ * exceptionHandler: boolean if true this branch will be only trigger to handle exceptions
  
 #### example
 
@@ -69,6 +70,7 @@ mainBranch.execute(11)
 mainBranch.execute(15)
     .then(console.log)//15
 ```
+
 
 ### branch.setCondition(condition: (value: any) => result: any): branch
 

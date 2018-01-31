@@ -66,7 +66,7 @@ describe("Branch", () => {
             branches: [
                 {
                     name: "subBranch",
-                    catchHandlerMode: true,
+                    exceptionHandler: true,
                     action: err => err.message + "AAA"
                 }
             ]
