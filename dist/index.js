@@ -312,13 +312,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function executeBranch(value, _ref) {
     var currentBranch = _ref.branch;
 
-    return _bluebird2.default.resolve().then(function () {
-        return currentBranch.condition(value);
-    }).then(function (conditionResult) {
-        return conditionResult ? executeBranchAction(value, { branch: currentBranch }) : value;
-    }).then(function (value) {
-        return executeChain(currentBranch.getChain(), value);
-    });
+    return executeChain([currentBranch].concat(currentBranch.getChain()), value);
 }
 
 function executeBranchAction(value, _ref2) {
@@ -348,20 +342,37 @@ function getBranchByCondition(branches, value) {
     var branchCondition = branch.getCondition();
     return _bluebird2.default.resolve().then(function () {
         return branch.isExceptionHandler() === exceptionHandler && branchCondition(value);
-    }).then(function (branchValue) {
-        return branchValue ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, exceptionHandler);
+    }).then(function (conditionResult) {
+        return conditionResult ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, exceptionHandler);
     });
 }
 
 function executeChain(branches, value) {
     var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var exceptionHandler = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
     if (branches.length <= index) {
-        return _bluebird2.default.resolve(value);
+        if (exceptionHandler === false) {
+            return _bluebird2.default.resolve(value);
+        } else {
+            return _bluebird2.default.reject(value);
+        }
     }
-    var branch = branches[index];
-    return executeBranch(value, { branch: branch }).then(function (value) {
-        return executeChain(branches, value, index + 1);
+    var currentBranch = branches[index];
+    var branchCondition = currentBranch.getCondition();
+    return _bluebird2.default.resolve().then(function () {
+        return currentBranch.isExceptionHandler() === exceptionHandler && branchCondition(value);
+    }).then(function (conditionResult) {
+        if (conditionResult) {
+            exceptionHandler = false;
+            return executeBranchAction(value, { branch: currentBranch });
+        } else {
+            return value;
+        }
+    }).then(function (value) {
+        return executeChain(branches, value, index + 1, exceptionHandler);
+    }, function (err) {
+        return executeChain(branches, err, index + 1, true);
     });
 }
 

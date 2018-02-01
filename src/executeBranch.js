@@ -1,9 +1,6 @@
 import Promise from "bluebird";
 export default function executeBranch(value, { branch: currentBranch }) {
-    return Promise.resolve()
-        .then(() => currentBranch.condition(value))
-        .then(conditionResult => (conditionResult ? executeBranchAction(value, { branch: currentBranch }) : value))
-        .then(value => executeChain(currentBranch.getChain(), value));
+    return executeChain([currentBranch].concat(currentBranch.getChain()), value);
 }
 
 function executeBranchAction(value, { branch: currentBranch }) {
@@ -32,17 +29,35 @@ function getBranchByCondition(branches, value, index = 0, exceptionHandler) {
     return Promise.resolve()
         .then(() => branch.isExceptionHandler() === exceptionHandler && branchCondition(value))
         .then(
-            branchValue =>
-                branchValue
+            conditionResult =>
+                conditionResult
                     ? Promise.resolve(branch)
                     : getBranchByCondition(branches, value, index + 1, exceptionHandler)
         );
 }
 
-function executeChain(branches, value, index = 0) {
+function executeChain(branches, value, index = 0, exceptionHandler = false) {
     if (branches.length <= index) {
-        return Promise.resolve(value);
+        if (exceptionHandler === false) {
+            return Promise.resolve(value);
+        } else {
+            return Promise.reject(value);
+        }
     }
-    const branch = branches[index];
-    return executeBranch(value, { branch }).then(value => executeChain(branches, value, index + 1));
+    const currentBranch = branches[index];
+    const branchCondition = currentBranch.getCondition();
+    return Promise.resolve()
+        .then(() => currentBranch.isExceptionHandler() === exceptionHandler && branchCondition(value))
+        .then(conditionResult => {
+            if (conditionResult) {
+                exceptionHandler = false;
+                return executeBranchAction(value, { branch: currentBranch });
+            } else {
+                return value;
+            }
+        })
+        .then(
+            value => executeChain(branches, value, index + 1, exceptionHandler),
+            err => executeChain(branches, err, index + 1, true)
+        );
 }

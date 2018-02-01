@@ -235,5 +235,36 @@ describe("Branch", () => {
                 .execute("")
                 .then(value => expect(value).to.be.equal("ABD"));
         });
+
+        it("should catch error by exception handler branch in chain", () => {
+            const mainBranch = new Branch({
+                name: "mainBranch",
+                action: value => value + "A"
+            });
+            return mainBranch
+                .chain({
+                    name: "branch1",
+                    action: () => {
+                        throw Error("test");
+                    }
+                })
+                .chain({
+                    exceptionHandler: true,
+                    name: "branch2",
+                    action: err => "C"
+                })
+                .chain({
+                    name: "branch3",
+                    action: value => value + "D"
+                })
+                .execute("")
+                .then(
+                    value => expect(value).to.be.equal("CD"),
+                    err => {
+                        console.error(err);
+                        expect.fail();
+                    }
+                );
+        });
     });
 });
