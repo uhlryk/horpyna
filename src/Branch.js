@@ -1,5 +1,5 @@
 import { convertToBranches, convertToBranch } from "./convertToBranches";
-import executeBranch from "./executeBranch";
+import execute from "./execute/execute";
 export default class Branch {
     static create(options) {
         return new Branch(options);
@@ -82,6 +82,6 @@ export default class Branch {
         return this.name;
     }
     execute(value) {
-        return executeBranch(value, { branch: this });
+        return execute(value, { branch: this });
     }
 }

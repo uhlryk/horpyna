@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -86,11 +86,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _convertToBranches = __webpack_require__(4);
+var _convertToBranches = __webpack_require__(5);
 
-var _executeBranch = __webpack_require__(5);
+var _execute2 = __webpack_require__(6);
 
-var _executeBranch2 = _interopRequireDefault(_executeBranch);
+var _execute3 = _interopRequireDefault(_execute2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -224,7 +224,7 @@ var Branch = function () {
     }, {
         key: "execute",
         value: function execute(value) {
-            return (0, _executeBranch2.default)(value, { branch: this });
+            return (0, _execute3.default)(value, { branch: this });
         }
     }]);
 
@@ -235,20 +235,26 @@ exports.default = Branch;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-__webpack_require__(2);
-module.exports = __webpack_require__(3);
-
+module.exports = require("bluebird");
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(3);
+module.exports = __webpack_require__(4);
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-polyfill");
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -269,7 +275,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -299,7 +305,7 @@ function convertToBranch(branch) {
 }
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -308,51 +314,41 @@ function convertToBranch(branch) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = executeBranch;
+exports.default = execute;
 
-var _bluebird = __webpack_require__(6);
+var _executeChain = __webpack_require__(7);
 
-var _bluebird2 = _interopRequireDefault(_bluebird);
+var _executeChain2 = _interopRequireDefault(_executeChain);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function executeBranch(value, _ref) {
+function execute(value, _ref) {
     var currentBranch = _ref.branch;
 
-    return executeChain([currentBranch].concat(currentBranch.getChain()), value);
+    return (0, _executeChain2.default)([currentBranch].concat(currentBranch.getChain()), value);
 }
 
-function executeBranchAction(value, _ref2) {
-    var currentBranch = _ref2.branch;
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
 
-    return _bluebird2.default.resolve().then(function () {
-        return currentBranch.action(value);
-    }).then(function (actionResult) {
-        return getBranchByCondition(currentBranch.getBranches(), actionResult, 0, false).then(function (childBranch) {
-            return childBranch ? executeBranchAction(actionResult, { branch: childBranch }) : actionResult;
-        });
-    }, function (err) {
-        return getBranchByCondition(currentBranch.getBranches(), err, 0, true).then(function (childBranch) {
-            return childBranch ? executeBranchAction(err, { branch: childBranch }) : _bluebird2.default.reject(err);
-        });
-    });
-}
+"use strict";
 
-function getBranchByCondition(branches, value) {
-    var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var exceptionHandler = arguments[3];
 
-    if (branches.length <= index) {
-        return _bluebird2.default.resolve(null);
-    }
-    var branch = branches[index];
-    var branchCondition = branch.getCondition();
-    return _bluebird2.default.resolve().then(function () {
-        return branch.isExceptionHandler() === exceptionHandler && branchCondition(value);
-    }).then(function (conditionResult) {
-        return conditionResult ? _bluebird2.default.resolve(branch) : getBranchByCondition(branches, value, index + 1, exceptionHandler);
-    });
-}
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = executeChain;
+
+var _bluebird = __webpack_require__(1);
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
+var _executeBranch = __webpack_require__(8);
+
+var _executeBranch2 = _interopRequireDefault(_executeBranch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function executeChain(branches, value) {
     var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
@@ -372,7 +368,7 @@ function executeChain(branches, value) {
     }).then(function (conditionResult) {
         if (conditionResult) {
             exceptionHandler = false;
-            return executeBranchAction(value, { branch: currentBranch });
+            return (0, _executeBranch2.default)(value, { branch: currentBranch });
         } else {
             return value;
         }
@@ -384,10 +380,69 @@ function executeChain(branches, value) {
 }
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports) {
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("bluebird");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = executeBranch;
+
+var _bluebird = __webpack_require__(1);
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
+var _getBranchByCondition = __webpack_require__(9);
+
+var _getBranchByCondition2 = _interopRequireDefault(_getBranchByCondition);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function executeBranch(value, _ref) {
+    var currentBranch = _ref.branch;
+
+    return _bluebird2.default.resolve().then(function () {
+        return currentBranch.action(value);
+    }).then(function (actionResult) {
+        return (0, _getBranchByCondition2.default)(currentBranch.getBranches(), actionResult, 0, false).then(function (childBranch) {
+            return childBranch ? executeBranch(actionResult, { branch: childBranch }) : actionResult;
+        });
+    }, function (err) {
+        return (0, _getBranchByCondition2.default)(currentBranch.getBranches(), err, 0, true).then(function (childBranch) {
+            return childBranch ? executeBranch(err, { branch: childBranch }) : _bluebird2.default.reject(err);
+        });
+    });
+}
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getBranchByCondition;
+function getBranchByCondition(branches, value) {
+    var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var exceptionHandler = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+    if (branches.length <= index) {
+        return Promise.resolve(null);
+    }
+    var branch = branches[index];
+    var branchCondition = branch.getCondition();
+    return Promise.resolve().then(function () {
+        return branch.isExceptionHandler() === exceptionHandler && branchCondition(value);
+    }).then(function (conditionResult) {
+        return conditionResult ? Promise.resolve(branch) : getBranchByCondition(branches, value, index + 1, exceptionHandler);
+    });
+}
 
 /***/ })
 /******/ ]);
