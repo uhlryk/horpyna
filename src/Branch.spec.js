@@ -190,25 +190,50 @@ describe("Branch", () => {
         }).to.throw("Name should be provided");
     });
 
-    it("should execute all branches in chain", () => {
-        const mainBranch = new Branch({
-            name: "mainBranch",
-            action: value => value + "A"
+    describe("chain", () => {
+        it("should execute all branches in chain", () => {
+            const mainBranch = new Branch({
+                name: "mainBranch",
+                action: value => value + "A"
+            });
+            return mainBranch
+                .chain({
+                    name: "branch1",
+                    action: value => value + "B"
+                })
+                .chain({
+                    name: "branch2",
+                    action: value => value + "C"
+                })
+                .chain({
+                    name: "branch3",
+                    action: value => value + "D"
+                })
+                .execute("")
+                .then(value => expect(value).to.be.equal("ABCD"));
         });
-        return mainBranch
-            .chain({
-                name: "branch1",
-                action: value => value + "B"
-            })
-            .chain({
-                name: "branch2",
-                action: value => value + "C"
-            })
-            .chain({
-                name: "branch3",
-                action: value => value + "D"
-            })
-            .execute("")
-            .then(value => expect(value).to.be.equal("ABCD"));
+
+        it("should execute all branches in chain except one", () => {
+            const mainBranch = new Branch({
+                name: "mainBranch",
+                action: value => value + "A"
+            });
+            return mainBranch
+                .chain({
+                    name: "branch1",
+                    action: value => value + "B"
+                })
+                .chain({
+                    name: "branch2",
+                    condition: () => false,
+                    action: value => value + "C"
+                })
+                .chain({
+                    name: "branch3",
+                    action: value => value + "D"
+                })
+                .execute("")
+                .then(value => expect(value).to.be.equal("ABD"));
+        });
     });
 });
