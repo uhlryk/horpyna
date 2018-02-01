@@ -39,7 +39,8 @@ Creates new branch instance.
 {   name: String
     condition: Function,
     action: Function,
-    branches: Array<Branch>
+    branches: Array<Branch>,
+    exceptionHandler: Bool
 }
 ```
 
@@ -205,6 +206,39 @@ Returns branch name
 ### branch,getBranches(): Array<branch>
 
 Returns all child branches
+
+### branch.chain(branch): Branch
+
+Add another branch to queue. All branches in queue will be invoked one by one after all child branches 
+are done. Return current branch
+
+#### example
+```javascript
+import { Branch } from "Horpyna";
+const mainBranch = new Branch({ 
+    name: "branchA",
+    condition: () => true,
+    action: value => value + "A",
+    branches: [{
+        name: "branchB",
+        condition: () => true,
+        action: value => value + "B",
+    }]
+});
+mainBranch.chain({
+    name: "branchC",
+    condition: () => true,
+    action: value => value + "C",
+})
+mainBranch.chain({
+    name: "branchD",
+    condition: () => true,
+    action: value => value + "D",
+})
+
+mainBranch.execute("")
+.then(console.log)//"ABCD"
+```
 
 ### branch,setName(name: string): branch
 

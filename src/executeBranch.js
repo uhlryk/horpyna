@@ -1,11 +1,9 @@
 import Promise from "bluebird";
 export default function executeBranch(value, { branch: currentBranch }) {
-    return (
-        Promise.resolve()
-            // TODO: consider if we want check condition of main/root branch
-            .then(() => currentBranch.condition(value))
-            .then(conditionResult => (conditionResult ? executeBranchAction(value, { branch: currentBranch }) : value))
-    );
+    return Promise.resolve()
+        .then(() => currentBranch.condition(value))
+        .then(conditionResult => (conditionResult ? executeBranchAction(value, { branch: currentBranch }) : value))
+        .then(value => executeChain(currentBranch.getChain(), value));
 }
 
 function executeBranchAction(value, { branch: currentBranch }) {
@@ -39,4 +37,12 @@ function getBranchByCondition(branches, value, index = 0, exceptionHandler) {
                     ? Promise.resolve(branch)
                     : getBranchByCondition(branches, value, index + 1, exceptionHandler)
         );
+}
+
+function executeChain(branches, value, index = 0) {
+    if (branches.length <= index) {
+        return Promise.resolve(value);
+    }
+    const branch = branches[index];
+    return executeBranch(value, { branch }).then(value => executeChain(branches, value, index + 1));
 }
