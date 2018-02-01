@@ -97,6 +97,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Branch = function () {
+    _createClass(Branch, null, [{
+        key: "create",
+        value: function create(options) {
+            return new Branch(options);
+        }
+    }]);
+
     function Branch() {
         var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
             name = _ref.name,

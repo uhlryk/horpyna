@@ -25,11 +25,25 @@ const branch = new Branch({
 branch.execute(someInput)
     .then(response => console.log(response))
 ```
+or
+
+```
+import { Branch} from "Horpyna";
+const branch = Branch.create({
+    name: "branchName"
+})
+branch.execute(someInput)
+    .then(response => console.log(response))
+```
 
 ## API
 
 
 ### new Branch(options: Object): branch
+
+Creates new branch instance.
+
+### Branch.create(options: Object): branch
 
 Creates new branch instance.
 

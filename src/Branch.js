@@ -1,6 +1,9 @@
 import { convertToBranches, convertToBranch } from "./convertToBranches";
 import executeBranch from "./executeBranch";
 export default class Branch {
+    static create(options) {
+        return new Branch(options);
+    }
     constructor({
         name,
         condition = () => true,

@@ -21,6 +21,14 @@ describe("Branch", () => {
         });
     });
 
+    it("should create branch from static method", () => {
+        const mainBranch = Branch.create({ name: "mainBranch" });
+        return mainBranch.execute(10).then(result => {
+            expect(result).to.be.equal(10);
+            expect(mainBranch.getName()).to.be.equal("mainBranch");
+        });
+    });
+
     it("should convert branch objects to Branch instances", () => {
         const mainBranch = new Branch({
             name: "mainBranch",
